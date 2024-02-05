@@ -1,0 +1,157 @@
+@media screen and (max-width: 920px) {
+  header .logo {
+    width: 25dvw;
+    min-width: 200px;
+  }
+
+  .menu-toggle-btn {
+    display: block !important;
+    cursor: pointer;
+  }
+
+  .nav-links {
+    display: none !important;
+    font-size: 1.3rem;
+    animation: slideOutToRight 0.5s ease-out forwards;
+  }
+
+  .nav-links.active {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: flex-end;
+    justify-content: flex-start;
+    gap: 1.5rem;
+    position: absolute !important;
+    width: 100dvw !important;
+    height: 85dvh !important;
+    background: var(--background) !important;
+    top: 15dvh !important;
+    right: 0 !important;
+    z-index: 9999 !important;
+    padding-inline: 10%;
+    animation: slideInFromRight 0.5s ease-out forwards;
+  }
+
+  .cards {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+
+  .card p {
+    font-size: 0.9rem !important;
+  }
+
+  .goals li {
+    font-size: 1.1rem !important;
+  }
+
+  .donate-slogan {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem !important;
+  }
+
+  #quotes blockquote {
+    font-size: 1.2rem !important;
+  }
+
+  #quotes .sub-text {
+    font-size: 1rem !important;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  h1 {
+    font-size: 2.3rem;
+  }
+
+  .contact p,
+  .main-slogan p,
+  .understand-disability .slogan p,
+  .donate .container p,
+  #donate-now p,
+  #financial-support p,
+  #self-employed-professional-support p {
+    font-size: 1.2rem !important;
+  }
+
+  .what-are-we p {
+    font-size: 1.1rem !important;
+  }
+
+  .what-are-we .highlight {
+    font-size: 1rem !important;
+    gap: 10px !important;
+    word-wrap: break-word !important;
+    flex-wrap: wrap !important;
+    align-items: center;
+    justify-content: center;
+    padding-inline: 0 !important;
+  }
+
+  .dot-icon {
+    font-size: 7px !important;
+  }
+
+  .contact-persons .persons {
+    grid-template-columns: 1fr;
+  }
+
+  .login-type-container,
+  .register-type-container {
+    grid-template-columns: 1fr !important;
+  }
+
+  .slider-1 {
+    gap: 2rem !important;
+  }
+
+  .register-type-container h1 {
+    font-size: 1.8rem !important;
+  }
+
+  .login-type,
+  .register-type {
+    height: 300px;
+  }
+
+  .understand-disability .slogan p {
+    width: 100% !important;
+  }
+
+  .understand-disability .slogan .images {
+    width: 70% !important;
+  }
+
+  .cards {
+    grid-template-columns: 1fr !important;
+    place-content: center !important;
+    place-items: center !important;
+  }
+
+  .card {
+    width: 80% !important;
+  }
+
+  .card p {
+    font-size: 1rem !important;
+  }
+
+  .goals li {
+    font-size: 1rem !important;
+  }
+
+  .counter p {
+    font-size: 1rem !important;
+  }
+
+  .donate-now-list-item,
+  .goal-list-item,
+  .financial-support-list-item {
+    width: 100% !important;
+    font-size: 0.9rem !important;
+    margin-right: 0 !important;
+    margin-left: 0 !important;
+  }
+}
