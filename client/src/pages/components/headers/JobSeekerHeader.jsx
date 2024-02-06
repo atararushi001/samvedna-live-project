@@ -136,9 +136,9 @@ const RecruiterHeader = () => {
             </Link>
           </li>
           <div className="btn-container">
-            <Link className="btn" onClick={handleLogout}>
+            <button className="btn" onClick={handleLogout}>
               Logout
-            </Link>
+            </button>
           </div>
         </ul>
         <FontAwesomeIcon
