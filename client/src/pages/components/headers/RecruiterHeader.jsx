@@ -112,10 +112,14 @@ const RecruiterHeader = () => {
 
   
   const HandleLogout = () => {
-    const navigate = useNavigate();
+    console.log(sessionStorage.getItem('isLoggedIn'));
+    console.log(sessionStorage.getItem('recruiters_id'));
+    
     sessionStorage.removeItem('isLoggedIn');
     sessionStorage.removeItem('recruiters_id');
-    // toast.success("You have successfully logged out.");
+
+    console.log(sessionStorage.getItem('isLoggedIn'));
+    console.log(sessionStorage.getItem('recruiters_id'));
     navigate("/login");
 };
 
@@ -148,9 +152,9 @@ const RecruiterHeader = () => {
             >
               Post a Job
             </Link>
-            <Link className="btn btn-outline logout" onClick={HandleLogout}>
+            <button className="btn btn-outline logout" onClick={HandleLogout}>
               Logout
-            </Link>
+            </button>
           </div>
         </ul>
         <FontAwesomeIcon
