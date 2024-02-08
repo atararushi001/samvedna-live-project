@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import { Helmet } from "react-helmet";
 
 import CustomCarousel from "./components/CustomCarousel";
 import JobCarousel from "./components/JobCarousel";
@@ -114,7 +115,13 @@ const Home = () => {
 
   return (
     <>
+     <Helmet>
+        <title>Your Page Title</title>
+        <meta name="description" content="disABLED PERSON'S SOCIAL WELFARE TRUST" />
+        <meta name="keywords" content="samvedna,disABLED,disability job portal" />
+      </Helmet>
       <CustomCarousel />
+     
       <div className="container ">
         <section
           className="main-slogan to-animate"
