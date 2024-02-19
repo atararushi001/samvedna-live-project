@@ -6,22 +6,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $stmt->bind_param("s", $_POST['email']);
     $stmt->execute();
 
-    
+
     $result = $stmt->get_result();
-    
+
     if ($result->num_rows > 0) {
         $message = 'Email already exists';
         $response = array(
             'success' => false,
             'message' => $message,
         );
-        
+
         header('Content-Type: application/json');
         $jsonResponse = json_encode($response);
         echo $jsonResponse;
         exit();
     }
-    
+
     $email = $_POST['email'];
     $username = $_POST['username'];
     $password = $_POST['password'];
@@ -59,40 +59,53 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
          ,?,?,?,?,?,?,
          ?,?,?,?,?,?,
          ?,?)";
-         
-$stmt = $conn->prepare($sql);
 
-$stmt->bind_param(
-    "ssssssssssssssssssssssssss",
-    $email,
-    $username,
-    $password,
-    $name,
-    $lastName,
-    $dob,
-    $gender,
-    $permanentAddress,
-    $currentAddress,
-    $city,
-    $state,
-    $postalCode,
-    $country,
-    $contactNumber,
-    $whatsappNumber,
-    $jobAlerts,
-    $homePhone,
-    $addHomePhone,
-    $qualification,
-    $educationSpecialization,
-    $experienceAndAppliance,
-    $yesNoQuestion,
-    $twoWheeler,
-    $threeWheeler,
-    $car,
-    $specializationInDisability
-);
+    $stmt = $conn->prepare($sql);
 
-    
+    $stmt->bind_param(
+        "ssssssssssssssssssssssssss",
+        $email,
+        $username,
+        $password,
+        $name,
+        $lastName,
+        $dob,
+        $gender,
+        $permanentAddress,
+        $currentAddress,
+        $city,
+        $state,
+        $postalCode,
+        $country,
+        $contactNumber,
+        $whatsappNumber,
+        $jobAlerts,
+        $homePhone,
+        $addHomePhone,
+        $qualification,
+        $educationSpecialization,
+        $experienceAndAppliance,
+        $yesNoQuestion,
+        $twoWheeler,
+        $threeWheeler,
+        $car,
+        $specializationInDisability
+    );
+    $last_id = $conn->insert_id;
+    $count = 0;
+    while (isset($_POST['product' + $count])) {
+
+        $sql = "INSERT INTO `product_job_seekers`( `ps_details`,`job_seekers_id`) VALUES (?,?)";
+
+        $stmt = $conn->prepare($sql);
+
+        $stmt->bind_param(
+            "Ss",
+            $_POST['product' + $count],
+            $last_id
+        );
+        $count++;
+    }
     if (!$stmt->execute()) {
         die('Error in execute statement: ' . $stmt->error);
     } else {
