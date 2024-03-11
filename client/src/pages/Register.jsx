@@ -1,59 +1,23 @@
 import { useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
-import { SessionState } from "../context/SessionProvider";
-
-const API = import.meta.env.VITE_API_URL;
-
 const Register = () => {
-  const { setIsLoggedIn, setRecruiterId, setJobSeekerId, setSelfEmployedId } =
-    SessionState();
-
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetch(`${API}/utils/checkLogin.php`, {
-      method: "GET",
-      credentials: "include",
-    })
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
+    const isLoggedIn = sessionStorage.getItem("isLoggedIn");
+    const jobSeekerId = sessionStorage.getItem("job_seekers_id");
+    const recruiterId = sessionStorage.getItem("recruiters_id");
 
-        return response.json();
-      })
-      .then((data) => {
-        if (data.is_logged_in) {
-          setIsLoggedIn(true);
-          if (data.recruiters_id) {
-            setRecruiterId(data.recruiters_id);
-            navigate("/recruiter-dashboard");
-          } else if (data.job_seekers_id) {
-            setJobSeekerId(data.job_seekers_id);
-            navigate("/job-seeker-dashboard");
-          } else if (data.self_employed_id) {
-            setSelfEmployedId(data.self_employed_id);
-            navigate("/self-employed-dashboard");
-          }
-        } else {
-          setIsLoggedIn(false);
-          setJobSeekerId(null);
-          setRecruiterId(null);
-          setSelfEmployedId(null);
-        }
-      })
-      .catch((error) => {
-        console.error(error);
-      });
-  }, [
-    setIsLoggedIn,
-    setJobSeekerId,
-    setRecruiterId,
-    setSelfEmployedId,
-    navigate,
-  ]);
-
+    if (isLoggedIn) {
+      if (jobSeekerId) {
+        navigate("/job-seeker-dashboard");
+      } else if (recruiterId) {
+        navigate("/recruiter-dashboard");
+      }
+    }
+  }, [navigate]);
+  
   return (
     <>
       <section className="register-type-container">

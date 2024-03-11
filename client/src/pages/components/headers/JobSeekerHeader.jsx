@@ -2,64 +2,13 @@ import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
-import { SessionState } from "../../../context/SessionProvider";
-
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import Logo from "../../../assets/images/Logo.png";
 
-// const API = import.meta.env.VITE_API_URL;
-
 const RecruiterHeader = () => {
   const navigate = useNavigate();
-  const { setIsLoggedIn, setJobSeekerId } = SessionState();
   const [icon, setIcon] = useState("bars");
-
-  useEffect(() => {
-    const isLoggedIn = sessionStorage.getItem("isLoggedIn");
-    const jobSeekerId = sessionStorage.getItem("job_seekers_id");
-    const recruiterId = sessionStorage.getItem("recruiters_id");
-
-    if (isLoggedIn) {
-      if (jobSeekerId) {
-        setIsLoggedIn(true);
-        setJobSeekerId(jobSeekerId);
-
-      } else if (recruiterId) {
-        navigate("/recruiter-dashboard");
-      }
-    }
-    else{
-     
-      navigate("/job-seeker-login");
-
-    }
-  }, [navigate,setIsLoggedIn, setJobSeekerId]);
-  // useEffect(() => {
-  //   fetch(`${API}/utils/checkLogin.php`, {
-  //     method: "GET",
-  //     credentials: "include",
-  //   })
-  //     .then((response) => {
-  //       if (!response.ok) {
-  //         throw new Error(`HTTP error! status: ${response.status}`);
-  //       }
-
-  //       return response.json();
-  //     })
-  //     .then((data) => {
-  //       if (data.is_logged_in) {
-  //         setIsLoggedIn(true);
-  //         setJobSeekerId(data.job_seeker_id);
-  //       } else {
-  //         setIsLoggedIn(false);
-  //         setJobSeekerId(null);
-  //       }
-  //     })
-  //     .catch((error) => {
-  //       console.error(error);
-  //     });
-  // }, [setIsLoggedIn, setJobSeekerId]);
 
   useEffect(() => {
     window.addEventListener("resize", () => {
@@ -95,8 +44,8 @@ const RecruiterHeader = () => {
       links.forEach((link) =>
         link.removeEventListener("click", handleLinkClick)
       );
-      window.removeEventListener("resize", () => {});
-      window.removeEventListener("change", () => {});
+      window.removeEventListener("resize", () => { });
+      window.removeEventListener("change", () => { });
     };
   }, []);
 
@@ -110,7 +59,7 @@ const RecruiterHeader = () => {
   const handleLogout = () => {
     sessionStorage.removeItem('isLoggedIn');
     sessionStorage.removeItem('job_seekers_id');
-    toast.success("You have successfully logged out.");
+    toast.success("Logged out Successfully!");
     navigate("/job-seeker-login");
   };
 

@@ -2,20 +2,16 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
-// import { SessionState } from "../context/SessionProvider";
-
 const API = import.meta.env.VITE_API_URL;
 
 const PostJob = () => {
-  //  const { isLoggedIn, setIsLoggedIn, recruiterId, setRecruiterId } = SessionState();
-  
   const recruiterId = sessionStorage.getItem("recruiters_id");
   const navigate = useNavigate();
   useEffect(() => {
     const isLoggedIn = sessionStorage.getItem("isLoggedIn");
     const jobSeekerId = sessionStorage.getItem("job_seekers_id");
     const recruiterId = sessionStorage.getItem("recruiters_id");
-    // console.log(recruiterId);
+
     if (isLoggedIn) {
       if (jobSeekerId) {
         navigate("/job-seeker-dashboard");
@@ -26,7 +22,7 @@ const PostJob = () => {
       navigate("/recruiter-login");
     }
   }, [navigate]);
- 
+
   const [formData, setFormData] = useState({
     companyName: "",
     website: "",
@@ -60,6 +56,7 @@ const PostJob = () => {
     placeOfWork: "",
     resumesToBeSent: "",
     resumeEmail: "",
+    resumeWebsite: "",
     interviewDetails: {
       date: "",
       time: "",
@@ -466,7 +463,7 @@ const PostJob = () => {
                   Resumes to be sent
                 </option>
                 <option value="Online">Online</option>
-                <option value="Hardcopy">Hardcopy</option>
+                <option value="Website">Website</option>
               </select>
 
               {formData.resumesToBeSent === "Online" && (
@@ -478,6 +475,19 @@ const PostJob = () => {
                   onChange={handleInputChange}
                 />
               )}
+
+              {
+                formData.resumesToBeSent === "Website" && (
+                  <input
+                    type="text"
+                    name="resumeWebsite"
+                    placeholder="If Website, the website to which the resume be sent"
+                    value={formData.resumeWebsite}
+                    onChange={handleInputChange}
+                  />
+                )
+              }
+
             </fieldset>
 
             <fieldset>

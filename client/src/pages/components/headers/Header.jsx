@@ -1,75 +1,34 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
-import { SessionState } from "../../../context/SessionProvider";
-
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import Logo from "../../../assets/images/Logo.png";
 
-// const API = import.meta.env.VITE_API_URL;
-
 const Header = () => {
   const navigate = useNavigate();
   const [icon, setIcon] = useState("bars");
-  const {
-    isLoggedIn,
-    setIsLoggedIn,
-    recruiterId,
-    setRecruiterId,
-    jobSeekerId,
-    setJobSeekerId,
-    selfEmployedId
 
-  } = SessionState();
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [jobSeekerId, setJobSeekerId] = useState(null);
+  const [recruiterId, setRecruiterId] = useState(null);
+
   useEffect(() => {
     const isLoggedIn = sessionStorage.getItem("isLoggedIn");
     const jobSeekerId = sessionStorage.getItem("job_seekers_id");
     const recruiterId = sessionStorage.getItem("recruiters_id");
 
     if (isLoggedIn) {
+      setIsLoggedIn(true);
       if (jobSeekerId) {
         setJobSeekerId(jobSeekerId);
+        navigate("/job-seeker-dashboard");
       } else if (recruiterId) {
         setRecruiterId(recruiterId);
-
+        // navigate("/recruiter-dashboard");
       }
     }
-   
-  }, [setIsLoggedIn, setRecruiterId, setJobSeekerId, navigate]);
-  // useEffect(() => {
-  //   fetch(`${API}/utils/checkLogin.php`, {
-  //     method: "GET",
-  //     credentials: "include",
-  //   })
-  //     .then((response) => {
-  //       if (!response.ok) {
-  //         throw new Error(`HTTP error! status: ${response.status}`);
-  //       }
-
-  //       return response.json();
-  //     })
-  //     .then((data) => {
-  //       if (data.is_logged_in) {
-  //         setIsLoggedIn(true);
-  //         if (data.recruiters_id) {
-  //           setRecruiterId(data.recruiters_id);
-  //         } else if (data.job_seekers_id) {
-  //           setJobSeekerId(data.job_seekers_id);
-  //         } else if (data.self_employed_id) {
-  //           setSelfEmployedId(data.self_employed_id);
-  //         }
-  //       } else {
-  //         setIsLoggedIn(false);
-  //         setRecruiterId(null);
-  //         setJobSeekerId(null);
-  //         setSelfEmployedId(null);
-  //       }
-  //     })
-  //     .catch((error) => {
-  //       console.error(error);
-  //     });
-  // }, [setIsLoggedIn, setRecruiterId, setJobSeekerId, setSelfEmployedId]);
+  }, [navigate]);
 
   useEffect(() => {
     window.addEventListener("resize", () => {
@@ -140,6 +99,15 @@ const Header = () => {
           <li>
             <Link
               className="nav-link"
+              to="/blogs"
+              onClick={handleLinkNavigation}
+            >
+              Blogs
+            </Link>
+          </li>
+          <li>
+            <Link
+              className="nav-link"
               to="/gallery"
               onClick={handleLinkNavigation}
             >
@@ -180,15 +148,6 @@ const Header = () => {
                   <Link
                     className="nav-link"
                     to="/job-seeker-dashboard"
-                    onClick={handleLinkNavigation}
-                  >
-                    Dashboard
-                  </Link>
-                ) : null}
-                {selfEmployedId ? (
-                  <Link
-                    className="nav-link"
-                    to="/self-employed-dashboard"
                     onClick={handleLinkNavigation}
                   >
                     Dashboard

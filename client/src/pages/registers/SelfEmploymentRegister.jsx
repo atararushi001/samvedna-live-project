@@ -1,4 +1,7 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { toast } from "react-toastify";
+
+const API = import.meta.env.VITE_API_URL;
 
 const SelfEmploymentRegister = () => {
   const [formData, setFormData] = useState({
@@ -17,6 +20,18 @@ const SelfEmploymentRegister = () => {
     experience: "",
     assistanceNedeed: "",
   });
+
+  const [professions, setProfessions] = useState([]);
+
+  useEffect(() => {
+    fetch(`${API}/controllers/getProfessions.php`)
+      .then((response) => response.text())
+      .then((data) => {
+        const options = parseOptions(data);
+        setProfessions(options);
+      })
+      .catch((error) => console.error(error));
+  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -50,8 +65,45 @@ const SelfEmploymentRegister = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Add your form submission logic here or send data to a backend API
-    console.log(formData);
+
+    const data = new FormData();
+
+    for (const key in formData) {
+      if (key === "productDetails") {
+        formData[key].forEach((detail, index) => {
+          data.append(`product${index}`, detail);
+        });
+      } else {
+        data.append(key, formData[key]);
+      }
+    }
+
+    fetch(`${API}/controllers/selfEmploymentRegister.php`, {
+      method: "POST",
+      body: data,
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(data);
+        if (data.success) {
+          console.log(data);
+          toast.success(data.message);
+        } else {
+          toast.error(data.message);
+        }
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  };
+
+  const parseOptions = (htmlString) => {
+    const parser = new DOMParser();
+    const htmlDoc = parser.parseFromString(htmlString, "text/html");
+    return Array.from(htmlDoc.querySelectorAll("option")).map((opt) => ({
+      value: opt.value,
+      label: opt.textContent,
+    }));
   };
   return (
     <>
@@ -264,8 +316,16 @@ const SelfEmploymentRegister = () => {
               required
               value={formData.professionType}
               onChange={handleChange}
+              defaultValue=""
             >
-              <option value="1">1</option>
+              <option value="" selected>
+                Select Your Profession
+              </option>
+              {professions.map((profession, index) => (
+                <option key={index} value={profession.value}>
+                  {profession.label}
+                </option>
+              ))}
             </select>
 
             <textarea

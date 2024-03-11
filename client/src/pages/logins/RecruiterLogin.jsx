@@ -50,7 +50,6 @@ const RecruiterLogin = () => {
       }
       const responseData = await response.json();
       if (responseData.success) {
-        // console.log( responseData);
         toast.success(responseData.message);
         sessionStorage.setItem("isLoggedIn", true);
         sessionStorage.setItem("recruiters_id", responseData.recruiters_id);

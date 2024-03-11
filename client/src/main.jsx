@@ -12,10 +12,11 @@ import {
 	faSearch,
 	faLocationDot,
 	faWheelchair,
-	faPercent
+	faPercent,
+	faQuoteLeft
 } from "@fortawesome/free-solid-svg-icons";
 
-library.add(fab, faBars, faXmark, faCircle, faSearch, faLocationDot, faWheelchair, faPercent);
+library.add(fab, faBars, faXmark, faCircle, faSearch, faLocationDot, faWheelchair, faPercent, faQuoteLeft);
 
 import App from "./App.jsx";
 import "./assets/styles/style.css";

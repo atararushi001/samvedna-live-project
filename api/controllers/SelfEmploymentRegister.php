@@ -7,6 +7,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $stmt->execute();
 
 
+
     $result = $stmt->get_result();
 
     if ($result->num_rows > 0) {
@@ -35,18 +36,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $experience = $_POST['experience'];
     $assistanceNedeed = $_POST['assistanceNedeed'];
 
-    $sql = "INSERT INTO `selfemployment`(`name`, `experience`, `disabilityType`, `percentage`,
-     `education`, `companyName`, `companyType`, `officeAddress`, `contactNumber`,
-      `email`, `professionType`, `description`,`assistanceNedeed`) 
-      VALUES (?,?,?,?,
-      ?,?,?,?,?,
-      ?,?,?,?)";
+    $sql = "INSERT INTO `selfemployment`(
+        `name`, `experience`, `disabilityType`, `percentage`, `education`, 
+        `companyName`, `companyType`, `officeAddress`, `contactNumber`, `email`, 
+        `professionType`, `description`,`assistanceNedeed`) 
+    VALUES (
+        ?,?,?,?,?,
+        ?,?,?,?,?,
+        ?,?,?
+    )";
 
     $stmt = $conn->prepare($sql);
 
     $stmt->bind_param(
         "sssssssssssss",
         $name,
+        $experience,
         $disabilityType,
         $percentage,
         $education,
@@ -57,25 +62,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $email,
         $professionType,
         $description,
-        $experience,
         $assistanceNedeed
     );
+
     $last_id = $conn->insert_id;
     $count = 0;
-    while (isset($_POST['product' + $count])) {
 
-        $sql = "INSERT INTO `product_selfemployment`( `ps_details`,`self_employment_id`) VALUES (?,?)";
+    while (isset($_POST['product' . $count])) {
+        $sql2 = "INSERT INTO `product_selfemployment`( `ps_details`,`self_employment_id`) VALUES (?,?)";
+        $stmt2 = $conn->prepare($sql2);
 
-        $stmt = $conn->prepare($sql);
-
-        $stmt->bind_param(
-            "Ss",
-            $_POST['product' + $count],
+        $stmt2->bind_param(
+            "ss",
+            $_POST['product' . $count],
             $last_id
         );
+
         $count++;
     }
-    if (!$stmt->execute()) {
+
+    if (!$stmt->execute() || !$stmt2->execute()) {
         die('Error in execute statement: ' . $stmt->error);
     } else {
         $message = 'Registration Successful!';

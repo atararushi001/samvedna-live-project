@@ -47,23 +47,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $twoWheeler = $_POST['twoWheeler'];
     $threeWheeler = $_POST['threeWheeler'];
     $car = $_POST['car'];
-    $specializationInDisability =  $_POST['specializationInDisability'];
+    $disabilityPercentage = $_POST['disabilityPercentage'];
+    $specializationInDisability = $_POST['specializationInDisability'];
 
-    $sql = "INSERT INTO `job_seekers`(`email`, `username`, `password`, `name`,`lastName`,
-     `dob`, `gender`, `permanentAddress`, `currentAddress`,`city`,
-      `state`, `postalCode`, `country`, `contactNumber`,`whatsappNumber`,
-       `jobAlerts`, `homePhone`, `addHomePhone`, `qualification`,`educationSpecialization`,
-        `experienceAndAppliance`, `yesNoQuestion`, `twoWheeler`, `threeWheeler`, `car`, `specializationInDisability`) VALUES
-         (?,?,?,?,?,?
-         ,?,?,?,?,?,?
-         ,?,?,?,?,?,?,
-         ?,?,?,?,?,?,
-         ?,?)";
+    $sql = "INSERT INTO 
+    `job_seekers`(
+        `email`, `username`, `password`, `name`,`lastName`,
+        `dob`, `gender`, `permanentAddress`, `currentAddress`,`city`,
+        `state`, `postalCode`, `country`, `contactNumber`,`whatsappNumber`,
+        `jobAlerts`, `homePhone`, `addHomePhone`, `qualification`,`educationSpecialization`,
+        `experienceAndAppliance`, `yesNoQuestion`, `twoWheeler`, `threeWheeler`, `car`, 
+        `disabilityPercentage`, `specializationInDisability`) 
+    VALUES (
+            ?,?,?,?,?,
+            ?,?,?,?,?,
+            ?,?,?,?,?,
+            ?,?,?,?,?,
+            ?,?,?,?,?,
+            ?,?)";
 
     $stmt = $conn->prepare($sql);
 
     $stmt->bind_param(
-        "ssssssssssssssssssssssssss",
+        "sssssssssssssssssssssssssss",
         $email,
         $username,
         $password,
@@ -89,23 +95,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $twoWheeler,
         $threeWheeler,
         $car,
+        $disabilityPercentage,
         $specializationInDisability
     );
-    $last_id = $conn->insert_id;
-    $count = 0;
-    while (isset($_POST['product' + $count])) {
 
-        $sql = "INSERT INTO `product_job_seekers`( `ps_details`,`job_seekers_id`) VALUES (?,?)";
 
-        $stmt = $conn->prepare($sql);
-
-        $stmt->bind_param(
-            "Ss",
-            $_POST['product' + $count],
-            $last_id
-        );
-        $count++;
-    }
     if (!$stmt->execute()) {
         die('Error in execute statement: ' . $stmt->error);
     } else {

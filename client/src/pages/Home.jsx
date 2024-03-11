@@ -26,13 +26,10 @@ const Home = () => {
   };
 
   useEffect(() => {
-    fetch(
-      `${API}/controllers/renderLatestJobs.php`,
-      {
-        method: "GET",
-        credentials: "include",
-      }
-    )
+    fetch(`${API}/controllers/renderLatestJobs.php`, {
+      method: "GET",
+      credentials: "include",
+    })
       .then((response) => {
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
@@ -115,13 +112,18 @@ const Home = () => {
 
   return (
     <>
-     <Helmet>
-        <title>Your Page Title</title>
-        <meta name="description" content="disABLED PERSON'S SOCIAL WELFARE TRUST" />
-        <meta name="keywords" content="samvedna,disABLED,disability job portal" />
+      <Helmet>
+        <meta
+          name="description"
+          content="disABLED PERSON'S SOCIAL WELFARE TRUST"
+        />
+        <meta
+          name="keywords"
+          content="samvedna,disABLED,disability job portal"
+        />
       </Helmet>
       <CustomCarousel />
-     
+
       <div className="container ">
         <section
           className="main-slogan to-animate"
@@ -429,6 +431,66 @@ const Home = () => {
               differently-abled persons.
             </li>
           </ol>
+        </section>
+
+        <section className="testimonials">
+          <h1>
+            What <span className="highlight-text">People</span> Say
+          </h1>
+          <div className="testimonial-cards">
+            <div className="testimonial-card to-animate">
+              <FontAwesomeIcon icon="quote-left" className="quote-icon" />
+              <div className="testimonial-content">
+                <p>
+                  <strong>“Samvedna”</strong> is doing a great job by providing
+                  jobs to the differently-abled people. It is a great initiative
+                  to provide them with a platform to showcase their skills and
+                  talents.
+                </p>
+              </div>
+              <div className="testimonial-author">
+                <img
+                  src="https://randomuser.me/api/portraits/men/58.jpg"
+                  alt="testimonial author"
+                />
+                <h3>John Doe</h3>
+              </div>
+            </div>
+            <div className="testimonial-card to-animate">
+              <FontAwesomeIcon icon="quote-left" className="quote-icon" />
+              <div className="testimonial-content">
+                <p>
+                  I am very grateful to <strong>“Samvedna”</strong> for
+                  providing me with a job. I am now able to support my family
+                  and live a dignified life.
+                </p>
+              </div>
+              <div className="testimonial-author">
+                <img
+                  src="https://randomuser.me/api/portraits/men/5.jpg"
+                  alt="testimonial author"
+                />
+                <h3>Jane Doe</h3>
+              </div>
+            </div>
+            <div className="testimonial-card to-animate">
+              <FontAwesomeIcon icon="quote-left" className="quote-icon" />
+              <div className="testimonial-content">
+                <p>
+                  I am very thankful to <strong>“Samvedna”</strong> for
+                  providing me with a platform to showcase my skills and
+                  talents. I am now able to live a dignified life.
+                </p>
+              </div>
+              <div className="testimonial-author">
+                <img
+                  src="https://randomuser.me/api/portraits/men/69.jpg"
+                  alt="testimonial author"
+                />
+                <h3>John Smith</h3>
+              </div>
+            </div>
+          </div>
         </section>
       </div>
     </>

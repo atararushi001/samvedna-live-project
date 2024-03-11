@@ -1,7 +1,5 @@
 import { useState, useEffect } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
-
-// import { SessionState } from "../context/SessionProvider";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 
 const API = import.meta.env.VITE_API_URL;
 
@@ -17,8 +15,6 @@ const ViewJob = () => {
 
   const [job, setJob] = useState({});
 
-  // const { setIsLoggedIn, setRecruiterId } = SessionState();  
-
   useEffect(() => {
     fetch(`${API}/controllers/getJob.php?job_id=${jobId}`, {
       method: "GET",
@@ -32,7 +28,6 @@ const ViewJob = () => {
       })
       .then((data) => {
         if (data.success) {
-          console.log(data.job[0]);
           setJob(data.job[0]);
         } else {
           console.log(data.message);
@@ -42,50 +37,6 @@ const ViewJob = () => {
         console.error(error);
       });
   }, [jobId]);
-
-  // useEffect(() => {
-  //   fetch(`${API}/utils/checkLogin.php`, {
-  //     method: "GET",
-  //     credentials: "include",
-  //   })
-  //     .then((response) => {
-  //       if (!response.ok) {
-  //         throw new Error(`HTTP error! status: ${response.status}`);
-  //       }
-
-  //       return response.json();
-  //     })
-  //     .then((data) => {
-  //       if (data.isLoggedIn) {
-  //         setIsLoggedIn(true);
-  //         if (data.recruiters_id) {
-  //           setRecruiterId(data.recruiters_id);
-  //         }
-  //       } else {
-  //         setIsLoggedIn(false);
-  //         setRecruiterId(null);
-  //       }
-  //     })
-  //     .catch((error) => {
-  //       console.error(error);
-  //     });
-  // }, [setIsLoggedIn, setRecruiterId, navigate]);
-
-  useEffect(() => {
-    const isLoggedIn = sessionStorage.getItem("isLoggedIn");
-    const jobSeekerId = sessionStorage.getItem("job_seekers_id");
-    const recruiterId = sessionStorage.getItem("recruiters_id");
-
-    if (isLoggedIn) {
-      if (jobSeekerId) {
-        navigate("/job-seeker-dashboard");
-      } else if (recruiterId) {
-        // navigate("/recruiter-dashboard");
-      }
-    } else {
-      navigate("/job-seeker-login");
-    }
-  }, [navigate]);
 
   return (
     <div className="container">
@@ -238,6 +189,26 @@ const ViewJob = () => {
                 <h3>Technical Interview Details:</h3>
                 <p>{job.interviewTopics}</p>
               </div>
+            )}
+          </div>
+          <div className="job-footer">
+            {job.resumeEmail && (
+              <Link
+                className="btn"
+                to={`mailto:${job.email}?subject=Application for the post of ${job.jobDesignation}&body=I am interested in the job. Please find my resume attached.`}
+              >
+                Apply
+              </Link>
+            )}
+            {job.resumeWebsite && (
+              <a
+                className="btn"
+                href={job.resumeWebsite}
+                target="_blank"
+                rel="noreferrer"
+              >
+                Apply
+              </a>
             )}
           </div>
         </div>

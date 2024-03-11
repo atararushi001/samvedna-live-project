@@ -2,13 +2,9 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
-import { SessionState } from "../../context/SessionProvider";
-
 const API = import.meta.env.VITE_API_URL;
 
 const JobSeekerRegister = () => {
-  const { setIsLoggedIn, setJobSeekerId, setRecruiterId, setSelfEmployedId } =
-    SessionState();
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     email: "",
@@ -37,49 +33,15 @@ const JobSeekerRegister = () => {
     twoWheeler: false,
     threeWheeler: false,
     car: false,
+    disabilityPercentage: "",
     specializationInDisability: "",
   });
 
   const [countries, setCountries] = useState([]);
   const [states, setStates] = useState([]);
   const [cities, setCities] = useState([]);
-
-  useEffect(() => {
-    fetch(`${API}/utils/checkLogin.php`, {
-      method: "GET",
-      credentials: "include",
-    })
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        return response.json();
-      })
-      .then((data) => {
-        if (data.is_logged_in) {
-          setIsLoggedIn(true);
-          if (data.job_seekers_id) {
-            setJobSeekerId(data.job_seekers_id);
-            navigate("/job-seeker-dashboard");
-          } else if (data.recruiters_id) {
-            setRecruiterId(data.recruiters_id);
-            navigate("/recruiter-dashboard");
-          } else if (data.self_employed_id) {
-            setSelfEmployedId(data.self_employed_id);
-            navigate("/self-employed-dashboard");
-          }
-        } else {
-          setIsLoggedIn(false);
-          setJobSeekerId(null);
-          setRecruiterId(null);
-          setSelfEmployedId(null);
-        }
-      })
-      .catch((error) => {
-        console.error(error);
-      });
-  }, [setIsLoggedIn, setJobSeekerId, setRecruiterId, setSelfEmployedId, navigate]);
+  const [qualifications, setQualifications] = useState([]);
+  const [specializations, setSpecializations] = useState([]);
 
   const handleInputChange = (event) => {
     const { name, value, type, checked } = event.target;
@@ -89,6 +51,20 @@ const JobSeekerRegister = () => {
       [name]: type === "checkbox" ? checked : value,
     }));
   };
+
+  useEffect(() => {
+    const isLoggedIn = sessionStorage.getItem("isLoggedIn");
+    const jobSeekerId = sessionStorage.getItem("job_seekers_id");
+    const recruiterId = sessionStorage.getItem("recruiters_id");
+
+    if (isLoggedIn) {
+      if (jobSeekerId) {
+        navigate("/job-seeker-dashboard");
+      } else if (recruiterId) {
+        navigate("/recruiter-dashboard");
+      }
+    }
+  }, [navigate]);
 
   useEffect(() => {
     fetch(`${API}/controllers/getCountry.php`)
@@ -123,6 +99,28 @@ const JobSeekerRegister = () => {
         .catch((error) => console.error(error));
     }
   }, [formData.state]);
+
+  useEffect(() => {
+    fetch(`${API}/controllers/getQualificationLevels.php`)
+      .then((response) => response.text())
+      .then((data) => {
+        const options = parseOptions(data);
+        setQualifications(options);
+      })
+      .catch((error) => console.error(error));
+  }, []);
+
+  useEffect(() => {
+    if (formData.qualification) {
+      fetch(`${API}/controllers/getEducationSpecialization.php?qualification_id=${formData.qualification}`)
+        .then((response) => response.text())
+        .then((data) => {
+          const options = parseOptions(data);
+          setSpecializations(options);
+        })
+        .catch((error) => console.error(error));
+    }
+  }, [formData.qualification]);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -314,7 +312,11 @@ const JobSeekerRegister = () => {
               name="country"
               value={formData.country}
               onChange={handleInputChange}
+              defaultValue=""
             >
+              <option value="" disabled>
+                Select Country
+              </option>
               {countries.map((country, index) => (
                 <option key={`${country.value}-${index}`} value={country.value}>
                   {country.label}
@@ -325,7 +327,11 @@ const JobSeekerRegister = () => {
               name="state"
               value={formData.state}
               onChange={handleInputChange}
+              defaultValue=""
             >
+              <option value="" disabled>
+                Select State
+              </option>
               {states.map((state, index) => (
                 <option key={`${state.value}-${index}`} value={state.value}>
                   {state.label}
@@ -336,7 +342,11 @@ const JobSeekerRegister = () => {
               name="city"
               value={formData.city}
               onChange={handleInputChange}
+              defaultValue=""
             >
+              <option value="" disabled>
+                Select City
+              </option>
               {cities.map((city, index) => (
                 <option key={`${city.value}-${index}`} value={city.value}>
                   {city.label}
@@ -419,21 +429,18 @@ const JobSeekerRegister = () => {
               name="qualification"
               onChange={handleInputChange}
               required
+              defaultValue=""
             >
               <option value="" disabled>
-                Select Your Qualification
+                Select Qualification Level
               </option>
-              <option value="Below SSC">Below SSC</option>
-              <option value="SSLC X">SSLC / X</option>
-              <option value="HSC XII">HSC / XII</option>
-              <option value="Under Graduate">Under Graduate</option>
-              <option value="Company Secretary">Company Secretary (ACS)</option>
-              <option value="Aviation">Aviation</option>
-              <option value="BA">B.A</option>
-              <option value="B.Arch">B. Arch</option>
-              <option value="B.Com">B.Com</option>
-              <option value="BE B.Tech">B.E/B.Tech</option>
-              <option value="B.Ed">B.Ed</option>
+              {
+                qualifications.map((qualification, index) => (
+                  <option key={`${qualification.value}-${index}`} value={qualification.value}>
+                    {qualification.label}
+                  </option>
+                ))
+              }
             </select>
           </fieldset>
 
@@ -447,28 +454,18 @@ const JobSeekerRegister = () => {
               name="educationSpecialization"
               onChange={handleInputChange}
               required
+              defaultValue=""
             >
               <option value="" disabled>
-                Select Your Specialization
+                Select Education Specialization
               </option>
-              <optgroup label="Below X">
-                <option value="Below X">Below X</option>
-              </optgroup>
-              <optgroup label="SSLC / X">
-                <option value="SSLC X">SSLC / X</option>
-              </optgroup>
-              <optgroup label="HSC / XII">
-                <option value="HSC/XII">HSC / XII</option>
-                <option value="Science">Science</option>
-                <option value="Commerce">Commerce</option>
-                <option value="Arts">Arts</option>
-              </optgroup>
-              <optgroup label="Under Graduate">
-                <option value="Under_Graduate">Under Graduate</option>
-                <option value="FY">F.Y</option>
-                <option value="SY">S.Y</option>
-                <option value="TY">T.Y</option>
-              </optgroup>
+              {
+                specializations.map((specialization, index) => (
+                  <option key={`${specialization.value}-${index}`} value={specialization.value}>
+                    {specialization.label}
+                  </option>
+                ))
+              }
             </select>
           </fieldset>
 
@@ -530,8 +527,8 @@ const JobSeekerRegister = () => {
                 <label htmlFor="car">Car</label>
               </div>
             )}
-            <select name="percentage" onChange={handleInputChange} required>
-              <option value="" disabled>
+            <select name="disabilityPercentage" onChange={handleInputChange} required>
+              <option value="" disabled selected>
                 Select Percentage of Disability
               </option>
               <option value="40-45">40-45</option>

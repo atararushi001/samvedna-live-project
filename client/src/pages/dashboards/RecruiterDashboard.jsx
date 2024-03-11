@@ -1,11 +1,9 @@
 import { useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-// import { SessionState } from "../../context/SessionProvider";
 
 const RecruiterDashboard = () => {
   const navigate = useNavigate();
-  // const { isLoggedIn, setIsLoggedIn, recruiterId, setRecruiterId } =
-  //   SessionState();
+
   useEffect(() => {
     const isLoggedIn = sessionStorage.getItem("isLoggedIn");
     const jobSeekerId = sessionStorage.getItem("job_seekers_id");
@@ -15,7 +13,7 @@ const RecruiterDashboard = () => {
       if (jobSeekerId) {
         navigate("/job-seeker-dashboard");
       } else if (recruiterId) {
-        // navigate("/recruiter-dashboard");
+        navigate("/recruiter-dashboard");
       }
     } else {
       navigate("/recruiter-login");
@@ -57,20 +55,6 @@ const RecruiterDashboard = () => {
                 View Jobs
               </Link>
             </div>
-            {/* <div className="recruiter-dashboard-card">
-            <h2>View Applications</h2>
-            <p>
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam
-            quibusdam, voluptatum, quos, nesciunt voluptatem voluptates
-            voluptatibus quae quia quod enim.
-            </p>
-            <Link
-            to="/recruiter-dashboard/view-applications"
-            className="btn btn-primary"
-            >
-            View Applications
-            </Link>
-          </div> */}
           </div>
         </section>
       </div>

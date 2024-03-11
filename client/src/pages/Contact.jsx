@@ -2,9 +2,20 @@ import Tarulata from "../assets/images/Team/Core/Tarulata Patel.jpg";
 import Mayank from "../assets/images/Team/Core/Mayank Patel.jpg";
 import Sagar from "../assets/images/Team/Management/Sagar Patel.jpg";
 
-import { useEffect, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
+import { toast } from "react-toastify";
+
+const API = import.meta.env.VITE_API_URL;
 
 const Contact = () => {
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    contact: "",
+    address: "",
+    message: "",
+  });
+
   const sectionRef1 = useRef(null);
   const sectionRef2 = useRef(null);
   const sectionRef3 = useRef(null);
@@ -109,6 +120,39 @@ const Contact = () => {
     };
   }, []);
 
+  const handleInputChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    const data = new FormData();
+
+    for (let key in formData) {
+      data.append(key, formData[key]);
+    }
+
+    fetch(`${API}/controllers/contactForm.php`, {
+      method: "POST",
+      body: data,
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.success) {
+          toast.success(data.message);
+          setFormData({
+            name: "",
+            email: "",
+            contact: "",
+            address: "",
+            message: "",
+          });
+        }
+      })
+      .catch((err) => console.log(err));
+  };
+
   return (
     <div className="container">
       <section className="contact to-animate" ref={sectionRef1}>
@@ -192,12 +236,14 @@ const Contact = () => {
 
       <section className="contact-form to-animate" ref={sectionRef3}>
         <h1>Contact Form</h1>
-        <form>
+        <form onSubmit={handleSubmit}>
           <input
             type="text"
             id="name"
             name="name"
             placeholder="Enter Full Name"
+            value={formData.name}
+            onChange={handleInputChange}
             required
           />
           <input
@@ -205,6 +251,8 @@ const Contact = () => {
             id="email"
             name="email"
             placeholder="Enter Email Address"
+            value={formData.email}
+            onChange={handleInputChange}
             required
           />
           <input
@@ -212,21 +260,27 @@ const Contact = () => {
             id="contact"
             name="contact"
             placeholder="Enter Phone or Mobile No (with country code)"
+            value={formData.contact}
+            onChange={handleInputChange}
             required
           />
           <textarea
             id="address"
             name="address"
             placeholder="Enter Address (with area, city, state, country, and pin code)"
+            value={formData.address}
+            onChange={handleInputChange}
             required
           />
           <textarea
             id="message"
             name="message"
             placeholder="Enter Message"
+            value={formData.message}
+            onChange={handleInputChange}
             required
           />
-          <button className="btn btn-full">Submit</button>
+          <button className="btn btn-full" type="submit">Submit</button>
         </form>
       </section>
     </div>

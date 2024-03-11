@@ -2,14 +2,11 @@ import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
-// import { SessionState } from "../context/SessionProvider";
-
 const API = import.meta.env.VITE_API_URL;
 
 const EditJob = () => {
   const [job, setJob] = useState({});
   const { id } = useParams();
-  // const { isLoggedIn, setIsLoggedIn, recruiterId, setRecruiterId } = SessionState();
 
   const navigate = useNavigate();
 

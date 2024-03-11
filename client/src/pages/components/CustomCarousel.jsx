@@ -19,7 +19,7 @@ const CustomCarousel = () => {
     data.append("jobType", jobType);
     data.append("location", location);
     data.append("disabilityPercentage", disabilityPercentage);
-    
+
     fetch("http://localhost/MySamvedna/api/controllers/searchJobs.php", {
       method: "POST",
       body: data,
@@ -99,7 +99,12 @@ const CustomCarousel = () => {
               value={jobType}
               onChange={(e) => setJobType(e.target.value)}
             >
-              <option value="">Job Type</option>
+              <option value="" disabled selected>Select Job Type</option>
+              <option value="Full Time">Full Time</option>
+              <option value="Part Time">Part Time</option>
+              <option value="Contract">Contract</option>
+              <option value="Internship">Internship</option>
+              <option value="Work From Home">Work From Home</option>
             </select>
             <select
               className="form-control"
@@ -107,15 +112,24 @@ const CustomCarousel = () => {
               value={location}
               onChange={(e) => setLocation(e.target.value)}
             >
-              <option value="">Location</option>
+              <option value="" disabled selected>Select Job Location</option>
             </select>
-            <select
-              className="form-control"
-              id="disabilityPercentage"
-              value={disabilityPercentage}
-              onChange={(e) => setDisabilityPercentage(e.target.value)}
-            >
-              <option value="">Disability Percentage</option>
+            <select name="disabilityPercentage" onChange={(e) => setDisabilityPercentage(e.target.value)} required>
+              <option value="" disabled selected>
+                Select Percentage of Disability
+              </option>
+              <option value="40-45">40-45</option>
+              <option value="45-50">45-50</option>
+              <option value="50-55">50-55</option>
+              <option value="55-60">55-60</option>
+              <option value="60-65">60-65</option>
+              <option value="65-70">65-70</option>
+              <option value="70-75">70-75</option>
+              <option value="75-80">75-80</option>
+              <option value="80-85">80-85</option>
+              <option value="85-90">85-90</option>
+              <option value="90-95">90-95</option>
+              <option value="95-100">95-100</option>
             </select>
           </div>
           <button type="submit" className="btn btn-primary">

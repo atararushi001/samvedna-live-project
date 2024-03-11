@@ -2,13 +2,10 @@ import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
-// import { SessionState } from "../../context/SessionProvider";
-
 const API = import.meta.env.VITE_API_URL;
 
 const JobSeekerLogin = () => {
   const navigate = useNavigate();
-  // const { setIsLoggedIn, setJobSeekerId, setRecruiterId } = SessionState();
 
   useEffect(() => {
     const isLoggedIn = sessionStorage.getItem("isLoggedIn");
@@ -22,44 +19,11 @@ const JobSeekerLogin = () => {
         navigate("/recruiter-dashboard");
       }
     }
-    else{
+    else {
       navigate("/job-seeker-login");
 
     }
   }, [navigate]);
-
-  // useEffect(() => {
-  //   fetch(`${API}/utils/checkLogin.php`, {
-  //     method: "GET",
-  //     credentials: "include",
-  //   })
-  //     .then((response) => {
-  //       if (!response.ok) {
-  //         throw new Error(`HTTP error! status: ${response.status}`);
-  //       }
-
-  //       return response.json();
-  //     })
-  //     .then((data) => {
-  //       console.log(data);
-  //       if (data.is_logged_in) {
-  //         setIsLoggedIn(true);
-  //         if (data.job_seekers_id) {
-  //           setJobSeekerId(data.job_seekers_id);
-  //           navigate("/job-seeker-dashboard");
-  //         } else if (data.recruiters_id) {
-  //           setRecruiterId(data.recruiters_id);
-  //           navigate("/recruiter-dashboard");
-  //         }
-  //       } else {
-  //         setIsLoggedIn(false);
-  //         setJobSeekerId(null);
-  //       }
-  //     })
-  //     .catch((error) => {
-  //       console.error(error);
-  //     });
-  // }, [setIsLoggedIn, setRecruiterId, setJobSeekerId, navigate]);
 
   const [formData, setFormData] = useState({
     email: "",

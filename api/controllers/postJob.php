@@ -52,6 +52,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $placeOfWork = $_POST['placeOfWork'];
     $resumesToBeSent = $_POST['resumesToBeSent'];
     $resumeEmail = $_POST['resumeEmail'];
+    $resumeWebsite = $_POST['resumeWebsite'];
     $interviewDetailsDate = $_POST['interviewDetailsDate'];
     $interviewDetailsTime = $_POST['interviewDetailsTime'];
     $interviewDetailsAptitudeTest = $_POST['interviewDetailsAptitudeTest'];
@@ -76,16 +77,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             employerName, companyDescription, jobDesignation, jobType, dutyDescription, 
             essentialQualificationEssential, essentialQualificationDesirable, ageLimit, womenEligible, workingHoursFrom, 
             workingHoursTo, vacanciesRegular, vacanciesTemporary, payAndAllowances, placeOfWork, 
-            resumesToBeSent, resumeEmail, interviewDetailsDate, interviewDetailsTime, interviewDetailsAptitudeTest, 
-            interviewDetailsTechnicalTest, interviewDetailsGroupDiscussion, interviewDetailsPersonalInterview, interviewDetailsTopics, interviewDetailsContactPerson, 
-            disabilityInfoType, disabilityInfoPercentage, disabilityInfoAidOrAppliance, ownVehiclePreferred, conveyanceProvided, 
-            conveyanceType, otherInformation) 
-        VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+            resumesToBeSent, resumeEmail, resumeWebsite, interviewDetailsDate, interviewDetailsTime, 
+            interviewDetailsAptitudeTest, interviewDetailsTechnicalTest, interviewDetailsGroupDiscussion, interviewDetailsPersonalInterview, interviewDetailsTopics, 
+            interviewDetailsContactPerson, disabilityInfoType, disabilityInfoPercentage, disabilityInfoAidOrAppliance, ownVehiclePreferred, 
+            conveyanceProvided, conveyanceType, otherInformation) 
+        VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 
     $stmt2 = $conn->prepare($query);
 
     $stmt2->bind_param(
-        "ssssssssssssssssssssssssssssssssssssssssss",
+        "sssssssssssssssssssssssssssssssssssssssssss",
         $recruiterId,
         $companyName,
         $website,
@@ -113,6 +114,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $placeOfWork,
         $resumesToBeSent,
         $resumeEmail,
+        $resumeWebsite,
         $interviewDetailsDate,
         $interviewDetailsTime,
         $interviewDetailsAptitudeTest,

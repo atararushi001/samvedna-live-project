@@ -28,7 +28,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (!$stmt->execute()) {
         die('Error in execute statement: ' . $stmt->error);
     } else {
-        $message = 'Registration Successful!';
+        $message = 'Query Sent Successfully!';
         $response = array(
             'success' => true,
             'message' => $message,

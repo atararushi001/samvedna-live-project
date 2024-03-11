@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import Carousel from "nuka-carousel";
 import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
@@ -7,9 +8,28 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 const API = import.meta.env.VITE_API_URL;
 
 const JobCarousel = ({ jobData }) => {
+  const [slidesToShow, setSlidesToShow] = useState(3);
+
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth <= 768) {
+        setSlidesToShow(1);
+      } else if (window.innerWidth <= 1024) {
+        setSlidesToShow(2);
+      } else {
+        setSlidesToShow(3);
+      }
+    };
+
+    window.addEventListener('resize', handleResize);
+    handleResize();
+
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   return (
     <Carousel
-      slidesToShow={3}
+      slidesToShow={slidesToShow}
       withoutControls={true}
       slidesToScroll={1}
       autoplay={true}
