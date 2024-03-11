@@ -133,21 +133,28 @@ const Home = () => {
             What is <strong className="highlight-text">Samvedna?</strong>
           </h1>
           <p>
-            <strong>&ldquo;SAMVEDNA&rdquo;</strong>, i.e., a
-            <strong>&ldquo;sensation&rdquo;</strong>, is a call for empathy and
-            support. It&apos;s a voice saying:
+            Welcome to <strong>&ldquo;SAMVEDNA&rdquo;</strong> - A Pioneer Trust
+            in <strong>GPT</strong> i.e. Guiding, Progression, and
+            Transformation
           </p>
           <p className="italic">
-            &ldquo;Stand with me, build me up, don&apos;t tear me down. Support
-            me and our efforts, don&apos;t trash me and our efforts. Guide me,
-            don&apos;t mislead me. Be our friend, not our enemy. Love me,
-            don&apos;t just like me. Hold me, don&apos;t just touch me. Receive
-            me, don&apos;t reject me. Walk with me, don&apos;t walk away from
-            me. Stand with me... Stand with me!&rdquo;
+            &ldquo;The Comprehensive Hub for Persons with Disabilities (PWDs)
+            Employment, Entrepreneurship, Talent, Relationships, Community and
+            eCommerce&rdquo;
           </p>
           <p>
-            Yes, this is the <strong>&ldquo;SAMVEDNA&rdquo;</strong> (sensation)
-            of a &ldquo;Person with Disability&rdquo;.
+            <strong>
+              &ldquo;Embracing Diversity…Unlocking Potential…Empowering
+              Lives&rdquo;
+            </strong>
+          </p>
+          <p className="italic">
+            Let&apos;s understand the word{" "}
+            <strong>&ldquo;SAMVEDNA&rdquo;</strong> - &ldquo;<strong>S</strong>
+            ustaining <strong>A</strong>bilities, <strong>M</strong>otivating
+            &nbsp;<strong>V</strong>ision, <strong>E</strong>mpowering{" "}
+            <strong>D</strong>reams, <strong>N</strong>urturing &nbsp;
+            <strong>A</strong>spirations.&rdquo;
           </p>
           <p>
             I am a man on a mission whose <strong>disABILITY</strong>{" "}
@@ -166,12 +173,9 @@ const Home = () => {
             <span className="highlight-text">SAMVEDNA TRUST</span>
           </h1>
           <p>
-            On 26th March, 2010 <strong>“SAMVEDNA”</strong> came into existence
-            having{" "}
-            <strong>
-              Regd. No. E/7338/Vadodara of Charity Commissioner, Vadodara,
-              Gujarat, India
-            </strong>
+            Established on March 26th, 2010, SAMVEDNA is a registered
+            organization under the Charity Commissioner, Vadodara, Gujarat,
+            India, dedicated to empowering individuals with disabilities.
           </p>
           <p>
             <strong>“SAMVEDNA”</strong> Ideology is based on five “Ss”
@@ -184,19 +188,17 @@ const Home = () => {
             SUCCESS
           </p>
           <p>
-            <strong>“SAMVEDNA”</strong> is contributing efforts and devoting
-            services, dedicated towards improving the standard of living of
-            <strong>“PERSONS WITH disABILITY”</strong> of OUR INDIAN SOCIETY by
-            assisting them to live life with Honour, Respect and inherent
-            dignity.
+            <strong>
+              &ldquo;Transforming Lives, Enriching Futures: SAMVEDNA&apos;s
+              Pledge to Persons with Disabilities&rdquo;
+            </strong>
           </p>
           <p>
-            The main Object and aspect of <strong>“SAMVEDNA”</strong> is to
-            contribute efforts for creating sources and searching areas for
-            employment, create resources for self employment and marketing hand
-            made commodities / articles of self employed{" "}
-            <strong>“Persons with disABILITY”</strong> and thereby enable them
-            generate Source of Income to establish their life.
+            Step into a realm where compassion meets action, where every
+            heartbeat resonates with the promise of empowerment. SAMVEDNA
+            isn&apos;t just an organization; it&aspo;s a beacon of hope,
+            illuminating the path towards a brighter tomorrow for those often
+            overlooked in society.
           </p>
         </div>
       </section>
@@ -213,13 +215,20 @@ const Home = () => {
           <div className="slogan">
             <div className="images"></div>
             <p>
-              One having certain Physical impairment/disorder, results in
-              his/her ability to perform/interact particular action due to
-              attitudinal and environmental barriers, which he/she perform with
-              different ability, that too in a different manner, as such, it
-              will be best to call him/her as{" "}
-              <strong>“DIFFERENTLY ABLE BODY”.</strong> It is well said that
-              <strong>“Count their ABILITIES but not disABILITIES”</strong>
+              &ldquo; Disability is not a barrier; it&apos;s an opportunity for
+              diverse abilities to shine. We recognize that individuals with
+              physical impairments may face challenges due to attitudinal and
+              environmental barriers. However, we celebrate their unique talents
+              and capabilities, emphasizing their ABILITIES rather than their
+              disabilities. We believe in creating a society that values
+              inclusion and diversity, where everyone&apos;s potential can
+              flourish&rdquo;
+              <br />
+              <br />
+              <strong>
+                “Together, let&apos;s build a future where everyone can thrive,
+                regardless of their abilities.”
+              </strong>
             </p>
           </div>
         </div>
@@ -237,63 +246,74 @@ const Home = () => {
             <div className="card">
               <h2 className="highlight-text">INTENTION</h2>
               <p>
-                <strong>Samvedna</strong> aims to redefine{" "}
-                <strong>disABILITY</strong>, emphasizing abilities over
-                limitations. The trust seeks to empower and integrate the
-                challenged community, fostering hope and aspirations. The goal
-                is to be heard, seen, and supported, advocating for a shift from
-                disABILITY to undeniable potential.
+                At <strong>&ldquo;SAMVEDNA&rdquo;,</strong> we believe in
+                harnessing the abilities of individuals with disabilities by
+                focusing on their strengths, talents, and aspirations. Our
+                mission is to remove the stigma associated with disabilities and
+                empower these individuals to achieve their dreams. We strive to
+                provide them with the support, resources, and opportunities they
+                need to lead fulfilling lives with dignity and respect.
               </p>
             </div>
             <div className="card ">
               <h2 className="highlight-text">AIM</h2>
               <p>
-                <strong>Samvedna</strong> strives to stand beside and empower
-                physically challenged individuals, promoting independence
-                through skill development. The trust focuses on integration and
-                inclusion, emphasizing financial self-sufficiency for persons
-                with <strong>disABILITIES.</strong>
+                Our goal is to support and empower physically challenged
+                individuals who lack adequate support in society. Through skill
+                development and training programs, we aim to equip them with the
+                necessary tools to lead independent lives and support themselves
+                and their families. At <strong>&ldquo;SAMVEDNA&rdquo;,</strong>{" "}
+                we strongly advocate for the integration and inclusion of
+                persons with disabilities into society, ensuring their financial
+                self-sufficiency and overall well-being.
               </p>
             </div>
             <div className="card ">
               <h2 className="highlight-text">BELIEF</h2>
               <p>
-                <strong>Samvedna</strong> believes in adding value by
-                empowering, not just sympathizing. The trust rejects charity in
-                favor of empowering through employment or self-employment. It
-                recognizes the potential of the disabled to lead meaningful
-                lives with proper care, training, and support.
+                <strong>&ldquo;SAMVEDNA&rdquo;</strong> is committed to adding
+                value to the lives of persons with disabilities through
+                empowerment and support. We believe in providing opportunities
+                for employment and self-employment rather than relying solely on
+                charity. By empowering individuals with disabilities, we aim to
+                share their experiences, challenges, and victories, fostering a
+                sense of community and support.
               </p>
             </div>
 
             <div className="card ">
               <h2 className="highlight-text">EXPECTATION</h2>
               <p>
-                <strong>Samvedna</strong> urges equal opportunities for persons
-                with <strong>disABILITIES</strong>, aligning with India&apos;s
-                constitutional principles. It highlights the need for inclusive
-                policies, services, and opportunities for the holistic
-                development of this valuable human resource.
+                Our mission is to create equal opportunities for persons with
+                disabilities, ensuring their full participation and inclusion in
+                society. We believe that every individual, regardless of their
+                abilities, deserves an equal chance to succeed. Through advocacy
+                and awareness initiatives, we work towards breaking down
+                barriers and promoting inclusivity and equality for all.
               </p>
             </div>
             <div className="card ">
               <h2 className="highlight-text">VISION</h2>
               <p>
-                The trust envisions a society where every individual contributes
-                generously to those less privileged. Samvedna emphasizes
-                empowerment by providing vocational skills, fostering
-                self-reliance, and elevating the self-esteem of the disabled.
+                We envision a society where every individual is empowered to
+                make a difference in the lives of others. Through our
+                initiatives, we aim to inspire individuals to give back to those
+                less fortunate, creating a culture of compassion and empathy. At
+                <strong> &ldquo;SAMVEDNA&rdquo;,</strong> we believe in the
+                power of collective action to bring about positive change and
+                transform lives thereby HUMANIZE disABILITIES
               </p>
             </div>
             <div className="card ">
               <h2 className="highlight-text">MISSION</h2>
               <p>
-                <strong>Mission Empowerment</strong> focuses on aiding skilled,
-                semi-skilled, and unskilled persons with{" "}
-                <strong>disABILITY</strong> in securing proper employment or
-                self-employment. Samvedna acts as a bridge between the disabled
-                community and suitable opportunities, considering their
-                abilities.
+                Our mission is to empower persons with disabilities by providing
+                them with the support and resources they need to thrive. Through
+                our <strong>&ldquo;Mission Empowerment&rdquo;</strong>{" "}
+                initiative, we strive to connect skilled individuals with
+                employment opportunities that align with their abilities and
+                aspirations. By harnessing the potential of every individual, we
+                hope to create a more inclusive and equitable society for all.
               </p>
             </div>
           </div>
@@ -442,10 +462,11 @@ const Home = () => {
               <FontAwesomeIcon icon="quote-left" className="quote-icon" />
               <div className="testimonial-content">
                 <p>
-                  <strong>“Samvedna”</strong> is doing a great job by providing
-                  jobs to the differently-abled people. It is a great initiative
-                  to provide them with a platform to showcase their skills and
-                  talents.
+                  Samvedna Trust has been a beacon of hope in my journey towards
+                  employment. Their personalized support and guidance helped me
+                  secure a job that aligns perfectly with my skills and
+                  aspirations. I am grateful for their dedication to empowering
+                  individuals with disabilities.
                 </p>
               </div>
               <div className="testimonial-author">
@@ -453,16 +474,18 @@ const Home = () => {
                   src="https://randomuser.me/api/portraits/men/58.jpg"
                   alt="testimonial author"
                 />
-                <h3>John Doe</h3>
+                <h3>- Priya Sharma, Mumbai</h3>
               </div>
             </div>
             <div className="testimonial-card to-animate">
               <FontAwesomeIcon icon="quote-left" className="quote-icon" />
               <div className="testimonial-content">
                 <p>
-                  I am very grateful to <strong>“Samvedna”</strong> for
-                  providing me with a job. I am now able to support my family
-                  and live a dignified life.
+                  I never imagined finding a job that not only accommodates my
+                  disability but also celebrates my abilities. Thanks to
+                  Samvedna Trust, I am now thriving in a fulfilling career that
+                  brings out the best in me. Their unwavering support has
+                  transformed my life.
                 </p>
               </div>
               <div className="testimonial-author">
@@ -470,16 +493,18 @@ const Home = () => {
                   src="https://randomuser.me/api/portraits/men/5.jpg"
                   alt="testimonial author"
                 />
-                <h3>Jane Doe</h3>
+                <h3>- Ananya Patel, Ahmedabad</h3>
               </div>
             </div>
             <div className="testimonial-card to-animate">
               <FontAwesomeIcon icon="quote-left" className="quote-icon" />
               <div className="testimonial-content">
                 <p>
-                  I am very thankful to <strong>“Samvedna”</strong> for
-                  providing me with a platform to showcase my skills and
-                  talents. I am now able to live a dignified life.
+                  Samvedna Trust truly understands the challenges faced by job
+                  seekers with disabilities. Their holistic approach, from
+                  skills training to placement support, empowers individuals to
+                  overcome barriers and achieve their career goals. I am forever
+                  grateful for their unwavering support
                 </p>
               </div>
               <div className="testimonial-author">
@@ -487,7 +512,64 @@ const Home = () => {
                   src="https://randomuser.me/api/portraits/men/69.jpg"
                   alt="testimonial author"
                 />
-                <h3>John Smith</h3>
+                <h3>- Neha Gupta, Pune</h3>
+              </div>
+            </div>
+            <div className="testimonial-card to-animate">
+              <FontAwesomeIcon icon="quote-left" className="quote-icon" />
+              <div className="testimonial-content">
+                <p>
+                  Samvedna Trust has been a lifeline in my job search journey.
+                  Their guidance and encouragement boosted my confidence and
+                  helped me secure a job that values my skills and potential. I
+                  am grateful for their unwavering support and commitment to
+                  empowering individuals like me
+                </p>
+              </div>
+              <div className="testimonial-author">
+                <img
+                  src="https://randomuser.me/api/portraits/men/69.jpg"
+                  alt="testimonial author"
+                />
+                <h3>- Deepak Singh, Kolkatae</h3>
+              </div>
+            </div>
+            <div className="testimonial-card to-animate">
+              <FontAwesomeIcon icon="quote-left" className="quote-icon" />
+              <div className="testimonial-content">
+                <p>
+                  Finding employment as a person with a disability can be
+                  challenging, but Samvedna Trust made the process seamless.
+                  Their personalized approach, coupled with their extensive
+                  network of employers, opened doors to opportunities I never
+                  thought possible. Thank you for believing in me.
+                </p>
+              </div>
+              <div className="testimonial-author">
+                <img
+                  src="https://randomuser.me/api/portraits/men/69.jpg"
+                  alt="testimonial author"
+                />
+                <h3>- Riya Verma, Hyderabad</h3>
+              </div>
+            </div>
+            <div className="testimonial-card to-animate">
+              <FontAwesomeIcon icon="quote-left" className="quote-icon" />
+              <div className="testimonial-content">
+                <p>
+                  Samvedna Trust is more than just a placement agency; they are
+                  true advocates for people with disabilities. Their
+                  compassionate team understood my unique needs and connected me
+                  with a job that matches my skills and interests perfectly. I
+                  am forever grateful for their support and encouragement.
+                </p>
+              </div>
+              <div className="testimonial-author">
+                <img
+                  src="https://randomuser.me/api/portraits/men/69.jpg"
+                  alt="testimonial author"
+                />
+                <h3>- Arjun Kumar, Chandigarh</h3>
               </div>
             </div>
           </div>

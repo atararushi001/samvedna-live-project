@@ -76,6 +76,35 @@ const Gallery = () => {
 
   return (
     <div className="container">
+      <section className="gallery-showcase">
+        <h1>
+          Transformative Moments in{" "}
+          <span className="highlight-text">Our Gallery</span>
+        </h1>
+        <p>
+          Welcome to our Gallery Page, where we showcase the vibrant tapestry of
+          moments that define the essence of Samvedna Trust.
+        </p>
+        <p>
+          Dive into a visual journey that captures the heartwarming stories,
+          inspiring events, and impactful initiatives that shape our mission of
+          empowerment and inclusion. From heartwarming success stories to
+          snapshots of our community engagement efforts, each image resonates
+          with the spirit of resilience, hope, and determination.{" "}
+        </p>
+        <p>
+          Join us as we celebrate the achievements, milestones, and memorable
+          experiences that fuel our commitment to creating a more inclusive
+          world.{" "}
+        </p>
+        <p>
+          Explore, engage, and be inspired by the power of compassion and change
+          captured in every frame. Discover our gallery today and witness the
+          transformative impact of our work firsthand. Explore now and
+          experience the power of compassion and change in action.
+        </p>
+      </section>
+
       <section className="events bandhan">
         <h1>
           <span className="highlight-text">BANDHAN</span> - PARICHAY MELA

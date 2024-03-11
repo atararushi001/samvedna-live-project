@@ -45,11 +45,12 @@ const Footer = () => {
         </div>
       </div>
       <div className="footer-bottom">
-        <p>&copy; 2010-{new Date().getFullYear()}
+        <p>
+          &copy; 2010-{new Date().getFullYear()}
           &nbsp;<strong>MySamvedna.</strong> All Rights Reserved.
         </p>
       </div>
-    </footer >
+    </footer>
   );
 };
 

@@ -172,7 +172,7 @@ a.btn {
 .nav-link {
   font-family: "Open Sans", sans-serif;
   font-weight: 500;
-  font-size: .85rem;
+  font-size: 0.85rem;
   position: relative;
 }
 
@@ -314,7 +314,6 @@ header .nav-links .btn-container .btn {
   font-size: 0.8rem;
 }
 
-
 footer {
   background-color: var(--background);
   display: flex;
@@ -373,12 +372,12 @@ footer .footer-bottom {
   background: var(--text);
   color: var(--background);
   width: 100%;
-  padding: .7rem;
+  padding: 0.7rem;
 }
 
 footer .footer-bottom p {
-  font-size: .9rem;
-  letter-spacing: .5px;
+  font-size: 0.9rem;
+  letter-spacing: 0.5px;
   font-weight: 300;
   text-align: center;
 }
@@ -462,9 +461,9 @@ footer .footer-bottom p {
   align-items: center;
   justify-content: center;
   gap: 1rem;
-  padding: .75rem;
+  padding: 0.75rem;
   width: 300px;
-  border-radius: .25rem;
+  border-radius: 0.25rem;
   border: 1px solid var(--text);
   text-align: center;
   box-shadow: 0 0.2rem 0.8rem rgba(0, 0, 0, 0.25);
@@ -479,7 +478,7 @@ footer .footer-bottom p {
   width: 100%;
   aspect-ratio: 16 / 9;
   object-fit: cover;
-  border-radius: .25rem;
+  border-radius: 0.25rem;
   box-shadow: 0 0.2rem 0.8rem rgba(0, 0, 0, 0.25);
 }
 
@@ -498,7 +497,7 @@ footer .footer-bottom p {
 }
 
 .job-slider .jobs-container .job .icon {
-  font-size: .8rem;
+  font-size: 0.8rem;
   color: var(--primary);
 }
 
@@ -510,8 +509,8 @@ footer .footer-bottom p {
   gap: 10px;
 }
 
-.job-slider .jobs-container .job .job-body .job-description{
-  font-size: .9rem;
+.job-slider .jobs-container .job .job-body .job-description {
+  font-size: 0.9rem;
   font-weight: 300;
   text-align: center;
 }
@@ -595,7 +594,7 @@ footer .footer-bottom p {
       rgba(255, 255, 255, 0.7)
     ),
     url("../images/Backgrounds/Growth.jpg") no-repeat center center/cover;
-    z-index: 99999999;
+  z-index: 99999999;
 }
 
 .search {
@@ -1129,7 +1128,40 @@ table td:last-child {
   text-align: right;
 }
 
+.support-us,
+.volunteer-contributions,
+.social-responsibility,
+.resource-assistance {
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 3rem;
+  padding-block: 3rem;
+}
+
+.support-us {
+  min-height: 50dvh;
+}
+
 /* Pages > Gallery */
+.gallery-showcase {
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 1rem;
+  padding-block: 3rem;
+}
+
+.gallery-showcase p {
+  font-size: 1.5rem;
+  font-weight: 300;
+  text-align: center;
+}
+
 .events {
   min-height: 100dvh;
   display: flex;
@@ -1272,7 +1304,7 @@ table td:last-child {
   place-items: center;
   grid-template-rows: 0.5fr;
   gap: 1rem;
-  height: calc(100dvh - 15dvh);
+  min-height: calc(100dvh - 15dvh);
 }
 
 .contact.animate {
@@ -1314,9 +1346,12 @@ table td:last-child {
 }
 
 .persons {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
   gap: 1rem;
+  row-gap: 1rem;
 }
 
 .persons .person {
@@ -1326,8 +1361,8 @@ table td:last-child {
   justify-content: center;
   text-align: center;
   gap: 1rem;
-  width: 100%;
-  max-height: 400px;
+  width: 250px;
+  height: 300px;
   background: var(--background);
   color: var(--text);
   padding: 2rem;

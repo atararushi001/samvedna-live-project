@@ -1,6 +1,5 @@
-import Tarulata from "../assets/images/Team/Core/Tarulata Patel.jpg";
-import Mayank from "../assets/images/Team/Core/Mayank Patel.jpg";
-import Sagar from "../assets/images/Team/Management/Sagar Patel.jpg";
+import Default from "../assets/images/Team/default.png";
+import Tarulatta from "../assets/images/Team/Core/Tarulata Patel.jpg";
 
 import { useState, useEffect, useRef } from "react";
 import { toast } from "react-toastify";
@@ -71,6 +70,8 @@ const Contact = () => {
   const listItemRef1 = useRef(null);
   const listItemRef2 = useRef(null);
   const listItemRef3 = useRef(null);
+  const listItemRef4 = useRef(null);
+  const listItemRef5 = useRef(null);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -99,6 +100,14 @@ const Contact = () => {
 
     if (listItemRef3.current) {
       observer.observe(listItemRef3.current);
+    }
+
+    if (listItemRef4.current) {
+      observer.observe(listItemRef4.current);
+    }
+
+    if (listItemRef5.current) {
+      observer.observe(listItemRef5.current);
     }
 
     const currentRef1 = listItemRef1.current;
@@ -156,17 +165,21 @@ const Contact = () => {
   return (
     <div className="container">
       <section className="contact to-animate" ref={sectionRef1}>
-        <h1>Contact Information</h1>
+        <img src={Tarulatta} alt="Late Tarulatta Patel" />
+        <h2>Late Tarulatta Patel</h2>
+        <h4>(Ex Founder, Managing Trustee & President)</h4>
+        <h2>Honoring the Legacy of Our Beloved Managing Trustee</h2>
         <p>
-          We at <strong>SAMVEDNA</strong>, a social welfare trust for{" "}
-          <strong>disABLED&nbsp;</strong>
-          persons, welcome you to get in touch with us. Whether you have a
-          query, suggestion, or wish to leave a review, your input is valuable
-          to us.
-        </p>
-        <p>
-          Your guidelines and reviews enhance our welfare services and help us
-          serve better. Please feel free to contact or mail us.
+          We deeply mourn the passing of our beloved Managing Trustee, who was
+          the driving force behind the inception and success of our NGO. Her
+          visionary leadership, unwavering dedication, and invaluable
+          contributions have left an indelible mark on our organization and the
+          lives of countless individuals with disabilities. Her passion for
+          empowering PWDs through employment initiatives has been instrumental
+          in shaping our mission and guiding our efforts. We honor her legacy by
+          continuing to uphold the values and principles she instilled in us,
+          and we remain committed to fulfilling her vision of creating a more
+          inclusive and equitable society.
         </p>
       </section>
 
@@ -175,19 +188,20 @@ const Contact = () => {
         <div>
           <h3>Address:</h3>
           <p>
-            20, GABBAR APARTMENT, OPP. AMBAJI TEMPLE, WATER TANK ROAD,
-            KARELIBAUG, VADODARA - 390 018 GUJARAT, INDIA
+            A/173, Silverleaf Bungalows, Near Reavshray Complex, Bh. Bharat
+            Petrol Pump, Darshnam Angan lane, Waghodia-Dabhoi Ring Road, Soma
+            Talav Crossing, Vadodara - 390025 (Gujarat, India)
           </p>
-          <h3>Telephone:</h3>
-          <p>(0265)&nbsp;-&nbsp;2489807</p>
+          <h3>Mobile:</h3>
+          <p>9898718766 / 7069766866</p>
           <h3>Email:</h3>
           <p>
-            <a href="mailto:samvedna2010@yahoo.in" className="link">
-              samvedna2010@yahoo.in
+            <a href="mailto:hello@mysamvedna.org" className="link">
+              hello@mysamvedna.org
             </a>
             <br />
-            <a href="mailto:samvednatrust2010@gmail.com" className="link">
-              samvednatrust2010@gmail.com
+            <a href="mailto:samvedna2010@yahoo.in" className="link">
+              samvedna2010@yahoo.in
             </a>
           </p>
         </div>
@@ -197,39 +211,41 @@ const Contact = () => {
         <h1>Contact Persons</h1>
         <div className="persons">
           <div className="person to-animate" ref={listItemRef1}>
-            <img src={Tarulata} alt="Tarulata Patel" />
-            <h3>
-              SMT. TARULATTA PATEL
-              <span className="person-title">
-                (Founder | Trustee | President)
-              </span>
-            </h3>
-            <p>TEL: (0265) - 2489807</p>
-          </div>
-          <div className="person to-animate" ref={listItemRef2}>
-            <img src={Mayank} alt="Mayank Patel" />
+            <img src={Default} alt="Mayank Patel" />
             <h3>
               MAYANK PATEL
+              <span className="person-title">
+                (Managing Trustee & President)
+              </span>
+            </h3>
+          </div>
+          <div className="person to-animate" ref={listItemRef2}>
+            <img src={Default} alt="Sagar Patel" />
+            <h3>
+              SAGAR PATEL
               <span className="person-title">(Trustee & Secretary)</span>
             </h3>
-            <p>
-              MOB:{" "}
-              <a href="tel:+919898718766" className="link">
-                +919898718766
-              </a>
-            </p>
           </div>
           <div className="person to-animate" ref={listItemRef3}>
-            <img src={Sagar} alt="Sagar Patel" />
+            <img src={Default} alt="Sagar Patel" />
             <h3>
-              SAGAR PATEL<span className="person-title">(Co-Ordinator)</span>
+              RASHESH SHASTRI
+              <span className="person-title">(Trustee & Treasurer)</span>
             </h3>
-            <p>
-              MOB:{" "}
-              <a href="tel:+919898608426" className="link">
-                +919898608426
-              </a>
-            </p>
+          </div>
+          <div className="person to-animate" ref={listItemRef4}>
+            <img src={Default} alt="Sagar Patel" />
+            <h3>
+              SARITA SINHA
+              <span className="person-title">(Trustee & Joint Secretary)</span>
+            </h3>
+          </div>
+          <div className="person to-animate" ref={listItemRef5}>
+            <img src={Default} alt="Sagar Patel" />
+            <h3>
+              AMIT PATEL
+              <span className="person-title">(Trustee & Joint Secretary)</span>
+            </h3>
           </div>
         </div>
       </section>
@@ -280,7 +296,9 @@ const Contact = () => {
             onChange={handleInputChange}
             required
           />
-          <button className="btn btn-full" type="submit">Submit</button>
+          <button className="btn btn-full" type="submit">
+            Submit
+          </button>
         </form>
       </section>
     </div>
