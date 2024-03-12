@@ -1640,6 +1640,13 @@ table td:last-child {
   width: 50%;
 }
 
+.warning {
+  font-size: 0.9rem;
+  font-weight: 400;
+  font-style: italic;
+  color: var(--secondary);
+}
+
 /* Pages > Login */
 /* Pages > Register */
 .login-type-container,
