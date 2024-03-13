@@ -2162,6 +2162,77 @@ table td:last-child {
   text-align: center;
 }
 
+/* Pages > Create Resume */
+.build-resume {
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 3rem;
+  padding-block: 3rem;
+}
+
+.build-resume .sub-text {
+  font-size: 1.5rem;
+  font-weight: 300;
+  text-align: center;
+}
+
+.build-resume .build-resume-form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  width: 100%;
+}
+
+.build-resume .build-resume-form fieldset {
+  width: 100%;
+}
+
+.build-resume .build-resume-form fieldset p {
+  font-size: 1rem;
+  font-weight: 300;
+  text-align: center;
+}
+
+.build-resume .build-resume-form label {
+  font-size: 1rem;
+  font-weight: 300;
+  text-align: left;
+  width: 100%;
+}
+
+.build-resume .build-resume-form .input-group.row input {
+  width: 100%;
+}
+
+.build-resume .work-history,
+.build-resume .education {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  width: 100%;
+}
+
+.build-resume .work-history .positions,
+.build-resume .education .degrees,
+.build-resume .branches {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  width: 100%;
+  border: 1px solid var(--text);
+  padding: 1rem;
+  border-radius: 0.25rem;
+}
+
 /* Pages > 404 */
 .page-404 {
   min-height: 100dvh;

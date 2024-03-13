@@ -154,4 +154,25 @@
     margin-right: 0 !important;
     margin-left: 0 !important;
   }
+
+  .build-resume .input-group {
+    flex-direction: column !important;
+    gap: 1rem !important;
+    width: 100% !important;
+  }
+
+  .build-resume .input-group input {
+    width: 100% !important;
+  }
+
+  .build-resume .input-group input[type="checkbox"] {
+    width: auto !important;
+  }
+
+  .input-group.row {
+    flex-direction: row !important;
+    gap: 1rem !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+  }
 }
