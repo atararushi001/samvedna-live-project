@@ -7,18 +7,17 @@ const API = import.meta.env.VITE_API_URL;
 const Search = () => {
   const [formData, setFormData] = useState({
     search: "",
-    jobType: "",
-    location: "",
-    disabilityPercentage: "",
+    postedBetweenStart: "",
+    postedBetweenEnd: "",
+    status: "",
+    country: "",
+    state: "",
   });
 
   const navigate = useNavigate();
 
   const handleChange = (event) => {
-    setFormData({
-      ...formData,
-      [event.target.id]: event.target.value,
-    });
+    setFormData({ ...formData, [event.target.id]: event.target.value });
   };
 
   const handleSubmit = (event) => {
@@ -70,41 +69,64 @@ const Search = () => {
               required
             />
           </div>
-          <div className="form-group">
-            <select
+          <h3 style={{ textAlign: "left" }}>Advance Search:</h3>
+          <div
+            className="form-group"
+            style={{ display: "flex", flexDirection: "column", gap: ".5rem" }}
+          >
+            <label htmlFor="postedBetweenStart">Posted Between</label>
+            <input
+              type="date"
               className="form-control"
-              id="jobType"
-              value={formData.jobType}
+              id="postedBetweenStart"
+              placeholder="Posted Between"
+              value={formData.postedBetweenStart}
               onChange={handleChange}
-            >
-              <option value="" disabled>
-                Select Job Type
-              </option>
-            </select>
+            />
+            <label htmlFor="postedBetweenEnd">And</label>
+            <input
+              type="date"
+              className="form-control"
+              id="postedBetweenEnd"
+              placeholder="Posted Between"
+              value={formData.postedBetweenEnd}
+              onChange={handleChange}
+            />
           </div>
           <div className="form-group">
             <select
-              className="form-control"
-              id="location"
-              value={formData.location}
+              name="status"
+              id="status"
+              value={formData.status}
               onChange={handleChange}
             >
               <option value="" disabled>
-                Select Location
+                Select Status
               </option>
+              <option value="Active">Active</option>
+              <option value="Closed">Closed</option>
+              <option value="Expired">Expired</option>
             </select>
           </div>
           <div className="form-group">
-            <select
-              className="form-control"
-              id="disabilityPercentage"
-              value={formData.disabilityPercentage}
+            <input
+              type="text"
+              name="country"
+              id="country"
+              placeholder="Enter Country"
+              value={formData.country}
               onChange={handleChange}
-            >
-              <option value="" disabled>
-                Select Disability Percentage
-              </option>
-            </select>
+            />
+          </div>
+          <div className="form-group">
+            <input
+              type="text"
+              name="state"
+              id="state"
+              placeholder="Enter State"
+              value={formData.state}
+              onChange={handleChange}
+            />
           </div>
           <button type="submit" className="btn btn-primary">
             Search

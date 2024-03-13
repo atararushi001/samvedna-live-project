@@ -171,6 +171,10 @@ const RecruiterRegister = () => {
               onChange={handleInputChange}
               required
             />
+            <p className="warning">
+              jpg, png & gif file format only, max size &lt; 50 MB, 300x300
+              pixel format
+            </p>
             <button
               type="submit"
               className="btn"

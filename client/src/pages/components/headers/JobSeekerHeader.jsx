@@ -44,8 +44,8 @@ const RecruiterHeader = () => {
       links.forEach((link) =>
         link.removeEventListener("click", handleLinkClick)
       );
-      window.removeEventListener("resize", () => { });
-      window.removeEventListener("change", () => { });
+      window.removeEventListener("resize", () => {});
+      window.removeEventListener("change", () => {});
     };
   }, []);
 
@@ -57,8 +57,8 @@ const RecruiterHeader = () => {
   };
 
   const handleLogout = () => {
-    sessionStorage.removeItem('isLoggedIn');
-    sessionStorage.removeItem('job_seekers_id');
+    sessionStorage.removeItem("isLoggedIn");
+    sessionStorage.removeItem("job_seekers_id");
     toast.success("Logged out Successfully!");
     navigate("/job-seeker-login");
   };
@@ -82,6 +82,15 @@ const RecruiterHeader = () => {
               onClick={handleLinkNavigation}
             >
               Dashboard
+            </Link>
+          </li>
+          <li>
+            <Link
+              to="/job-seeker-dashboard/manage-resume"
+              className="nav-link"
+              onClick={handleLinkNavigation}
+            >
+              Manage Resume
             </Link>
           </li>
           <div className="btn-container">

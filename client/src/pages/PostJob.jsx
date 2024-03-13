@@ -36,12 +36,19 @@ const PostJob = () => {
     employerName: "",
     companyDescription: "",
     jobDesignation: "",
+    industryCategory: "",
+    jobTitle: "",
     jobType: "",
     dutyDescription: "",
-    essentialQualification: {
-      essential: "",
-      desirable: "",
+    jobDuration: "",
+    minimumEducation: "",
+    minimumExperience: "",
+    salary: {
+      min: "",
+      max: "",
     },
+    workplaceType: "",
+    placeOfWork: "",
     ageLimit: "",
     womenEligible: false,
     workingHours: {
@@ -52,8 +59,6 @@ const PostJob = () => {
       regular: "",
       temporary: "",
     },
-    payAndAllowances: "",
-    placeOfWork: "",
     resumesToBeSent: "",
     resumeEmail: "",
     resumeWebsite: "",
@@ -323,11 +328,213 @@ const PostJob = () => {
               <input
                 type="text"
                 name="jobDesignation"
-                placeholder="Job designation offered"
+                placeholder="Enter Position Title"
                 value={formData.jobDesignation}
                 onChange={handleInputChange}
                 required
               />
+
+              <select
+                name="industryCategory"
+                id="industryCategory"
+                value={formData.industryCategory}
+                onChange={handleInputChange}
+                required
+              >
+                <option value="" disabled>
+                  Select Industry Category
+                </option>
+                <option value="Advertising/Marketing">
+                  Advertising/Marketing
+                </option>
+                <option value="Agricultural">Agricultural</option>
+                <option value="Airline/Aerospace/Aviation">
+                  Airline/Aerospace/Aviation
+                </option>
+                <option value="Apparel/Textiles">Apparel/Textiles</option>
+                <option value="Architecture / Design">
+                  Architecture / Design
+                </option>
+                <option value="Art/Photography">Art/Photography</option>
+                <option value="Automotive-vehicles/parts/service">
+                  Automotive-vehicles/parts/service
+                </option>
+                <option value="Banking / Accounting / Financial">
+                  Banking / Accounting / Financial
+                </option>
+                <option value="Biotechnology">Biotechnology</option>
+                <option value="Broadcasting/Radio/TV">
+                  Broadcasting/Radio/TV
+                </option>
+                <option value="Building Materials">Building Materials</option>
+                <option value="Computer Hardware">Computer Hardware</option>
+                <option value="Computer Software">Computer Software</option>
+                <option value="Construction">Construction</option>
+                <option value="Consulting">Consulting</option>
+                <option value="Consumer Products">Consumer Products</option>
+                <option value="Education / Teaching / Administration">
+                  Education / Teaching / Administration
+                </option>
+                <option value="Electronics">Electronics</option>
+                <option value="Energy/Utilities/Gas/Oil/Electric">
+                  Energy/Utilities/Gas/Oil/Electric
+                </option>
+                <option value="Entertainment">Entertainment</option>
+                <option value="Sports">Sports</option>
+                <option value="Environmental">Environmental</option>
+                <option value="Food/Beverages">Food/Beverages</option>
+                <option value="General">General</option>
+                <option value="Government/Civil Service">
+                  Government/Civil Service
+                </option>
+                <option value="Healthcare / Health Services">
+                  Healthcare / Health Services
+                </option>
+                <option value="Hospitality / Tourism">
+                  Hospitality / Tourism
+                </option>
+                <option value="Human Resources/Staffing">
+                  Human Resources/Staffing
+                </option>
+                <option value="HVAC">HVAC</option>
+                <option value="Industrial/Materials">
+                  Industrial/Materials
+                </option>
+                <option value="Insurance">Insurance</option>
+                <option value="Internet / E-Commerce">
+                  Internet / E-Commerce
+                </option>
+                <option value="Law Enforcement / Security">
+                  Law Enforcement / Security
+                </option>
+                <option value="Legal">Legal</option>
+                <option value="Manufacturing">Manufacturing</option>
+                <option value="Merchandising">Merchandising</option>
+                <option value="Military">Military</option>
+                <option value="Non-Profit / Charity">
+                  Non-Profit / Charity
+                </option>
+                <option value="Office Equipment">Office Equipment</option>
+                <option value="Other">Other</option>
+                <option value="Packaging">Packaging</option>
+                <option value="Pharmaceutical">Pharmaceutical</option>
+                <option value="Printing / Publishing">
+                  Printing / Publishing
+                </option>
+                <option value="Public / Community Relations">
+                  Public / Community Relations
+                </option>
+                <option value="Real Estate/Property Management">
+                  Real Estate/Property Management
+                </option>
+                <option value="Recreation">Recreation</option>
+                <option value="Restaurants / Food Service">
+                  Restaurants / Food Service
+                </option>
+                <option value="Retail">Retail</option>
+                <option value="Semiconductor">Semiconductor</option>
+                <option value="Telecommunications">Telecommunications</option>
+                <option value="Training/Training Products">
+                  Training/Training Products
+                </option>
+              </select>
+
+              <select
+                name="jobTitle"
+                id="jobTitle"
+                value={formData.jobTitle}
+                onChange={handleInputChange}
+              >
+                <option value="" disabled>
+                  Select Job Title
+                </option>
+                <option value="Accounting/Finance">Accounting/Finance</option>
+                <option value="Administrative Support">
+                  Administrative Support
+                </option>
+                <option value="Administrative Services">
+                  Administrative Services
+                </option>
+                <option value="Artificial Intelligence">
+                  Artificial Intelligence
+                </option>
+                <option value="Business Analytics & Consulting">
+                  Business Analytics & Consulting
+                </option>
+                <option value="Business Development & Strategy">
+                  Business Development & Strategy
+                </option>
+                <option value="Clinical">Clinical</option>
+                <option value="Compliance">Compliance</option>
+                <option value="Consultant">Consultant</option>
+                <option value="Customer Service">Customer Service</option>
+                <option value="Art & Design">Art & Design</option>
+                <option value="Education/Training">Education/Training</option>
+                <option value="Engineering">Engineering</option>
+                <option value="Executive/Management">
+                  Executive/Management
+                </option>
+                <option value="Facilities">Facilities</option>
+                <option value="Finance">Finance</option>
+                <option value="General Business">General Business</option>
+                <option value="Global Comms & Corp Marketing">
+                  Global Comms & Corp Marketing
+                </option>
+                <option value="Health Econ, Policy & Reimbursement">
+                  Health Econ, Policy & Reimbursement
+                </option>
+                <option value="Healthcare">Healthcare</option>
+                <option value="Human Resources">Human Resources</option>
+                <option value="Information Technology">
+                  Information Technology
+                </option>
+                <option value="Intern">Intern</option>
+                <option value="Inventory">Inventory</option>
+                <option value="Legal">Legal</option>
+                <option value="Manufacturing">Manufacturing</option>
+                <option value="Marketing">Marketing</option>
+                <option value="Medical">Medical</option>
+                <option value="Office Support">Office Support</option>
+                <option value="Studio Operations">Studio Operations</option>
+                <option value="Professional Services">
+                  Professional Services
+                </option>
+                <option value="Sourcing & Procurement">
+                  Sourcing & Procurement
+                </option>
+                <option value="Quality Assurance">Quality Assurance</option>
+                <option value="Regulatory Affairs">Regulatory Affairs</option>
+                <option value="Research">Research</option>
+                <option value="Safety">Safety</option>
+                <option value="Sales">Sales</option>
+                <option value="Science">Science</option>
+                <option value="Shipping">Shipping</option>
+                <option value="Skilled Labor">Skilled Labor</option>
+                <option value="Strategy/Planning">Strategy/Planning</option>
+                <option value="Supply Chain">Supply Chain</option>
+                <option value="Technicians">Technicians</option>
+                <option value="Public Relations">Public Relations</option>
+                <option value="Digital & Interactive Media">
+                  Digital & Interactive Media
+                </option>
+                <option value="Data & Analytics">Data & Analytics</option>
+                <option value="Security">Security</option>
+                <option value="Hospitality">Hospitality</option>
+                <option value="Retail">Retail</option>
+                <option value="Production (entertainment/media)">
+                  Production (entertainment/media)
+                </option>
+                <option value="Culinary/Food Service">
+                  Culinary/Food Service
+                </option>
+                <option value="Communications & Public Relations">
+                  Communications & Public Relations
+                </option>
+                <option value="Writer">Writer</option>
+                <option value="Cyber Security">Cyber Security</option>
+                <option value="Construction">Construction</option>
+                <option value="Transportation">Transportation</option>
+              </select>
 
               <select
                 name="jobType"
@@ -341,32 +548,116 @@ const PostJob = () => {
                 <option value="Full Time">Full Time</option>
                 <option value="Part Time">Part Time</option>
                 <option value="Contract">Contract</option>
+                <option value="Temporary">Temporary</option>
+                <option value="Temporary-to-Hire">Temporary-to-Hire</option>
                 <option value="Internship">Internship</option>
-                <option value="Work From Home">Work From Home</option>
+                <option value="Volunteer">Volunteer</option>
               </select>
 
               <textarea
                 name="dutyDescription"
-                placeholder="Description of duty"
+                placeholder="Enter Job Description"
                 value={formData.dutyDescription}
                 onChange={handleInputChange}
                 required
               />
 
-              <input
-                type="text"
-                name="essentialQualification.essential"
-                placeholder="Required Essential qualification (Essential)"
-                value={formData.essentialQualification?.essential || ""}
+              <select
+                name="jobDuration"
+                id="jobDuration"
+                value={formData.jobDuration}
                 onChange={handleInputChange}
                 required
-              />
+              >
+                <option value="" disabled>
+                  Select Job Duration
+                </option>
+                <option value="Indefinite">Indefinite</option>
+                <option value="1-2 Years">1-2 Years</option>
+                <option value="6-12 Months">6-12 Months</option>
+                <option value="3-6 Months">3-6 Months</option>
+                <option value="1-3 Months">1-3 Months</option>
+                <option value="2-4 Weeks">2-4 Weeks</option>
+              </select>
+
+              <select
+                name="minimumEducation"
+                id="minimumEducation"
+                value={formData.minimumEducation}
+                onChange={handleInputChange}
+                required
+              >
+                <option value="" disabled>
+                  Select Minumum Education
+                </option>
+                <option value="None">None</option>
+                <option value="H.S. Diploma/Equivalent">
+                  H.S. Diploma/Equivalent
+                </option>
+                <option value="Associates Degree">Associates Degree</option>
+                <option value="BA/BS/Undergraduate">BA/BS/Undergraduate</option>
+                <option value="Master's Degree">Master&apos;s Degree</option>
+                <option value="Ph.D">Ph.D</option>
+              </select>
+
+              <select
+                name="minimumExperience"
+                id="minumumExperience"
+                value={formData.minimumExperience}
+                onChange={handleInputChange}
+                required
+              >
+                <option value="" disabled>
+                  Select Minumum Experience
+                </option>
+                <option value="None">None</option>
+                <option value="1-2 Years">1-2 Years</option>
+                <option value="2-3 Years">2-3 Years</option>
+                <option value="3-5 Years">3-5 Years</option>
+                <option value="5-7 Years">5-7 Years</option>
+              </select>
+
+              <label htmlFor="salary.min">Salary</label>
+              <div className="input-group">
+                <input
+                  type="number"
+                  name="salary.min"
+                  placeholder="Min"
+                  value={formData.salary.min}
+                  onChange={handleInputChange}
+                  required
+                />
+                <label htmlFor="salary.max">to</label>
+                <input
+                  type="number"
+                  name="salary.max"
+                  placeholder="Max"
+                  value={formData.salary.max}
+                  onChange={handleInputChange}
+                  required
+                />
+              </div>
+
+              <select
+                name="workplaceType"
+                id="workplaceType"
+                value={formData.workplaceType}
+                onChange={handleInputChange}
+                required
+              >
+                <option value="" disabled>
+                  Select Workplace Type
+                </option>
+                <option value="On-Site">On-Site</option>
+                <option value="Hybrid">Hybrid</option>
+                <option value="Remote">Remote</option>
+              </select>
 
               <input
                 type="text"
-                name="essentialQualification.desirable"
-                placeholder="Required Desirable qualification (Desirable)"
-                value={formData.essentialQualification?.desirable || ""}
+                name="placeOfWork"
+                placeholder="Place of work"
+                value={formData.placeOfWork}
                 onChange={handleInputChange}
                 required
               />
@@ -436,24 +727,6 @@ const PostJob = () => {
                 required
               />
 
-              <input
-                type="text"
-                name="payAndAllowances"
-                placeholder="Pay and Allowances"
-                value={formData.payAndAllowances}
-                onChange={handleInputChange}
-                required
-              />
-
-              <input
-                type="text"
-                name="placeOfWork"
-                placeholder="Place of work"
-                value={formData.placeOfWork}
-                onChange={handleInputChange}
-                required
-              />
-
               <select
                 name="resumesToBeSent"
                 value={formData.resumesToBeSent}
@@ -476,18 +749,15 @@ const PostJob = () => {
                 />
               )}
 
-              {
-                formData.resumesToBeSent === "Website" && (
-                  <input
-                    type="text"
-                    name="resumeWebsite"
-                    placeholder="If Website, the website to which the resume be sent"
-                    value={formData.resumeWebsite}
-                    onChange={handleInputChange}
-                  />
-                )
-              }
-
+              {formData.resumesToBeSent === "Website" && (
+                <input
+                  type="text"
+                  name="resumeWebsite"
+                  placeholder="If Website, the website to which the resume be sent"
+                  value={formData.resumeWebsite}
+                  onChange={handleInputChange}
+                />
+              )}
             </fieldset>
 
             <fieldset>
