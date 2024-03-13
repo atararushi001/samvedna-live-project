@@ -36,6 +36,8 @@ import NotFound from "./pages/404";
 import EditJob from "./pages/EditJob";
 import SearchResults from "./pages/SearchResults";
 
+import ManageResume from "./pages/ManageResume";
+
 const App = () => {
   return (
     <SessionProvider>
@@ -78,6 +80,7 @@ const App = () => {
 
           <Route path="job-seeker-dashboard" element={<JobSeeker />}>
             <Route index element={<JobSeekerDashboard />} />
+            <Route path="manage-resume" element={<ManageResume />} />
           </Route>
 
           <Route path="self-employed-dashboard" element={<Recruiter />}>

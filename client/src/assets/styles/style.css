@@ -2055,6 +2055,113 @@ table td:last-child {
   box-shadow: 0 0.2rem 0.8rem rgba(0, 0, 0, 0.25);
 }
 
+/* Pages > Resume */
+.resume-section {
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 3rem;
+  padding-block: 3rem;
+}
+
+.resume-status {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  width: 100%;
+}
+
+.resumes {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+
+.resumes .resumes-header {
+  padding: 0.5rem;
+  width: 100%;
+  border: 1px solid var(--text);
+  background: var(--secondary);
+}
+
+.resumes .resumes-header h2 {
+  font-size: 1.3rem;
+  font-weight: 500;
+  text-align: center;
+}
+
+.resumes .resumes-body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  text-align: center;
+  border: 1px solid var(--text);
+  padding: 1rem;
+  width: 100%;
+}
+
+.resumes .resumes-body p {
+  font-size: 0.9rem;
+  font-weight: 300;
+  text-align: center;
+}
+
+.resumes .resumes-body .resume {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  width: 100%;
+  padding: 1rem;
+  border: 1px solid var(--text);
+  border-radius: 0.25rem;
+  box-shadow: 0 0.2rem 0.8rem rgba(0, 0, 0, 0.25);
+}
+
+.resumes .resumes-body .resume .controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.create-resume-section {
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3rem;
+  padding-block: 3rem;
+}
+
+.create-resume-section p {
+  font-size: 1.5rem;
+  font-weight: 300;
+  text-align: center;
+}
+
+.create-resume-section .controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  width: 100%;
+}
+
+.create-resume-section .controls .btn {
+  width: 100%;
+  text-align: center;
+}
+
 /* Pages > 404 */
 .page-404 {
   min-height: 100dvh;
