@@ -64,55 +64,17 @@ const CreateResume = () => {
         recognition: "",
       },
     ],
-    workAuthorization: "",
-    mostRecentPay: "",
-    currency: "",
-    paytime: "",
-    highestEducation: "",
-    mostRecentCareer: "",
-    mostRecentIndustry: "",
-    mostRecentJobTitle: "",
-    languages: [],
-    militaryExperience: "",
-    govermentClearance: "",
-    desiredJobType: "",
+    desiredJobType: [],
     desiredPay: "",
     desiredCurrency: "",
     desiredPaytime: "",
-    desiredCommute: "",
-    desiredTravel: "",
     additionalPreferences: "",
-    relocation: "",
-    firstRelocation: [
-      {
-        country: "",
-        state: "",
-        city: "",
-        postalCode: "",
-      },
-    ],
-    secondRelocation: [
-      {
-        country: "",
-        state: "",
-        city: "",
-        postalCode: "",
-      },
-    ],
-    thirdRelocation: [
-      {
-        country: "",
-        state: "",
-        city: "",
-        postalCode: "",
-      },
-    ],
-    overallAdditionalInfo: "",
     published: false,
   });
 
   const handleInputChange = (e, index, section, subIndex, subSection) => {
-    const { name, value } = e.target;
+    const { name, type, value } = e.target;
+    const isChecked = type === "checkbox" ? e.target.checked : false;
 
     setFormData((prevState) => {
       if (section) {
@@ -127,7 +89,21 @@ const CreateResume = () => {
                       subIdx === subIndex
                         ? {
                             ...subItem,
-                            [name]: value,
+                            [name]:
+                              type === "checkbox"
+                                ? isChecked
+                                  ? [
+                                      ...(Array.isArray(subItem[name])
+                                        ? subItem[name]
+                                        : []),
+                                      value,
+                                    ]
+                                  : Array.isArray(subItem[name])
+                                  ? subItem[name].filter(
+                                      (item) => item !== value
+                                    )
+                                  : []
+                                : value,
                           }
                         : subItem
                     ),
@@ -142,7 +118,17 @@ const CreateResume = () => {
               idx === index
                 ? {
                     ...item,
-                    [name]: value,
+                    [name]:
+                      type === "checkbox"
+                        ? isChecked
+                          ? [
+                              ...(Array.isArray(item[name]) ? item[name] : []),
+                              value,
+                            ]
+                          : Array.isArray(item[name])
+                          ? item[name].filter((item) => item !== value)
+                          : []
+                        : value,
                   }
                 : item
             ),
@@ -151,7 +137,17 @@ const CreateResume = () => {
       } else {
         return {
           ...prevState,
-          [name]: value,
+          [name]:
+            type === "checkbox"
+              ? isChecked
+                ? [
+                    ...(Array.isArray(prevState[name]) ? prevState[name] : []),
+                    value,
+                  ]
+                : prevState[name].includes(value) // Check if value exists before filtering
+                ? prevState[name].filter((item) => item !== value)
+                : prevState[name] // Return previous state if value not found
+              : value,
         };
       }
     });
@@ -211,7 +207,35 @@ const CreateResume = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log(formData);
+
+    const data = new FormData();
+
+    for (const key in formData) {
+      if (Array.isArray(formData[key])) {
+        formData[key].forEach((item, index) => {
+          for (const subKey in item) {
+            if (Array.isArray(item[subKey])) {
+              item[subKey].forEach((subItem, subIndex) => {
+                for (const subSubKey in subItem) {
+                  data.append(
+                    `${key}[${index}][${subKey}][${subIndex}][${subSubKey}]`,
+                    subItem[subSubKey]
+                  );
+                }
+              });
+            } else {
+              data.append(`${key}[${index}][${subKey}]`, item[subKey]);
+            }
+          }
+        });
+      } else {
+        data.append(key, formData[key]);
+      }
+    }
+
+    for (let pair of data.entries()) {
+      console.log(pair[0] + ", " + pair[1]);
+    }
   };
 
   return (
@@ -899,6 +923,122 @@ const CreateResume = () => {
               Add Branch
             </button>
           </fieldset>
+          <fieldset>
+            <legend>
+              Desired Job Type{" "}
+              <span className="highlight-text">(Optional)</span>
+            </legend>
+            <div className="input-group">
+              <div className="input-group row">
+                <input
+                  type="checkbox"
+                  name="desiredJobType"
+                  id="desiredJobType1"
+                  value="Full-time"
+                  onChange={handleInputChange}
+                />
+                <label htmlFor="desiredJobType1">Full-time</label>
+              </div>
+              <div className="input-group row">
+                <input
+                  type="checkbox"
+                  name="desiredJobType"
+                  id="desiredJobType2"
+                  value="Part-time"
+                  onChange={handleInputChange}
+                />
+                <label htmlFor="desiredJobType2">Part-time</label>
+              </div>
+              <div className="input-group row">
+                <input
+                  type="checkbox"
+                  name="desiredJobType"
+                  id="desiredJobType3"
+                  value="Contract"
+                  onChange={handleInputChange}
+                />
+                <label htmlFor="desiredJobType3">Contract</label>
+              </div>
+              <div className="input-group row">
+                <input
+                  type="checkbox"
+                  name="desiredJobType"
+                  id="desiredJobType4"
+                  value="Temporary"
+                  onChange={handleInputChange}
+                />
+                <label htmlFor="desiredJobType4">Temporary</label>
+              </div>
+              <div className="input-group row">
+                <input
+                  type="checkbox"
+                  name="desiredJobType"
+                  id="desiredJobType5"
+                  value="Internship"
+                  onChange={handleInputChange}
+                />
+                <label htmlFor="desiredJobType5">Internship</label>
+              </div>
+              <div className="input-group row">
+                <input
+                  type="checkbox"
+                  name="desiredJobType"
+                  id="desiredJobType6"
+                  value="Volunteer"
+                  onChange={handleInputChange}
+                />
+                <label htmlFor="desiredJobType6">Volunteer</label>
+              </div>
+            </div>
+
+            <div className="input-group">
+              <input
+                type="text"
+                name="desiredPay"
+                id="desiredPay"
+                placeholder="Desired Pay"
+                value={formData.desiredPay}
+                onChange={handleInputChange}
+              />
+              <input
+                type="text"
+                name="desiredCurrency"
+                id="desiredCurrency"
+                placeholder="Desired Currency"
+                value={formData.desiredCurrency}
+                onChange={handleInputChange}
+              />
+              <input
+                type="text"
+                name="desiredPaytime"
+                id="desiredPaytime"
+                placeholder="Desired Paytime"
+                value={formData.desiredPaytime}
+                onChange={handleInputChange}
+              />
+            </div>
+
+            <textarea
+              name="additionalPreferences"
+              id="additionalPreferences"
+              placeholder="Additional Preferences"
+              value={formData.additionalPreferences}
+              onChange={handleInputChange}
+            ></textarea>
+          </fieldset>
+          <p className="left">
+            By checking the box below, you agree to make your resume visible to
+            employers.
+          </p>
+          <div className="input-group row">
+            <input
+              type="checkbox"
+              name="published"
+              id="published"
+              onChange={handleInputChange}
+            />
+            <label htmlFor="published">Publish Resume</label>
+          </div>
           <button type="submit" className="btn">
             Save Your Resume
           </button>
