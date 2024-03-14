@@ -10,9 +10,8 @@ function handleError($message)
 }
 
 if ($_SERVER['REQUEST_METHOD'] == "GET") {
-    $query = " ?";
+    $query = " SELECT * FROM `recruiters`";
     $stmt = $conn->prepare($query);
-    $stmt->bind_param("s", $_GET['res_id']);
 
     try {
         $stmt->execute();
@@ -22,7 +21,7 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
 
         $response = array(
             'success' => true,
-            'message' => 'job resume found!',
+            'message' => 'Companies resume found!',
             'job' => $rows,
         );
 
