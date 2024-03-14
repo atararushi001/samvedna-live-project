@@ -69,7 +69,66 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 }
             }
         }
+        $education = $_POST['education'];
+        foreach ($education as $edu) {
+            $institutionName = $edu['institutionName'];
+            $degrees = $edu['degrees'];
 
+            $stmt = $conn->prepare("INSERT INTO      (institutionName, jobresume_id) VALUES (?, ?)");
+            $stmt->bind_param("si", $institutionName, $lastInsertId);
+            if (!$stmt->execute()) {
+                die('Error in execute statement: ' . $stmt->error);
+            }
+        }
+
+            $educationId = $stmt->insert_id;
+
+            foreach ($degrees as $degree) {
+                $degreeName = $degree['degree'];
+                $educationCompleted = $degree['educationCompleted'];
+                $major = $degree['major'];
+                $graduationDate = $degree['graduationDate'];
+                $additionalInfo = $degree['additionalInfo'];
+                $grade = $degree['grade'];
+                $outOf = $degree['outOf'];
+
+                $stmt = $conn->prepare("INSERT INTO degrees (degreeName, educationCompleted, major, graduationDate, additionalInfo, grade, outOf, education_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+                $stmt->bind_param("sssssssi", $degreeName, $educationCompleted, $major, $graduationDate, $additionalInfo, $grade, $outOf, $educationId);
+                if (!$stmt->execute()) {
+                    die('Error in execute statement: ' . $stmt->error);
+                }
+            }
+        }
+        
+        $militaryStatus = $_POST['militaryStatus'];
+        $militaryAdditionalInfo = $_POST['militaryAdditionalInfo'];
+
+        $stmt = $conn->prepare("INSERT INTO military (militaryStatus, militaryAdditionalInfo, jobresume_id) VALUES (?, ?, ?)");
+        $stmt->bind_param("ssi", $militaryStatus, $militaryAdditionalInfo, $lastInsertId);
+        if (!$stmt->execute()) {
+            die('Error in execute statement: ' . $stmt->error);
+        }
+
+        $militaryId = $stmt->insert_id;
+
+        $branches = $_POST['branches'];
+        foreach ($branches as $branch) {
+            $branchName = $branch['branch'];
+            $unit = $branch['unit'];
+            $beginningRank = $branch['beginningRank'];
+            $endingRank = $branch['endingRank'];
+            $startDate = $branch['startDate'];
+            $endDate = $branch['endDate'];
+            $areaOfExpertise = $branch['areaOfExpertise'];
+            $recognition = $branch['recognition'];
+
+            $stmt = $conn->prepare("INSERT INTO militarybranches (branchName, unit, beginningRank, endingRank, startDate, endDate, areaOfExpertise, recognition, military_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
+            $stmt->bind_param("ssssssssi", $branchName, $unit, $beginningRank, $endingRank, $startDate, $endDate, $areaOfExpertise, $recognition, $militaryId);
+            if (!$stmt->execute()) {
+                die('Error in execute statement: ' . $stmt->error);
+            }
+        }
+        
         $message = 'Data inserted successfully';
         $response = array(
             'success' => true,
@@ -79,12 +138,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         header('Content-Type: application/json');
         $jsonResponse = json_encode($response);
         echo $jsonResponse;
+        $stmt->close();
+        $conn->close();
     }
 
-    $stmt->close();
-    $conn->close();
-
-    // Add your database insert code here
+ 
 
 
-}
+
