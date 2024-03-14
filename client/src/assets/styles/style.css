@@ -212,6 +212,11 @@ a.btn {
   color: var(--error);
 }
 
+.no-outline {
+  outline: 0;
+  border: 0;
+}
+
 input,
 select,
 textarea {
@@ -2240,6 +2245,120 @@ table td:last-child {
   border: 1px solid var(--text);
   padding: 1rem;
   border-radius: 0.25rem;
+}
+
+/* Pages > Company Directory */
+.company-directory {
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 1rem;
+  padding-block: 3rem;
+}
+
+.company-directory .filters {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  width: 100%;
+}
+
+.company-directory .filters .filter-dropdown {
+  width: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.company-directory .filters form {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 1rem;
+  width: 50%;
+}
+
+.company-directory .filters form input {
+  width: 100%;
+}
+
+.company-directory .alphabet-filter {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  width: 100%;
+  margin-top: 1rem;
+  flex-wrap: wrap;
+}
+
+.company-directory .alphabet-filter .link {
+  font-size: 1.3rem;
+  font-weight: 300;
+  text-align: center;
+}
+
+.company-directory .alphabet-filter .link.active {
+  text-decoration: none;
+  color: var(--secondary);
+}
+
+.company-directory .default {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  width: 100%;
+  height: calc(100dvh - 25dvh);
+}
+
+.company-directory .default p {
+  font-size: 1.5rem;
+  font-weight: 500;
+  text-align: center;
+}
+
+.company-directory table td {
+  text-align: center !important;
+}
+
+.company-directory .pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  width: 100%;
+  margin-top: 1rem;
+}
+
+.company-directory .pagination .page-links {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  width: 100%;
+  flex-wrap: wrap;
+}
+
+.company-directory .pagination .link {
+  font-size: 1.3rem;
+  font-weight: 300;
+  text-align: center;
+}
+
+.company-directory .pagination .link.active {
+  text-decoration: none;
+  color: var(--secondary);
+}
+
+.company-directory .pagination .btn.disabled {
+  cursor: not-allowed;
+  pointer-events: none;
+  opacity: 0.5;
 }
 
 /* Pages > 404 */

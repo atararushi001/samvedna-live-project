@@ -175,4 +175,23 @@
     align-items: center !important;
     justify-content: flex-start !important;
   }
+
+  .company-directory .filters {
+    flex-direction: column !important;
+    gap: 1rem !important;
+    width: 100% !important;
+  }
+
+  .company-directory .filters .input-group {
+    flex-direction: column !important;
+    width: 100% !important;
+  }
+
+  .company-directory .filters .input-group input {
+    width: 100% !important;
+  }
+
+  .company-directory .filters .input-group .btn {
+    width: 100% !important;
+  }
 }
