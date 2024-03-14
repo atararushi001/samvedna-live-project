@@ -86,11 +86,11 @@ const RecruiterHeader = () => {
           </li>
           <li>
             <Link
-              to="/job-seeker-dashboard/manage-resume"
+              to="/job-seeker-dashboard/manage-resumes"
               className="nav-link"
               onClick={handleLinkNavigation}
             >
-              Manage Resume
+              Manage Resumes
             </Link>
           </li>
           <div className="btn-container">
