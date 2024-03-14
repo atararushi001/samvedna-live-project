@@ -40,6 +40,8 @@ import ManageResume from "./pages/ManageResume";
 import CreateResume from "./pages/CreateResume";
 import EditResume from "./pages/EditResume";
 
+import CompanyDirectory from "./pages/CompanyDirectory";
+
 const App = () => {
   return (
     <SessionProvider>
@@ -85,6 +87,7 @@ const App = () => {
             <Route path="manage-resumes" element={<ManageResume />} />
             <Route path="create-resume" element={<CreateResume />} />
             <Route path="edit-resume/:id" element={<EditResume />} />
+            <Route path="company-directory" element={<CompanyDirectory />} />
           </Route>
 
           <Route path="self-employed-dashboard" element={<Recruiter />}>

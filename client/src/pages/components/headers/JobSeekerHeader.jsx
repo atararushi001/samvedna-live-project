@@ -93,6 +93,15 @@ const RecruiterHeader = () => {
               Manage Resumes
             </Link>
           </li>
+          <li>
+            <Link
+              to="/job-seeker-dashboard/company-directory"
+              className="nav-link"
+              onClick={handleLinkNavigation}
+            >
+              Company Directory
+            </Link>
+          </li>
           <div className="btn-container">
             <button className="btn" onClick={handleLogout}>
               Logout
