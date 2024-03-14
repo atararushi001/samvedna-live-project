@@ -30,16 +30,7 @@ const Resume = ({ resumes, title, description }) => {
                     border: "none",
                   }}
                 >
-                  <FontAwesomeIcon icon="trash" />
-                </button>
-                <button
-                  className="link"
-                  style={{
-                    outline: "none",
-                    border: "none",
-                  }}
-                >
-                  <FontAwesomeIcon icon="file" />
+                  <FontAwesomeIcon icon="trash" className="link delete" />
                 </button>
               </div>
             </div>

@@ -81,7 +81,7 @@ const App = () => {
 
           <Route path="job-seeker-dashboard" element={<JobSeeker />}>
             <Route index element={<JobSeekerDashboard />} />
-            <Route path="manage-resume" element={<ManageResume />} />
+            <Route path="manage-resumes" element={<ManageResume />} />
             <Route path="create-resume" element={<CreateResume />} />
           </Route>
 

@@ -1,7 +1,12 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
+const API = import.meta.env.VITE_API_URL;
+
 const CreateResume = () => {
+  const navigate = useNavigate();
+
   const [formData, setFormData] = useState({
     resumeName: "",
     firstName: "",
@@ -233,9 +238,30 @@ const CreateResume = () => {
       }
     }
 
-    for (let pair of data.entries()) {
-      console.log(pair[0] + ", " + pair[1]);
-    }
+    fetch(`${API}/controllers/createResume.php`, {
+      method: "POST",
+      body: data,
+      credentials: "include",
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+      })
+      .then((data) => {
+        console.log(data);
+        if (data.success) {
+          toast.success(data.message);
+          navigate("/job-seeker-dashboard/manage-resume");
+        } else {
+          toast.error(data.message);
+        }
+      })
+      .catch((error) => {
+        console.error(error);
+        toast.error("An error occurred: " + error.message);
+      });
   };
 
   return (

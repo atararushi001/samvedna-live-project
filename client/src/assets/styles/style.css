@@ -167,6 +167,11 @@ a.btn {
   font-weight: 500;
   transition: all 0.3s ease-in-out;
   text-decoration: underline;
+  cursor: pointer;
+}
+
+.link:hover {
+  color: var(--secondary);
 }
 
 .nav-link {
@@ -201,6 +206,10 @@ a.btn {
 
 .highlight-text {
   color: var(--primary) !important;
+}
+
+.delete {
+  color: var(--error);
 }
 
 input,
