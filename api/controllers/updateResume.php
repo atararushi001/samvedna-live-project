@@ -1,6 +1,7 @@
 <?php
 include '../includes/config.php';
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $resumeId = $_POST['res_id '];
     $resumeName = $_POST['resumeName'];
     $firstName = $_POST['firstName'];
     $lastName = $_POST['lastName'];
@@ -16,10 +17,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $summary = $_POST['summary'];
     $objective = $_POST['objective'];
 
-    $stmt = $conn->prepare("INSERT INTO jobresume (resumeName, firstName, lastName, suffix, email, phone, website, linkedin, country, state, city, postalCode, summary, objective) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+    $stmt = $conn->prepare("UPDATE jobresume SET resumeName = ?, firstName = ?, lastName = ?, suffix = ?, email = ?, phone = ?, website = ?, linkedin = ?, country = ?, state = ?, city = ?, postalCode = ?, summary = ?, objective = ? WHERE res_id  = ?");
 
     $stmt->bind_param(
-        "ssssssssssssss",
+        "ssssssssssssssi",
         $resumeName,
         $firstName,
         $lastName,
@@ -33,27 +34,69 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $city,
         $postalCode,
         $summary,
-        $objective
+        $objective,
+        $resumeId
     );
 
     if (!$stmt->execute()) {
         die('Error in execute statement: ' . $stmt->error);
     } else {
+        $stmt->close();
 
+        $stmt = $conn->prepare("DELETE FROM resumeemployers WHERE jobresume_id = ?");
+        $stmt->bind_param("i", $resumeId);
+        if (!$stmt->execute()) {
+            die('Error in execute statement: ' . $stmt->error);
+        }
+        $stmt->close();
 
-        $lastInsertId = $stmt->insert_id;
+        $stmt = $conn->prepare("DELETE FROM positions WHERE resumeemployers_id IN (SELECT id FROM resumeemployers WHERE jobresume_id = ?)");
+        $stmt->bind_param("i", $resumeId);
+        if (!$stmt->execute()) {
+            die('Error in execute statement: ' . $stmt->error);
+        }
+        $stmt->close();
+
+        $stmt = $conn->prepare("DELETE FROM education WHERE jobresume_id = ?");
+        $stmt->bind_param("i", $resumeId);
+        if (!$stmt->execute()) {
+            die('Error in execute statement: ' . $stmt->error);
+        }
+        $stmt->close();
+
+        $stmt = $conn->prepare("DELETE FROM degrees WHERE education_id IN (SELECT id FROM education WHERE jobresume_id = ?)");
+        $stmt->bind_param("i", $resumeId);
+        if (!$stmt->execute()) {
+            die('Error in execute statement: ' . $stmt->error);
+        }
+        $stmt->close();
+
+        $stmt = $conn->prepare("DELETE FROM military WHERE jobresume_id = ?");
+        $stmt->bind_param("i", $resumeId);
+        if (!$stmt->execute()) {
+            die('Error in execute statement: ' . $stmt->error);
+        }
+        $stmt->close();
+
+        $stmt = $conn->prepare("DELETE FROM militarybranches WHERE military_id IN (SELECT id FROM military WHERE jobresume_id = ?)");
+        $stmt->bind_param("i", $resumeId);
+        if (!$stmt->execute()) {
+            die('Error in execute statement: ' . $stmt->error);
+        }
+        $stmt->close();
+
         $employers = $_POST['employers'];
         foreach ($employers as $employer) {
             $employerName = $employer['employerName'];
             $positions = $employer['positions'];
 
             $stmt = $conn->prepare("INSERT INTO resumeemployers (employerName, jobresume_id) VALUES (?, ?)");
-            $stmt->bind_param("si", $employerName, $lastInsertId);
+            $stmt->bind_param("si", $employerName, $resumeId);
             if (!$stmt->execute()) {
                 die('Error in execute statement: ' . $stmt->error);
             }
-
             $employerId = $stmt->insert_id;
+            $stmt->close();
 
             foreach ($positions as $position) {
                 $positionTitle = $position['positionTitle'];
@@ -67,21 +110,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 if (!$stmt->execute()) {
                     die('Error in execute statement: ' . $stmt->error);
                 }
+                $stmt->close();
             }
         }
+
         $education = $_POST['education'];
         foreach ($education as $edu) {
             $institutionName = $edu['institutionName'];
             $degrees = $edu['degrees'];
 
-            $stmt = $conn->prepare("INSERT INTO  education(institutionName, jobresume_id) VALUES (?, ?)");
-            $stmt->bind_param("si", $institutionName, $lastInsertId);
+            $stmt = $conn->prepare("INSERT INTO education (institutionName, jobresume_id) VALUES (?, ?)");
+            $stmt->bind_param("si", $institutionName, $resumeId);
             if (!$stmt->execute()) {
                 die('Error in execute statement: ' . $stmt->error);
             }
-        }
-
             $educationId = $stmt->insert_id;
+            $stmt->close();
 
             foreach ($degrees as $degree) {
                 $degreeName = $degree['degree'];
@@ -97,19 +141,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 if (!$stmt->execute()) {
                     die('Error in execute statement: ' . $stmt->error);
                 }
+                $stmt->close();
             }
         }
-        
+
         $militaryStatus = $_POST['militaryStatus'];
         $militaryAdditionalInfo = $_POST['militaryAdditionalInfo'];
 
         $stmt = $conn->prepare("INSERT INTO military (militaryStatus, militaryAdditionalInfo, jobresume_id) VALUES (?, ?, ?)");
-        $stmt->bind_param("ssi", $militaryStatus, $militaryAdditionalInfo, $lastInsertId);
+        $stmt->bind_param("ssi", $militaryStatus, $militaryAdditionalInfo, $resumeId);
         if (!$stmt->execute()) {
             die('Error in execute statement: ' . $stmt->error);
         }
-
         $militaryId = $stmt->insert_id;
+        $stmt->close();
 
         $branches = $_POST['branches'];
         foreach ($branches as $branch) {
@@ -127,9 +172,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if (!$stmt->execute()) {
                 die('Error in execute statement: ' . $stmt->error);
             }
+            $stmt->close();
         }
-        
-        $message = 'Data inserted successfully';
+
+        $message = 'Data updated successfully';
         $response = array(
             'success' => true,
             'message' => $message,
@@ -140,9 +186,5 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         echo $jsonResponse;
     }
 
-    $stmt->close();
     $conn->close();
-
-
-
-
+}
