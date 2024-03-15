@@ -59,6 +59,10 @@
   #quotes .sub-text {
     font-size: 1rem !important;
   }
+
+  .resume-bank .resume-list {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
 }
 
 @media screen and (max-width: 768px) {
@@ -193,5 +197,9 @@
 
   .company-directory .filters .input-group .btn {
     width: 100% !important;
+  }
+
+  .resume-bank .resume-list {
+    grid-template-columns: 1fr !important;
   }
 }

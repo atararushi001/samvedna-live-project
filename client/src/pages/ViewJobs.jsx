@@ -121,16 +121,16 @@ const ViewJobs = () => {
                         <td className="controls">
                           <Link
                             to={`/recruiter-dashboard/edit-job/${job.job_id}`}
-                            className="btn btn-primary"
+                            className="link"
                           >
                             Edit
                           </Link>
-                          <button
-                            className="btn btn-delete"
+                          <Link
+                            className="link delete no-outline"
                             onClick={(e) => deleteJob(e)(job.job_id)}
                           >
                             Delete
-                          </button>
+                          </Link>
                         </td>
                       </tr>
                     );

@@ -1,48 +1,46 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 import Resume from "./components/Resume";
 
+const API = import.meta.env.VITE_API_URL;
+
 const ManageResume = () => {
-  const [publicResumes, setPublicResumes] = useState([
-    {
-      id: 1,
-      name: "John Doe",
-      published: "2021-01-01",
-    },
-    {
-      id: 2,
-      name: "Jane Doe",
-      published: "2021-01-01",
-    },
-  ]);
+  const navigate = useNavigate();
+
+  const [publicResumes, setPublicResumes] = useState([]);
   const [privateResumes, setPrivateResumes] = useState([]);
-  const [unsavedResumes, setUnsavedResumes] = useState([]);
+
+  useEffect(() => {
+    fetch(`${API}/controllers/createResume.php`, {
+      method: "GET",
+      credentials: "include",
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+      })
+      .then((data) => {
+        if (data.success) {
+          setPublicResumes(data.publicResumes);
+          setPrivateResumes(data.privateResumes);
+          toast.success(data.message);
+          navigate("/job-seeker-dashboard/manage-resumes");
+        } else {
+          toast.error(data.message);
+        }
+      })
+      .catch((error) => {
+        console.error(error);
+        toast.error("An error occurred: " + error.message);
+      });
+  }, [navigate]);
 
   return (
     <div className="container">
-      <section className="resume-section">
-        <h1>
-          Manage <span className="highlight-text">Resumes</span>
-        </h1>
-        <div className="resume-status">
-          <Resume
-            resumes={publicResumes}
-            title="Public Resumes"
-            description={`You don't have a resume active on this site right now. Employers searching for resumes will not be able to find yours unless you have posted it. To post one of your resumes below, choose "Publish on this site" from the options menu.`}
-          />
-          <Resume
-            resumes={privateResumes}
-            title="Private Resumes"
-            description="You have no private resumes."
-          />
-          <Resume
-            resumes={unsavedResumes}
-            title="Unsaved Resumes"
-            description="You have no unsaved resumes."
-          />
-        </div>
-      </section>
       <section className="create-resume-section">
         <h1>
           Create <span className="highlight-text">Resume</span>
@@ -63,6 +61,23 @@ const ManageResume = () => {
           >
             Upload Resume
           </Link>
+        </div>
+      </section>
+      <section className="resume-section">
+        <h1>
+          Manage <span className="highlight-text">Resumes</span>
+        </h1>
+        <div className="resume-status">
+          <Resume
+            resumes={publicResumes}
+            title="Public Resumes"
+            description={`You don't have a resume active on this site right now. Employers searching for resumes will not be able to find yours unless you have posted it. To post one of your resumes below, choose "Publish on this site" from the options menu.`}
+          />
+          <Resume
+            resumes={privateResumes}
+            title="Private Resumes"
+            description="You have no private resumes."
+          />
         </div>
       </section>
     </div>

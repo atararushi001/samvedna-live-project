@@ -45,8 +45,8 @@ const RecruiterHeader = () => {
       links.forEach((link) =>
         link.removeEventListener("click", handleLinkClick)
       );
-      window.removeEventListener("resize", () => { });
-      window.removeEventListener("change", () => { });
+      window.removeEventListener("resize", () => {});
+      window.removeEventListener("change", () => {});
     };
   }, []);
 
@@ -57,10 +57,9 @@ const RecruiterHeader = () => {
     navigate(link.getAttribute("href"));
   };
 
-
   const HandleLogout = () => {
-    sessionStorage.removeItem('isLoggedIn');
-    sessionStorage.removeItem('recruiters_id');
+    sessionStorage.removeItem("isLoggedIn");
+    sessionStorage.removeItem("recruiters_id");
     toast.success("Logged out successfully");
     navigate("/recruiter-login");
   };
@@ -86,15 +85,35 @@ const RecruiterHeader = () => {
               Dashboard
             </Link>
           </li>
-          <div className="btn-container">
+          <li>
             <Link
-              className="btn"
+              className="nav-link"
               to="/recruiter-dashboard/post-job"
               onClick={handleLinkNavigation}
             >
               Post a Job
             </Link>
-            <button className="btn btn-outline logout" onClick={HandleLogout}>
+          </li>
+          <li>
+            <Link
+              className="nav-link"
+              to="/recruiter-dashboard/view-jobs"
+              onClick={handleLinkNavigation}
+            >
+              View Jobs
+            </Link>
+          </li>
+          <li>
+            <Link
+              className="nav-link"
+              to="/recruiter-dashboard/resume-bank"
+              onClick={handleLinkNavigation}
+            >
+              Resume Bank
+            </Link>
+          </li>
+          <div className="btn-container">
+            <button className="btn logout" onClick={HandleLogout}>
               Logout
             </button>
           </div>

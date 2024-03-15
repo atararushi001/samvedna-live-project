@@ -548,12 +548,15 @@ footer .footer-bottom p {
   border: 1px solid var(--text);
   padding: 0.75rem;
   vertical-align: top;
+  text-align: center;
+  font-size: 1rem;
 }
 
 .view-jobs-container .table th {
   background-color: var(--secondary);
   color: var(--text);
   border: 1px solid var(--text);
+  font-weight: 600;
 }
 
 .view-jobs-container .table .btn {
@@ -564,6 +567,11 @@ footer .footer-bottom p {
   background-color: transparent;
   color: var(--text);
   border: 1px solid var(--text);
+}
+
+.view-jobs-container .link {
+  font-size: 1rem;
+  margin-inline: 0.5rem;
 }
 
 /* Pages > Home */
@@ -2326,7 +2334,7 @@ table td:last-child {
   text-align: center !important;
 }
 
-.company-directory .pagination {
+.pagination {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -2335,7 +2343,7 @@ table td:last-child {
   margin-top: 1rem;
 }
 
-.company-directory .pagination .page-links {
+.pagination .page-links {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -2344,21 +2352,91 @@ table td:last-child {
   flex-wrap: wrap;
 }
 
-.company-directory .pagination .link {
+.pagination .link {
   font-size: 1.3rem;
   font-weight: 300;
   text-align: center;
 }
 
-.company-directory .pagination .link.active {
+.pagination .link.active {
   text-decoration: none;
   color: var(--secondary);
 }
 
-.company-directory .pagination .btn.disabled {
+.pagination .btn.disabled {
   cursor: not-allowed;
   pointer-events: none;
   opacity: 0.5;
+}
+
+/* Pages > Resume Bank */
+.resume-bank {
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 2rem;
+  padding-block: 3rem;
+}
+
+.resume-bank .filters {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  width: 100%;
+}
+
+.resume-bank .filters .input-group {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.resume-bank .filters .input-group input {
+  width: 100%;
+}
+
+.resume-bank .pagination {
+  margin-top: 0;
+}
+
+.resume-bank .resume-list {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(15rem, 1fr));
+  gap: 1rem;
+  width: 100%;
+  place-content: center;
+  place-items: center;
+}
+
+.resume-bank .resume-list .resume {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  padding: 1rem;
+  border-radius: 0.25rem;
+  background: var(--background);
+  box-shadow: 0 0.2rem 0.8rem rgba(0, 0, 0, 0.25);
+  text-align: center;
+  cursor: pointer;
+}
+
+.resume-bank .default {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  width: 100%;
+  height: calc(100dvh - 25dvh);
+  font-size: 1.5rem;
+  font-weight: 500;
 }
 
 /* Pages > 404 */
