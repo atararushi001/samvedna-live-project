@@ -42,6 +42,8 @@ import EditResume from "./pages/EditResume";
 
 import CompanyDirectory from "./pages/CompanyDirectory";
 
+import ResumeBank from "./pages/ResumeBank";
+
 const App = () => {
   return (
     <SessionProvider>
@@ -80,6 +82,7 @@ const App = () => {
             <Route path="view-jobs" element={<ViewJobs />} />
             <Route path="post-job" element={<PostJob />} />
             <Route path="edit-job/:id" element={<EditJob />} />
+            <Route path="resume-bank" element={<ResumeBank />} />
           </Route>
 
           <Route path="job-seeker-dashboard" element={<JobSeeker />}>
