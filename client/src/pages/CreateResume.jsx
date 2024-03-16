@@ -258,6 +258,7 @@ const CreateResume = () => {
         return response.json();
       })
       .then((data) => {
+        console.log(data);
         if (data.success) {
           toast.success(data.message);
           navigate("/job-seeker-dashboard/manage-resumes");

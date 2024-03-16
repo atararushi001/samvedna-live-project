@@ -1,5 +1,6 @@
 <?php
 include '../includes/config.php';
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $resumeName = $_POST['resumeName'];
     $firstName = $_POST['firstName'];
@@ -15,18 +16,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $postalCode = $_POST['postalCode'];
     $summary = $_POST['summary'];
     $objective = $_POST['objective'];
+    $militaryStatus = $_POST['militaryStatus'];
+    $militaryAdditionalInfo = $_POST['militaryAdditionalInfo'];
     $desiredPay = $_POST['desiredPay'];
     $desiredCurrency = $_POST['desiredCurrency'];
     $desiredPaytime = $_POST['desiredPaytime'];
     $additionalPreferences = $_POST['additionalPreferences'];
     $published = $_POST['published'];
 
-
-    $stmt = $conn->prepare("INSERT INTO jobresume (resumeName, firstName, lastName, suffix, email, phone, website, linkedin, country, state, city, postalCode, summary, objective, published, 
-    desiredPay, desiredCurrency, desiredPaytime, additionalPreferences
-    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+    $stmt = $conn->prepare("INSERT INTO resumes (
+        resumeName, firstName, lastName, suffix, email, 
+        phone, website, linkedin, country, state, 
+        city, postalCode, summary, objective, militaryStatus,
+        militaryAdditionalInfo, desiredPay, desiredCurrency, desiredPaytime, additionalPreferences, 
+        published) VALUES (
+            ?, ?, ?, ?, ?, 
+            ?, ?, ?, ?, ?, 
+            ?, ?, ?, ?, ?, 
+            ?, ?, ?, ?, ?, 
+            ?)");
     $stmt->bind_param(
-        "sssssssssssssssssss",
+        "sssssssssssssssssssss",
         $resumeName,
         $firstName,
         $lastName,
@@ -41,116 +51,66 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $postalCode,
         $summary,
         $objective,
-        $published,
+        $militaryStatus,
+        $militaryAdditionalInfo,
         $desiredPay,
         $desiredCurrency,
         $desiredPaytime,
-        $additionalPreferences
+        $additionalPreferences,
+        $published
     );
+    $stmt->execute();
 
-    if (!$stmt->execute()) {
-        die('Error in execute statement: ' . $stmt->error);
-    } else {
+    $resumeId = $stmt->insert_id;
 
+    // Inserting data into Employers table
+    foreach ($_POST['employers'] as $employer) {
+        $stmt = $conn->prepare("INSERT INTO employers (employerName) VALUES (?)");
+        $stmt->bind_param("s", $employer['employerName']);
+        $stmt->execute();
 
-        $lastInsertId = $stmt->insert_id;
-        $employers = $_POST['employers'];
-        foreach ($employers as $employer) {
-            $employerName = $employer['employerName'];
-            $positions = $employer['positions'];
+        $employerId = $stmt->insert_id;
 
-            $stmt = $conn->prepare("INSERT INTO resumeemployers (employerName, jobresume_id) VALUES (?, ?)");
-            $stmt->bind_param("si", $employerName, $lastInsertId);
-            if (!$stmt->execute()) {
-                die('Error in execute statement: ' . $stmt->error);
-            }
-
-            $employerId = $stmt->insert_id;
-
-            foreach ($positions as $position) {
-                $positionTitle = $position['positionTitle'];
-                $startDate = $position['startDate'];
-                $endDate = $position['endDate'];
-                $isCurrentPosition = $position['isCurrentPosition'];
-                $jobDescription = $position['jobDescription'];
-
-                $stmt = $conn->prepare("INSERT INTO positions (positionTitle, startDate, endDate, isCurrentPosition, jobDescription, resumeemployers_id) VALUES (?, ?, ?, ?, ?, ?)");
-                $stmt->bind_param("sssssi", $positionTitle, $startDate, $endDate, $isCurrentPosition, $jobDescription, $employerId);
-                if (!$stmt->execute()) {
-                    die('Error in execute statement: ' . $stmt->error);
-                }
-            }
+        // Inserting data into Positions table
+        foreach ($employer['positions'] as $position) {
+            $stmt = $conn->prepare("INSERT INTO positions (employer_id, positionTitle, startDate, endDate, isCurrentPosition, jobDescription) VALUES (?, ?, ?, ?, ?, ?)");
+            $stmt->bind_param("ssssss", $employerId, $position['positionTitle'], $position['startDate'], $position['endDate'], $position['isCurrentPosition'], $position['jobDescription']);
+            $stmt->execute();
         }
-        $education = $_POST['education'];
-        foreach ($education as $edu) {
-            $institutionName = $edu['institutionName'];
-            $degrees = $edu['degrees'];
+    }
 
-            $stmt = $conn->prepare("INSERT INTO  education(institutionName, jobresume_id) VALUES (?, ?)");
-            $stmt->bind_param("si", $institutionName, $lastInsertId);
-            if (!$stmt->execute()) {
-                die('Error in execute statement: ' . $stmt->error);
-            }
-        }
+    // Inserting data into Education table
+    foreach ($_POST['education'] as $education) {
+        $stmt = $conn->prepare("INSERT INTO education (institutionName) VALUES (?)");
+        $stmt->bind_param("s", $education['institutionName']);
+        $stmt->execute();
 
         $educationId = $stmt->insert_id;
 
-        foreach ($degrees as $degree) {
-            $degreeName = $degree['degree'];
-            $educationCompleted = $degree['educationCompleted'];
-            $major = $degree['major'];
-            $graduationDate = $degree['graduationDate'];
-            $additionalInfo = $degree['additionalInfo'];
-            $grade = $degree['grade'];
-            $outOf = $degree['outOf'];
-
-            $stmt = $conn->prepare("INSERT INTO degrees (degreeName, educationCompleted, major, graduationDate, additionalInfo, grade, outOf, education_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
-            $stmt->bind_param("sssssssi", $degreeName, $educationCompleted, $major, $graduationDate, $additionalInfo, $grade, $outOf, $educationId);
-            if (!$stmt->execute()) {
-                die('Error in execute statement: ' . $stmt->error);
-            }
+        // Inserting data into Degrees table
+        foreach ($education['degrees'] as $degree) {
+            $stmt = $conn->prepare("INSERT INTO degrees (degree, educationCompleted, graduationDate, major, additionalInfo, grade, outOf, institution_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+            $stmt->bind_param("ssssssss", $degree['degree'], $degree['educationCompleted'], $degree['graduationDate'], $degree['major'], $degree['additionalInfo'], $degree['grade'], $degree['outOf'], $educationId);
+            $stmt->execute();
         }
     }
 
-    $militaryStatus = $_POST['militaryStatus'];
-    $militaryAdditionalInfo = $_POST['militaryAdditionalInfo'];
 
-    $stmt = $conn->prepare("INSERT INTO military (militaryStatus, militaryAdditionalInfo, jobresume_id) VALUES (?, ?, ?)");
-    $stmt->bind_param("ssi", $militaryStatus, $militaryAdditionalInfo, $lastInsertId);
-    if (!$stmt->execute()) {
-        die('Error in execute statement: ' . $stmt->error);
+    // Inserting data into Branches table
+    foreach ($_POST['branches'] as $branch) {
+        $stmt = $conn->prepare("INSERT INTO branches (branch, unit, beginningRank, endingRank, startDate, endDate, areaOfExpertise, recognition) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+        $stmt->bind_param("ssssssss", $branch['branch'], $branch['unit'], $branch['beginningRank'], $branch['endingRank'], $branch['startDate'], $branch['endDate'], $branch['areaOfExpertise'], $branch['recognition']);
+        $stmt->execute();
     }
 
-    $militaryId = $stmt->insert_id;
-
-    $branches = $_POST['branches'];
-    foreach ($branches as $branch) {
-        $branchName = $branch['branch'];
-        $unit = $branch['unit'];
-        $beginningRank = $branch['beginningRank'];
-        $endingRank = $branch['endingRank'];
-        $startDate = $branch['startDate'];
-        $endDate = $branch['endDate'];
-        $areaOfExpertise = $branch['areaOfExpertise'];
-        $recognition = $branch['recognition'];
-
-        $stmt = $conn->prepare("INSERT INTO militarybranches (branchName, unit, beginningRank, endingRank, startDate, endDate, areaOfExpertise, recognition, military_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
-        $stmt->bind_param("ssssssssi", $branchName, $unit, $beginningRank, $endingRank, $startDate, $endDate, $areaOfExpertise, $recognition, $militaryId);
-        if (!$stmt->execute()) {
-            die('Error in execute statement: ' . $stmt->error);
-        }
+    // Inserting data into desired_jobs table
+    foreach ($_POST['desiredJobType'] as $desiredJob) {
+        $stmt = $conn->prepare("INSERT INTO job_types (resume_id, jobType) VALUES (?, ?)");
+        $stmt->bind_param("ss", $resumeId, $desiredJob);
+        $stmt->execute();
     }
 
-    $message = 'Data inserted successfully';
-    $response = array(
-        'success' => true,
-        'message' => $message,
-    );
-
-    header('Content-Type: application/json');
-    $jsonResponse = json_encode($response);
-    echo $jsonResponse;
+    echo json_encode(array('success' => true, 'message' => 'Data inserted successfully'));
+} else {
+    echo json_encode(array('success' => false, 'message' => 'Invalid request method'));
 }
-
-$stmt->close();
-$conn->close();
