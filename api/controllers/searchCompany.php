@@ -4,8 +4,8 @@ include "../includes/config.php";
 
 
 
-if ($_SERVER['REQUEST_METHOD'] == "GET") {
-    $company =$_GET['company'];
+if ($_SERVER['REQUEST_METHOD'] == "POST") {
+    $company =$_POST['company'];
   
 
     $query = "SELECT * FROM `recruiters` WHERE`company` = ?)";
