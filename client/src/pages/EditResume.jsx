@@ -249,7 +249,7 @@ const EditResume = () => {
     }
 
     fetch(`${API}/controllers/updateResume.php?id=${id}`, {
-      method: "PUT",
+      method: "POST",
       body: data,
       credentials: "include",
     })
@@ -262,7 +262,7 @@ const EditResume = () => {
       .then((data) => {
         if (data.success) {
           toast.success(data.message);
-          navigate("/job-seeker-dashboard/manage-resume");
+          navigate("/job-seeker-dashboard/manage-resumes");
         } else {
           toast.error(data.message);
         }
