@@ -23,7 +23,7 @@ const CompanyDirectory = () => {
 
   const handleSearchSubmit = (event) => {
     event.preventDefault();
-    fetch(`${API}/controllers/searchCompanies.php`, {
+    fetch(`${API}/controllers/searchCompany.php`, {
       method: "POST",
       credentials: "include",
       headers: {

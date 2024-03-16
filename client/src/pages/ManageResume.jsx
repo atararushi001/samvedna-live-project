@@ -13,7 +13,7 @@ const ManageResume = () => {
   const [privateResumes, setPrivateResumes] = useState([]);
 
   useEffect(() => {
-    fetch(`${API}/controllers/createResume.php`, {
+    fetch(`${API}/controllers/getResume.php`, {
       method: "GET",
       credentials: "include",
     })
