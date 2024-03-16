@@ -3,13 +3,13 @@ include "../includes/config.php";
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     try {
-        $stmt = $conn->prepare("update job set job_status = 1- job_status WHERE job_id = ?");
+        $stmt = $conn->prepare("UPDATE job SET job_status = 1 - job_status WHERE job_id = ?");
         $stmt->bind_param("s", $_POST['job_id']);
         $stmt->execute();
 
-        $result = $stmt->get_result();
+        $affectedRows = $stmt->affected_rows;
 
-        if (!$result) {
+        if ($affectedRows > 0) {
             $response = array(
                 'success' => true,
                 'message' => 'Job status changed!',
@@ -17,7 +17,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } else {
             $response = array(
                 'success' => false,
-                'message' => 'Job not Found!',
+                'message' => 'Job not found or status already updated!',
             );
         }
 

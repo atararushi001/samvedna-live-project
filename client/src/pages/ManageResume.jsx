@@ -9,6 +9,19 @@ const API = import.meta.env.VITE_API_URL;
 const ManageResume = () => {
   const navigate = useNavigate();
 
+  useEffect(() => {
+    const isLoggedIn = sessionStorage.getItem("isLoggedIn");
+    const recruiterId = sessionStorage.getItem("recruiters_id");
+
+    if (isLoggedIn) {
+      if (recruiterId) {
+        navigate("/recruiter-dashboard");
+      }
+    } else {
+      navigate("/job-seeker-login");
+    }
+  }, [navigate]);
+
   const [publicResumes, setPublicResumes] = useState([]);
   const [privateResumes, setPrivateResumes] = useState([]);
 

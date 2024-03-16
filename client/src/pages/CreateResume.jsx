@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
@@ -6,6 +6,19 @@ const API = import.meta.env.VITE_API_URL;
 
 const CreateResume = () => {
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const isLoggedIn = sessionStorage.getItem("isLoggedIn");
+    const recruiterId = sessionStorage.getItem("recruiters_id");
+
+    if (isLoggedIn) {
+      if (recruiterId) {
+        navigate("/recruiter-dashboard");
+      }
+    } else {
+      navigate("/job-seeker-login");
+    }
+  }, [navigate]);
 
   const [formData, setFormData] = useState({
     resumeName: "",

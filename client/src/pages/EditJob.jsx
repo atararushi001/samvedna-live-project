@@ -27,35 +27,28 @@ const EditJob = () => {
   }, [navigate]);
 
   useEffect(() => {
-    const getJob = async () => {
-      try {
-        const response = await fetch(
-          `${API}/controllers/getJob.php?job_id=${id}`,
-          {
-            method: "GET",
-            credentials: "include",
+    try {
+      fetch(`${API}/controllers/getJob.php?job_id=${id}`, {
+        method: "GET",
+        credentials: "include",
+      })
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
           }
-        );
-
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        const data = await response.json();
-
-        if (data.success) {
-          setJob(data.job[0]);
-          console.log(job);
-        } else {
-          console.log(data.message);
-        }
-      } catch (error) {
-        console.error(error);
-      }
-    };
-
-    getJob();
-  }, [id, job]);
+          return response.json();
+        })
+        .then((data) => {
+          if (data.success) {
+            setJob(data.job[0]);
+          } else {
+            console.log(data.message);
+          }
+        });
+    } catch (error) {
+      console.error(error);
+    }
+  }, []);
 
   const handleInputChange = (event) => {
     const { name, value, type, checked } = event.target;
@@ -94,9 +87,46 @@ const EditJob = () => {
       const data = await response.json();
 
       if (data.success) {
-        console.log(data);
         toast.success("Job updated successfully!");
         navigate("/recruiter-dashboard");
+      } else {
+        console.log(data.message);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const handleJobDeactivation = async (e, status) => {
+    e.preventDefault();
+
+    const confirmDeactivation = window.confirm(
+      `Are you sure you want to ${status} this job?`
+    );
+
+    if (!confirmDeactivation) {
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("job_id", job.job_id);
+
+    try {
+      const response = await fetch(`${API}/controllers/getJobStatus.php`, {
+        method: "POST",
+        credentials: "include",
+        body: formData,
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+
+      if (data.success) {
+        toast.success("Job status updated successfully!");
+        navigate("/recruiter-dashboard/view-jobs");
       } else {
         console.log(data.message);
       }
@@ -555,9 +585,29 @@ const EditJob = () => {
               />
             </fieldset>
 
-            <button type="submit" className="btn">
-              Update
-            </button>
+            <div className="input-group row">
+              {job.job_status === 1 ? (
+                <button
+                  type="submit"
+                  className="btn btn-delete"
+                  onClick={(e) => handleJobDeactivation(e, "Deactivate")}
+                >
+                  Deactivate Job?
+                </button>
+              ) : (
+                <button
+                  type="submit"
+                  className="btn"
+                  onClick={(e) => handleJobDeactivation(e, "Activate")}
+                >
+                  Activate Job?
+                </button>
+              )}
+
+              <button type="submit" className="btn btn-outline">
+                Update
+              </button>
+            </div>
           </form>
         </section>
       </div>

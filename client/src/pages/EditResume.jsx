@@ -8,6 +8,19 @@ const EditResume = () => {
   const navigate = useNavigate();
   const { id } = useParams();
 
+  useEffect(() => {
+    const isLoggedIn = sessionStorage.getItem("isLoggedIn");
+    const recruiterId = sessionStorage.getItem("recruiters_id");
+
+    if (isLoggedIn) {
+      if (recruiterId) {
+        navigate("/recruiter-dashboard");
+      }
+    } else {
+      navigate("/job-seeker-login");
+    }
+  }, [navigate]);
+
   const [formData, setFormData] = useState({
     resumeName: "",
     firstName: "",
