@@ -13,7 +13,6 @@ import Blog from "./pages/Blog";
 import Gallery from "./pages/Gallery";
 import About from "./pages/About";
 import Contact from "./pages/Contact";
-import Search from "./pages/Search";
 
 import Login from "./pages/Login";
 import RecruiterLogin from "./pages/logins/RecruiterLogin";
@@ -34,11 +33,12 @@ import PostJob from "./pages/PostJob";
 
 import NotFound from "./pages/404";
 import EditJob from "./pages/EditJob";
-import SearchResults from "./pages/SearchResults";
 
 import ManageResume from "./pages/ManageResume";
 import CreateResume from "./pages/CreateResume";
 import EditResume from "./pages/EditResume";
+import Search from "./pages/Search";
+import SearchResults from "./pages/SearchResults";
 
 import CompanyDirectory from "./pages/CompanyDirectory";
 
@@ -57,8 +57,6 @@ const App = () => {
             <Route path="/gallery" element={<Gallery />} />
             <Route path="/about" element={<About />} />
             <Route path="/contact" element={<Contact />} />
-            <Route path="/search" element={<Search />} />
-            <Route path="/search-results" element={<SearchResults />} />
             <Route path="/view-job" element={<ViewJob />} />
 
             <Route path="/login" element={<Login />} />
@@ -91,6 +89,8 @@ const App = () => {
             <Route path="create-resume" element={<CreateResume />} />
             <Route path="edit-resume/:id" element={<EditResume />} />
             <Route path="company-directory" element={<CompanyDirectory />} />
+            <Route path="search" element={<Search />} />
+            <Route path="search-results" element={<SearchResults />} />
           </Route>
 
           <Route path="self-employed-dashboard" element={<Recruiter />}>

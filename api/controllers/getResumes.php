@@ -1,4 +1,3 @@
-
 <?php
 include "../includes/config.php";
 
@@ -10,27 +9,37 @@ function handleError($message)
 }
 
 if ($_SERVER['REQUEST_METHOD'] == "GET") {
-    $query = "SELECT *
-    FROM jobresume
-    LEFT JOIN resumeemployers ON jobresume.res_id = resumeemployers.jobresume_id
-    LEFT JOIN positions ON resumeemployers.resumeemployers_id = positions.resumeemployers_id
-    LEFT JOIN education ON jobresume.jobresume_id = education.jobresume_id
-    LEFT JOIN degrees ON education.education_id = degrees.education_id
-    LEFT JOIN military ON jobresume.jobresume_id = military.jobresume_id
-    LEFT JOIN militarybranches ON military.military_id  = militarybranches.military_id ";
-    $stmt = $conn->prepare($query);
- 
+    $baseQuery = "SELECT jobresume.*, resumeemployers.*, positions.*, education.*, degrees.*, military.*, militarybranches.*
+                    FROM jobresume
+                    LEFT JOIN resumeemployers ON jobresume.res_id = resumeemployers.jobresume_id
+                    LEFT JOIN positions ON resumeemployers.resumeemployers_id = positions.resumeemployers_id
+                    LEFT JOIN education ON jobresume.res_id = education.jobresume_id
+                    LEFT JOIN degrees ON education.education_id = degrees.education_id
+                    LEFT JOIN military ON jobresume.res_id = military.jobresume_id
+                    LEFT JOIN militarybranches ON military.military_id  = militarybranches.military_id";
+
+    $publishedQuery = $baseQuery . " WHERE jobresume.published = true GROUP BY jobresume.res_id";
+    $privateQuery = $baseQuery . " WHERE jobresume.published = false GROUP BY jobresume.res_id";
+
 
     try {
+        $stmt = $conn->prepare($publishedQuery);
         $stmt->execute();
-
         $result = $stmt->get_result();
-        $rows = $result->fetch_all(MYSQLI_ASSOC);
+        $publishedResumes = $result->fetch_all(MYSQLI_ASSOC);
+        $stmt->close();
+
+        $stmt = $conn->prepare($privateQuery);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $privateResumes = $result->fetch_all(MYSQLI_ASSOC);
+        $stmt->close();
 
         $response = array(
             'success' => true,
-            'message' => 'job resume found!',
-            'job' => $rows,
+            'message' => 'job resumes found!',
+            'publicResumes' => $publishedResumes,
+            'privateResumes' => $privateResumes,
         );
 
         header('Content-Type: application/json');
@@ -38,7 +47,6 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
     } catch (Exception $e) {
         handleError("Database error: " . $e->getMessage());
     } finally {
-        $stmt->close();
         $conn->close();
     }
 }

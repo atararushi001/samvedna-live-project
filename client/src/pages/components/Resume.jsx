@@ -41,16 +41,16 @@ const Resume = ({ resumes, title, description }) => {
       </div>
       <div className="resumes-body">
         {resumes.length > 0 ? (
-          resumes.map((resume) => (
-            <div key={resume.id} className="resume">
-              <h3>{resume.name}</h3>
+          resumes.map((resume, index) => (
+            <div key={index} className="resume">
+              <h3>{resume.resumeName}</h3>
               <p>
                 Published on: {new Date(resume.published).toLocaleDateString()}
               </p>
               <div className="controls">
                 <Link
                   className="link"
-                  to={`/job-seeker-dashboard/edit-resume/${resume.id}`}
+                  to={`/job-seeker-dashboard/edit-resume/${resume.res_id}`}
                 >
                   <FontAwesomeIcon icon="pen" />
                 </Link>
@@ -60,7 +60,7 @@ const Resume = ({ resumes, title, description }) => {
                     outline: "none",
                     border: "none",
                   }}
-                  onClick={() => handleDelete(resume.id)}
+                  onClick={() => handleDelete(resume.res_id)}
                 >
                   <FontAwesomeIcon icon="trash" className="link delete" />
                 </button>
