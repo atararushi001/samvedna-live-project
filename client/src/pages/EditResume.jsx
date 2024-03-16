@@ -8,6 +8,19 @@ const EditResume = () => {
   const navigate = useNavigate();
   const { id } = useParams();
 
+  useEffect(() => {
+    const isLoggedIn = sessionStorage.getItem("isLoggedIn");
+    const recruiterId = sessionStorage.getItem("recruiters_id");
+
+    if (isLoggedIn) {
+      if (recruiterId) {
+        navigate("/recruiter-dashboard");
+      }
+    } else {
+      navigate("/job-seeker-login");
+    }
+  }, [navigate]);
+
   const [formData, setFormData] = useState({
     resumeName: "",
     firstName: "",
@@ -249,7 +262,7 @@ const EditResume = () => {
     }
 
     fetch(`${API}/controllers/updateResume.php?id=${id}`, {
-      method: "PUT",
+      method: "POST",
       body: data,
       credentials: "include",
     })
@@ -262,7 +275,7 @@ const EditResume = () => {
       .then((data) => {
         if (data.success) {
           toast.success(data.message);
-          navigate("/job-seeker-dashboard/manage-resume");
+          navigate("/job-seeker-dashboard/manage-resumes");
         } else {
           toast.error(data.message);
         }

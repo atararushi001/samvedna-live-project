@@ -1,9 +1,25 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
 const API = import.meta.env.VITE_API_URL;
 
 const CompanyDirectory = () => {
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const isLoggedIn = sessionStorage.getItem("isLoggedIn");
+    const recruiterId = sessionStorage.getItem("recruiters_id");
+
+    if (isLoggedIn) {
+      if (recruiterId) {
+        navigate("/recruiter-dashboard");
+      }
+    } else {
+      navigate("/job-seeker-login");
+    }
+  }, [navigate]);
+
   const [companies, setCompanies] = useState([]);
   const [search, setSearch] = useState("");
   const [numberOfEntries, setNumberOfEntries] = useState(10);

@@ -149,11 +149,7 @@ const JobSeekerDashboard = () => {
             <h1>
               <span className="highlight-text">Job Seeker</span> Registration
             </h1>
-            <p>
-              Submit your resume here... Please fill in the following form to
-              get a free <strong>&ldquo;Samvedna Jobs&rdquo;</strong> account.
-              Get Started <span className="highlight-text">NOW</span>
-            </p>
+            <p>Update your details to get the best job opportunities.</p>
 
             <form method="post" onSubmit={handleSubmit}>
               <fieldset>

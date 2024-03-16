@@ -60,13 +60,15 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
         $stmt->execute();
         $result = $stmt->get_result();
         while ($row = $result->fetch_assoc()) {
+            $employerId = $row['employer_id'];
             $employerName = $row['employerName'];
             $position = array(
                 'positionTitle' => $row['positionTitle'],
                 'startDate' => $row['startDate'],
                 'endDate' => $row['endDate'],
                 'isCurrentPosition' => $row['isCurrentPosition'] === 'true' ? true : false,
-                'jobDescription' => $row['jobDescription']
+                'jobDescription' => $row['jobDescription'],
+                'position_id' => $row['position_id'] // Add position_id to the response for updating purposes
             );
 
             // Check if employer already exists
@@ -85,6 +87,7 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
             } else {
                 $employer = array(
                     'employerName' => $employerName,
+                    'employer_id' => $employerId, // Add employer_id to the response for updating purposes
                     'positions' => array($position)
                 );
                 $response['employers'][] = $employer;
@@ -107,12 +110,14 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
                 'graduationDate' => $row['graduationDate'],
                 'additionalInfo' => $row['additionalInfo'],
                 'grade' => $row['grade'],
-                'outOf' => $row['outOf']
+                'outOf' => $row['outOf'],
+                'degree_id' => $row['degree_id'] // Add degree_id to the response for updating purposes
             );
 
             // Add the degree to the education array
             $response['education'][] = array(
                 'institutionName' => $row['institutionName'],
+                'institution_id' => $row['institution_id'], // Add institution_id to the response for updating purposes
                 'degrees' => array($degree)
             );
         }
@@ -133,7 +138,8 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
                 'startDate' => $row['startDate'],
                 'endDate' => $row['endDate'],
                 'areaOfExpertise' => $row['areaOfExpertise'],
-                'recognition' => $row['recognition']
+                'recognition' => $row['recognition'],
+                'branch_id' => $row['branch_id'] // Add branch_id to the response for updating purposes
             );
             $response['branches'][] = $branch;
         }
