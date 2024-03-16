@@ -9,17 +9,10 @@ function handleError($message)
 }
 
 if ($_SERVER['REQUEST_METHOD'] == "GET") {
-    $baseQuery = "SELECT jobresume.*, resumeemployers.*, positions.*, education.*, degrees.*, military.*, militarybranches.*
-                    FROM jobresume
-                    LEFT JOIN resumeemployers ON jobresume.res_id = resumeemployers.jobresume_id
-                    LEFT JOIN positions ON resumeemployers.resumeemployers_id = positions.resumeemployers_id
-                    LEFT JOIN education ON jobresume.res_id = education.jobresume_id
-                    LEFT JOIN degrees ON education.education_id = degrees.education_id
-                    LEFT JOIN military ON jobresume.res_id = military.jobresume_id
-                    LEFT JOIN militarybranches ON military.military_id  = militarybranches.military_id";
+    $baseQuery = "SELECT * FROM resumes";
 
-    $publishedQuery = $baseQuery . " WHERE jobresume.published = true GROUP BY jobresume.res_id";
-    $privateQuery = $baseQuery . " WHERE jobresume.published = false GROUP BY jobresume.res_id";
+    $publishedQuery = $baseQuery . " WHERE resumes.published = 'true' GROUP BY resumes.resume_id";
+    $privateQuery = $baseQuery . " WHERE resumes.published = 'false' GROUP BY resumes.resume_id";
 
 
     try {
@@ -27,19 +20,30 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
         $stmt->execute();
         $result = $stmt->get_result();
         $publishedResumes = $result->fetch_all(MYSQLI_ASSOC);
+
+        foreach ($publishedResumes as $index => $resume) {
+            $publishedResumes[$index]['published'] = $resume['published'] === 'true' ? true : false;
+        }
+
         $stmt->close();
 
         $stmt = $conn->prepare($privateQuery);
         $stmt->execute();
         $result = $stmt->get_result();
         $privateResumes = $result->fetch_all(MYSQLI_ASSOC);
+
+        foreach ($privateResumes as $index => $resume) {
+            $privateResumes[$index]['published'] = $resume['published'] === 'true' ? true : false;
+        }
+
         $stmt->close();
+
 
         $response = array(
             'success' => true,
             'message' => 'job resumes found!',
             'publicResumes' => $publishedResumes,
-            'privateResumes' => $privateResumes,
+            'privateResumes' => $privateResumes
         );
 
         header('Content-Type: application/json');

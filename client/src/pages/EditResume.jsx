@@ -248,7 +248,7 @@ const EditResume = () => {
       }
     }
 
-    fetch(`${API}/controllers/updateResume.php?res_id=${id}`, {
+    fetch(`${API}/controllers/updateResume.php?id=${id}`, {
       method: "PUT",
       body: data,
       credentials: "include",
@@ -260,7 +260,6 @@ const EditResume = () => {
         return response.json();
       })
       .then((data) => {
-        console.log(data);
         if (data.success) {
           toast.success(data.message);
           navigate("/job-seeker-dashboard/manage-resume");
@@ -275,7 +274,7 @@ const EditResume = () => {
   };
 
   useEffect(() => {
-    fetch(`${API}/controllers/getResume.php?res_id=${id}`, {
+    fetch(`${API}/controllers/getResume.php?id=${id}`, {
       credentials: "include",
     })
       .then((response) => {
@@ -285,13 +284,11 @@ const EditResume = () => {
         return response.json();
       })
       .then((data) => {
-        console.log(data);
-        // if (data.success) {
-        //   setFormData(data.resume);
-        // } else {
-        //   toast.error(data.message);
-        //   navigate("/job-seeker-dashboard/manage-resumes");
-        // }
+        if (data.success) {
+          setFormData(data.resume);
+        } else {
+          toast.error(data.message);
+        }
       })
       .catch((error) => {
         console.error(error);
@@ -995,20 +992,22 @@ const EditResume = () => {
                   type="checkbox"
                   name="desiredJobType"
                   id="desiredJobType1"
-                  value="Full-time"
+                  value="Full-Time"
+                  checked={formData.desiredJobType.includes("Full-Time")}
                   onChange={handleInputChange}
                 />
-                <label htmlFor="desiredJobType1">Full-time</label>
+                <label htmlFor="desiredJobType1">Full-Time</label>
               </div>
               <div className="input-group row">
                 <input
                   type="checkbox"
                   name="desiredJobType"
                   id="desiredJobType2"
-                  value="Part-time"
+                  value="Part-Time"
+                  checked={formData.desiredJobType.includes("Part-Time")}
                   onChange={handleInputChange}
                 />
-                <label htmlFor="desiredJobType2">Part-time</label>
+                <label htmlFor="desiredJobType2">Part-Time</label>
               </div>
               <div className="input-group row">
                 <input
@@ -1016,6 +1015,7 @@ const EditResume = () => {
                   name="desiredJobType"
                   id="desiredJobType3"
                   value="Contract"
+                  checked={formData.desiredJobType.includes("Contract")}
                   onChange={handleInputChange}
                 />
                 <label htmlFor="desiredJobType3">Contract</label>
@@ -1026,6 +1026,7 @@ const EditResume = () => {
                   name="desiredJobType"
                   id="desiredJobType4"
                   value="Temporary"
+                  checked={formData.desiredJobType.includes("Temporary")}
                   onChange={handleInputChange}
                 />
                 <label htmlFor="desiredJobType4">Temporary</label>
@@ -1036,6 +1037,7 @@ const EditResume = () => {
                   name="desiredJobType"
                   id="desiredJobType5"
                   value="Internship"
+                  checked={formData.desiredJobType.includes("Internship")}
                   onChange={handleInputChange}
                 />
                 <label htmlFor="desiredJobType5">Internship</label>
@@ -1046,6 +1048,7 @@ const EditResume = () => {
                   name="desiredJobType"
                   id="desiredJobType6"
                   value="Volunteer"
+                  checked={formData.desiredJobType.includes("Volunteer")}
                   onChange={handleInputChange}
                 />
                 <label htmlFor="desiredJobType6">Volunteer</label>
@@ -1096,6 +1099,7 @@ const EditResume = () => {
               type="checkbox"
               name="published"
               id="published"
+              checked={formData.published}
               onChange={handleInputChange}
             />
             <label htmlFor="published">Publish Resume</label>

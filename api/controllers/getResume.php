@@ -9,12 +9,12 @@ function handleError($message)
 }
 
 if ($_SERVER['REQUEST_METHOD'] == "GET") {
-    $res_id = $_GET['res_id'];
+    $resume_id = $_GET['id'];
 
     try {
         // Fetch jobresume
-        $stmt = $conn->prepare("SELECT * FROM jobresume WHERE res_id = ?");
-        $stmt->bind_param("s", $res_id);
+        $stmt = $conn->prepare("SELECT * FROM resumes WHERE resume_id = ?");
+        $stmt->bind_param("s", $resume_id);
         $stmt->execute();
         $result = $stmt->get_result();
         $resume = $result->fetch_assoc();
@@ -24,12 +24,9 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
             handleError("No job resume found!");
         }
 
-        echo json_encode($resume);
-        die();
-
         // Initialize response object
         $response = array(
-            'res_id' => $resume['res_id'],
+            'resume_id' => $resume['resume_id'],
             'resumeName' => $resume['resumeName'],
             'firstName' => $resume['firstName'],
             'lastName' => $resume['lastName'],
@@ -49,7 +46,7 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
             'militaryStatus' => $resume['militaryStatus'],
             'militaryAdditionalInfo' => $resume['militaryAdditionalInfo'],
             'branches' => array(),
-            'desiredJobType' => json_decode($resume['desiredJobType']),
+            'desiredJobType' => array(),
             'desiredPay' => $resume['desiredPay'],
             'desiredCurrency' => $resume['desiredCurrency'],
             'desiredPaytime' => $resume['desiredPaytime'],
@@ -57,13 +54,9 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
             'published' => $resume['published'],
         );
 
-        // echo json_encode("Here");
-        // die();
-
-
         // Fetch employers and positions
-        $stmt = $conn->prepare("SELECT resumeemployers.*, positions.* FROM resumeemployers LEFT JOIN positions ON resumeemployers.resumeemployers_id = positions.resumeemployers_id WHERE resumeemployers.jobresume_id = ?");
-        $stmt->bind_param("s", $res_id);
+        $stmt = $conn->prepare("SELECT employers.*, positions.* FROM employers LEFT JOIN positions ON employers.employer_id = positions.employer_id WHERE employers.resume_id = ?");
+        $stmt->bind_param("s", $resume_id);
         $stmt->execute();
         $result = $stmt->get_result();
         while ($row = $result->fetch_assoc()) {
@@ -72,21 +65,41 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
                 'positionTitle' => $row['positionTitle'],
                 'startDate' => $row['startDate'],
                 'endDate' => $row['endDate'],
-                'isCurrentPosition' => $row['isCurrentPosition'],
+                'isCurrentPosition' => $row['isCurrentPosition'] === 'true' ? true : false,
                 'jobDescription' => $row['jobDescription']
             );
-            $response['employers'][$employerName]['employerName'] = $employerName;
-            $response['employers'][$employerName]['positions'][] = $position;
+
+            // Check if employer already exists
+            $employerIndex = null;
+            foreach ($response['employers'] as $index => $existingEmployer) {
+                if ($existingEmployer['employerName'] === $employerName) {
+                    $employerIndex = $index;
+                    break;
+                }
+            }
+
+            // If employer exists, add position to its 'positions' array
+            // If not, create a new entry for the employer
+            if ($employerIndex !== null) {
+                $response['employers'][$employerIndex]['positions'][] = $position;
+            } else {
+                $employer = array(
+                    'employerName' => $employerName,
+                    'positions' => array($position)
+                );
+                $response['employers'][] = $employer;
+            }
         }
         $stmt->close();
 
         // Fetch education and degrees
-        $stmt = $conn->prepare("SELECT education.*, degrees.* FROM education LEFT JOIN degrees ON education.education_id = degrees.education_id WHERE education.jobresume_id = ?");
-        $stmt->bind_param("s", $res_id);
+        $stmt = $conn->prepare("SELECT education.*, degrees.* FROM education LEFT JOIN degrees ON education.institution_id = degrees.institution_id WHERE education.resume_id = ?");
+        $stmt->bind_param("s", $resume_id);
         $stmt->execute();
         $result = $stmt->get_result();
+
         while ($row = $result->fetch_assoc()) {
-            $institutionName = $row['institutionName'];
+            // Create a new entry for each degree
             $degree = array(
                 'degree' => $row['degree'],
                 'educationCompleted' => $row['educationCompleted'],
@@ -96,17 +109,19 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
                 'grade' => $row['grade'],
                 'outOf' => $row['outOf']
             );
-            $response['education'][$institutionName]['institutionName'] = $institutionName;
-            $response['education'][$institutionName]['country'] = $row['country'];
-            $response['education'][$institutionName]['state'] = $row['state'];
-            $response['education'][$institutionName]['city'] = $row['city'];
-            $response['education'][$institutionName]['degrees'][] = $degree;
+
+            // Add the degree to the education array
+            $response['education'][] = array(
+                'institutionName' => $row['institutionName'],
+                'degrees' => array($degree)
+            );
         }
+
         $stmt->close();
 
-        // Fetch military and militarybranches
-        $stmt = $conn->prepare("SELECT military.*, militarybranches.* FROM military LEFT JOIN militarybranches ON military.military_id = militarybranches.military_id WHERE military.jobresume_id = ?");
-        $stmt->bind_param("s", $res_id);
+        // Fetch Military Branches
+        $stmt = $conn->prepare("SELECT * FROM branches WHERE resume_id = ?");
+        $stmt->bind_param("s", $resume_id);
         $stmt->execute();
         $result = $stmt->get_result();
         while ($row = $result->fetch_assoc()) {
@@ -124,13 +139,23 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
         }
         $stmt->close();
 
+        // Fetch Desired Job Types
+        $stmt = $conn->prepare("SELECT * FROM job_types WHERE resume_id = ?");
+        $stmt->bind_param("s", $resume_id);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        while ($row = $result->fetch_assoc()) {
+            $response['desiredJobType'][] = $row['jobType'];
+        }
+        $stmt->close();
+
         // Set published flag if it exists in the database
         if (isset($resume['published'])) {
-            $response['published'] = (bool)$resume['published'];
+            $response['published'] = $resume['published'] === 'true' ? true : false;
         }
 
         header('Content-Type: application/json');
-        echo json_encode($response);
+        echo json_encode(array('success' => true, 'message' => 'Data inserted successfully', 'resume' => $response));
     } catch (Exception $e) {
         handleError("Database error: " . $e->getMessage());
     } finally {

@@ -27,7 +27,6 @@ const ManageResume = () => {
         if (data.success) {
           setPublicResumes(data.publicResumes);
           setPrivateResumes(data.privateResumes);
-          navigate("/job-seeker-dashboard/manage-resumes");
         } else {
           toast.error(data.message);
         }
