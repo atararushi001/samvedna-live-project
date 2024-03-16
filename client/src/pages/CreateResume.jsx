@@ -81,78 +81,81 @@ const CreateResume = () => {
     const { name, type, value } = e.target;
     const isChecked = type === "checkbox" ? e.target.checked : false;
 
+    const handleCheckboxChange = (prevState, name, value) => {
+      if (name === "desiredJobType") {
+        return {
+          ...prevState,
+          [name]: prevState[name].includes(value)
+            ? prevState[name].filter((item) => item !== value)
+            : [...prevState[name], value],
+        };
+      } else if (Array.isArray(prevState[name])) {
+        return {
+          ...prevState,
+          [name]: prevState[name].includes(value)
+            ? prevState[name].filter((item) => item !== value)
+            : [...prevState[name], value],
+        };
+      } else {
+        return {
+          ...prevState,
+          [name]: isChecked,
+        };
+      }
+    };
+
+    const handleFieldChange = (prevState, name, value) => {
+      return {
+        ...prevState,
+        [name]: value,
+      };
+    };
+
     setFormData((prevState) => {
-      if (section) {
-        if (subSection) {
-          return {
-            ...prevState,
-            [section]: prevState[section].map((item, idx) =>
-              idx === index
-                ? {
-                    ...item,
-                    [subSection]: item[subSection].map((subItem, subIdx) =>
-                      subIdx === subIndex
-                        ? {
-                            ...subItem,
-                            [name]:
-                              type === "checkbox"
-                                ? isChecked
-                                  ? [
-                                      ...(Array.isArray(subItem[name])
-                                        ? subItem[name]
-                                        : []),
-                                      value,
-                                    ]
-                                  : Array.isArray(subItem[name])
-                                  ? subItem[name].filter(
-                                      (item) => item !== value
-                                    )
-                                  : []
-                                : value,
-                          }
-                        : subItem
-                    ),
-                  }
-                : item
-            ),
-          };
-        } else {
-          return {
-            ...prevState,
-            [section]: prevState[section].map((item, idx) =>
-              idx === index
-                ? {
-                    ...item,
-                    [name]:
-                      type === "checkbox"
-                        ? isChecked
-                          ? [
-                              ...(Array.isArray(item[name]) ? item[name] : []),
-                              value,
-                            ]
-                          : Array.isArray(item[name])
-                          ? item[name].filter((item) => item !== value)
-                          : []
-                        : value,
-                  }
-                : item
-            ),
-          };
-        }
+      if (section && subSection) {
+        return {
+          ...prevState,
+          [section]: prevState[section].map((item, idx) =>
+            idx === index
+              ? {
+                  ...item,
+                  [subSection]: item[subSection].map((subItem, subIdx) =>
+                    subIdx === subIndex
+                      ? {
+                          ...subItem,
+                          [name]:
+                            type === "checkbox"
+                              ? handleCheckboxChange(subItem, name, value)[name]
+                              : handleFieldChange(subItem, name, value)[name],
+                        }
+                      : subItem
+                  ),
+                }
+              : item
+          ),
+        };
+      } else if (section) {
+        return {
+          ...prevState,
+          [section]: prevState[section].map((item, idx) =>
+            idx === index
+              ? {
+                  ...item,
+                  [name]:
+                    type === "checkbox"
+                      ? handleCheckboxChange(item, name, value)[name]
+                      : handleFieldChange(item, name, value)[name],
+                }
+              : item
+          ),
+        };
       } else {
         return {
           ...prevState,
           [name]:
             type === "checkbox"
-              ? isChecked
-                ? [
-                    ...(Array.isArray(prevState[name]) ? prevState[name] : []),
-                    value,
-                  ]
-                : prevState[name].includes(value) // Check if value exists before filtering
-                ? prevState[name].filter((item) => item !== value)
-                : prevState[name] // Return previous state if value not found
-              : value,
+              ? handleCheckboxChange(prevState, name, value)[name]
+              : handleFieldChange(prevState, name, value)[name],
         };
       }
     });
@@ -212,27 +215,32 @@ const CreateResume = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-
     const data = new FormData();
 
     for (const key in formData) {
       if (Array.isArray(formData[key])) {
-        formData[key].forEach((item, index) => {
-          for (const subKey in item) {
-            if (Array.isArray(item[subKey])) {
-              item[subKey].forEach((subItem, subIndex) => {
-                for (const subSubKey in subItem) {
-                  data.append(
-                    `${key}[${index}][${subKey}][${subIndex}][${subSubKey}]`,
-                    subItem[subSubKey]
-                  );
-                }
-              });
-            } else {
-              data.append(`${key}[${index}][${subKey}]`, item[subKey]);
+        if (key === "desiredJobType") {
+          formData[key].forEach((item, index) => {
+            data.append(`${key}[${index}]`, item);
+          });
+        } else {
+          formData[key].forEach((item, index) => {
+            for (const subKey in item) {
+              if (Array.isArray(item[subKey])) {
+                item[subKey].forEach((subItem, subIndex) => {
+                  for (const subSubKey in subItem) {
+                    data.append(
+                      `${key}[${index}][${subKey}][${subIndex}][${subSubKey}]`,
+                      subItem[subSubKey]
+                    );
+                  }
+                });
+              } else {
+                data.append(`${key}[${index}][${subKey}]`, item[subKey]);
+              }
             }
-          }
-        });
+          });
+        }
       } else {
         data.append(key, formData[key]);
       }

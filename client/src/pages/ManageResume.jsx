@@ -13,7 +13,7 @@ const ManageResume = () => {
   const [privateResumes, setPrivateResumes] = useState([]);
 
   useEffect(() => {
-    fetch(`${API}/controllers/getResume.php`, {
+    fetch(`${API}/controllers/getResumes.php`, {
       method: "GET",
       credentials: "include",
     })
@@ -27,8 +27,6 @@ const ManageResume = () => {
         if (data.success) {
           setPublicResumes(data.publicResumes);
           setPrivateResumes(data.privateResumes);
-          toast.success(data.message);
-          navigate("/job-seeker-dashboard/manage-resumes");
         } else {
           toast.error(data.message);
         }
@@ -51,17 +49,9 @@ const ManageResume = () => {
           you! Or keep it private and use it when applying online for jobs.
           Choose an option below to get started
         </p>
-        <div className="controls">
-          <Link to="/job-seeker-dashboard/create-resume" className="btn">
-            Create Resume
-          </Link>
-          <Link
-            to="/job-seeker-dashboard/upload-resume"
-            className="btn btn-outline"
-          >
-            Upload Resume
-          </Link>
-        </div>
+        <Link to="/job-seeker-dashboard/create-resume" className="btn">
+          Create Resume
+        </Link>
       </section>
       <section className="resume-section">
         <h1>

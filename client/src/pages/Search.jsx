@@ -42,7 +42,9 @@ const Search = () => {
       .then((data) => {
         if (data.success) {
           toast.success(data.message);
-          navigate("/search-results", { state: { results: data.jobs } });
+          navigate("/job-seeker-dashboard/search-results", {
+            state: { results: data.jobs },
+          });
         } else {
           toast.error(data.message);
         }

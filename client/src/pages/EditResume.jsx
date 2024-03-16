@@ -82,78 +82,81 @@ const EditResume = () => {
     const { name, type, value } = e.target;
     const isChecked = type === "checkbox" ? e.target.checked : false;
 
+    const handleCheckboxChange = (prevState, name, value) => {
+      if (name === "desiredJobType") {
+        return {
+          ...prevState,
+          [name]: prevState[name].includes(value)
+            ? prevState[name].filter((item) => item !== value)
+            : [...prevState[name], value],
+        };
+      } else if (Array.isArray(prevState[name])) {
+        return {
+          ...prevState,
+          [name]: prevState[name].includes(value)
+            ? prevState[name].filter((item) => item !== value)
+            : [...prevState[name], value],
+        };
+      } else {
+        return {
+          ...prevState,
+          [name]: isChecked,
+        };
+      }
+    };
+
+    const handleFieldChange = (prevState, name, value) => {
+      return {
+        ...prevState,
+        [name]: value,
+      };
+    };
+
     setFormData((prevState) => {
-      if (section) {
-        if (subSection) {
-          return {
-            ...prevState,
-            [section]: prevState[section].map((item, idx) =>
-              idx === index
-                ? {
-                    ...item,
-                    [subSection]: item[subSection].map((subItem, subIdx) =>
-                      subIdx === subIndex
-                        ? {
-                            ...subItem,
-                            [name]:
-                              type === "checkbox"
-                                ? isChecked
-                                  ? [
-                                      ...(Array.isArray(subItem[name])
-                                        ? subItem[name]
-                                        : []),
-                                      value,
-                                    ]
-                                  : Array.isArray(subItem[name])
-                                  ? subItem[name].filter(
-                                      (item) => item !== value
-                                    )
-                                  : []
-                                : value,
-                          }
-                        : subItem
-                    ),
-                  }
-                : item
-            ),
-          };
-        } else {
-          return {
-            ...prevState,
-            [section]: prevState[section].map((item, idx) =>
-              idx === index
-                ? {
-                    ...item,
-                    [name]:
-                      type === "checkbox"
-                        ? isChecked
-                          ? [
-                              ...(Array.isArray(item[name]) ? item[name] : []),
-                              value,
-                            ]
-                          : Array.isArray(item[name])
-                          ? item[name].filter((item) => item !== value)
-                          : []
-                        : value,
-                  }
-                : item
-            ),
-          };
-        }
+      if (section && subSection) {
+        return {
+          ...prevState,
+          [section]: prevState[section].map((item, idx) =>
+            idx === index
+              ? {
+                  ...item,
+                  [subSection]: item[subSection].map((subItem, subIdx) =>
+                    subIdx === subIndex
+                      ? {
+                          ...subItem,
+                          [name]:
+                            type === "checkbox"
+                              ? handleCheckboxChange(subItem, name, value)[name]
+                              : handleFieldChange(subItem, name, value)[name],
+                        }
+                      : subItem
+                  ),
+                }
+              : item
+          ),
+        };
+      } else if (section) {
+        return {
+          ...prevState,
+          [section]: prevState[section].map((item, idx) =>
+            idx === index
+              ? {
+                  ...item,
+                  [name]:
+                    type === "checkbox"
+                      ? handleCheckboxChange(item, name, value)[name]
+                      : handleFieldChange(item, name, value)[name],
+                }
+              : item
+          ),
+        };
       } else {
         return {
           ...prevState,
           [name]:
             type === "checkbox"
-              ? isChecked
-                ? [
-                    ...(Array.isArray(prevState[name]) ? prevState[name] : []),
-                    value,
-                  ]
-                : prevState[name].includes(value) // Check if value exists before filtering
-                ? prevState[name].filter((item) => item !== value)
-                : prevState[name] // Return previous state if value not found
-              : value,
+              ? handleCheckboxChange(prevState, name, value)[name]
+              : handleFieldChange(prevState, name, value)[name],
         };
       }
     });
@@ -218,22 +221,28 @@ const EditResume = () => {
 
     for (const key in formData) {
       if (Array.isArray(formData[key])) {
-        formData[key].forEach((item, index) => {
-          for (const subKey in item) {
-            if (Array.isArray(item[subKey])) {
-              item[subKey].forEach((subItem, subIndex) => {
-                for (const subSubKey in subItem) {
-                  data.append(
-                    `${key}[${index}][${subKey}][${subIndex}][${subSubKey}]`,
-                    subItem[subSubKey]
-                  );
-                }
-              });
-            } else {
-              data.append(`${key}[${index}][${subKey}]`, item[subKey]);
+        if (key === "desiredJobType") {
+          formData[key].forEach((item, index) => {
+            data.append(`${key}[${index}]`, item);
+          });
+        } else {
+          formData[key].forEach((item, index) => {
+            for (const subKey in item) {
+              if (Array.isArray(item[subKey])) {
+                item[subKey].forEach((subItem, subIndex) => {
+                  for (const subSubKey in subItem) {
+                    data.append(
+                      `${key}[${index}][${subKey}][${subIndex}][${subSubKey}]`,
+                      subItem[subSubKey]
+                    );
+                  }
+                });
+              } else {
+                data.append(`${key}[${index}][${subKey}]`, item[subKey]);
+              }
             }
-          }
-        });
+          });
+        }
       } else {
         data.append(key, formData[key]);
       }
@@ -251,7 +260,6 @@ const EditResume = () => {
         return response.json();
       })
       .then((data) => {
-        console.log(data);
         if (data.success) {
           toast.success(data.message);
           navigate("/job-seeker-dashboard/manage-resume");
@@ -280,7 +288,6 @@ const EditResume = () => {
           setFormData(data.resume);
         } else {
           toast.error(data.message);
-          navigate("/job-seeker-dashboard/manage-resumes");
         }
       })
       .catch((error) => {
@@ -985,20 +992,22 @@ const EditResume = () => {
                   type="checkbox"
                   name="desiredJobType"
                   id="desiredJobType1"
-                  value="Full-time"
+                  value="Full-Time"
+                  checked={formData.desiredJobType.includes("Full-Time")}
                   onChange={handleInputChange}
                 />
-                <label htmlFor="desiredJobType1">Full-time</label>
+                <label htmlFor="desiredJobType1">Full-Time</label>
               </div>
               <div className="input-group row">
                 <input
                   type="checkbox"
                   name="desiredJobType"
                   id="desiredJobType2"
-                  value="Part-time"
+                  value="Part-Time"
+                  checked={formData.desiredJobType.includes("Part-Time")}
                   onChange={handleInputChange}
                 />
-                <label htmlFor="desiredJobType2">Part-time</label>
+                <label htmlFor="desiredJobType2">Part-Time</label>
               </div>
               <div className="input-group row">
                 <input
@@ -1006,6 +1015,7 @@ const EditResume = () => {
                   name="desiredJobType"
                   id="desiredJobType3"
                   value="Contract"
+                  checked={formData.desiredJobType.includes("Contract")}
                   onChange={handleInputChange}
                 />
                 <label htmlFor="desiredJobType3">Contract</label>
@@ -1016,6 +1026,7 @@ const EditResume = () => {
                   name="desiredJobType"
                   id="desiredJobType4"
                   value="Temporary"
+                  checked={formData.desiredJobType.includes("Temporary")}
                   onChange={handleInputChange}
                 />
                 <label htmlFor="desiredJobType4">Temporary</label>
@@ -1026,6 +1037,7 @@ const EditResume = () => {
                   name="desiredJobType"
                   id="desiredJobType5"
                   value="Internship"
+                  checked={formData.desiredJobType.includes("Internship")}
                   onChange={handleInputChange}
                 />
                 <label htmlFor="desiredJobType5">Internship</label>
@@ -1036,6 +1048,7 @@ const EditResume = () => {
                   name="desiredJobType"
                   id="desiredJobType6"
                   value="Volunteer"
+                  checked={formData.desiredJobType.includes("Volunteer")}
                   onChange={handleInputChange}
                 />
                 <label htmlFor="desiredJobType6">Volunteer</label>
@@ -1086,6 +1099,7 @@ const EditResume = () => {
               type="checkbox"
               name="published"
               id="published"
+              checked={formData.published}
               onChange={handleInputChange}
             />
             <label htmlFor="published">Publish Resume</label>

@@ -22,7 +22,7 @@ const Header = () => {
       setIsLoggedIn(true);
       if (jobSeekerId) {
         setJobSeekerId(jobSeekerId);
-        navigate("/job-seeker-dashboard");
+        // navigate("/job-seeker-dashboard");
       } else if (recruiterId) {
         setRecruiterId(recruiterId);
         // navigate("/recruiter-dashboard");
@@ -154,27 +154,9 @@ const Header = () => {
                   </Link>
                 ) : null}
               </li>
-              <li>
-                <Link
-                  className="nav-link"
-                  to="/search"
-                  onClick={handleLinkNavigation}
-                >
-                  <FontAwesomeIcon icon="search" className="fa-search" />
-                </Link>
-              </li>
             </>
           ) : (
             <>
-              <li>
-                <Link
-                  className="nav-link"
-                  to="/search"
-                  onClick={handleLinkNavigation}
-                >
-                  <FontAwesomeIcon icon="search" className="fa-search" />
-                </Link>
-              </li>
               <div className="btn-container">
                 <Link
                   className="btn btn-outline"

@@ -24,10 +24,8 @@ const JobSeekerDashboard = () => {
       } else if (recruiterId) {
         navigate("/recruiter-dashboard");
       }
-    }
-    else{
+    } else {
       navigate("/job-seeker-login");
-
     }
   }, [navigate]);
 
@@ -230,6 +228,7 @@ const JobSeekerDashboard = () => {
                     id="male"
                     name="gender"
                     value="male"
+                    checked={jobSeeker && jobSeeker.gender === "male"}
                     onChange={handleInputChange}
                   />
                   <label htmlFor="male">Male</label>
@@ -238,6 +237,7 @@ const JobSeekerDashboard = () => {
                     id="female"
                     name="gender"
                     value="female"
+                    checked={jobSeeker && jobSeeker.gender === "female"}
                     onChange={handleInputChange}
                   />
                   <label htmlFor="female">Female</label>
@@ -343,6 +343,7 @@ const JobSeekerDashboard = () => {
                     type="checkbox"
                     id="jobAlerts"
                     name="jobAlerts"
+                    checked={jobSeeker && jobSeeker.jobAlerts}
                     onChange={handleInputChange}
                   />
                   <label htmlFor="jobAlerts">
@@ -456,9 +457,10 @@ const JobSeekerDashboard = () => {
                     id="yesNoQuestion"
                     name="yesNoQuestion"
                     onChange={handleInputChange}
+                    value={jobSeeker && jobSeeker.yesNoQuestion}
                     required
                   >
-                    <option value="" disabled selected>
+                    <option value="" disabled>
                       Select Your Answer
                     </option>
                     <option value="yes">Yes</option>

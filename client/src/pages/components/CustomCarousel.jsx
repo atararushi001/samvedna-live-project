@@ -1,48 +1,48 @@
-import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+// import { useState } from "react";
+import { Link } from "react-router-dom";
 import Carousel from "nuka-carousel";
-import { toast } from "react-toastify";
+// import { toast } from "react-toastify";
 
 const CustomCarousel = () => {
-  const [search, setSearch] = useState("");
-  const [jobType, setJobType] = useState("");
-  const [location, setLocation] = useState("");
-  const [disabilityPercentage, setDisabilityPercentage] = useState("");
+  // const [search, setSearch] = useState("");
+  // const [jobType, setJobType] = useState("");
+  // const [location, setLocation] = useState("");
+  // const [disabilityPercentage, setDisabilityPercentage] = useState("");
 
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  // const handleSubmit = (e) => {
+  //   e.preventDefault();
 
-    const data = new FormData();
-    data.append("search", search);
-    data.append("jobType", jobType);
-    data.append("location", location);
-    data.append("disabilityPercentage", disabilityPercentage);
+  //   const data = new FormData();
+  //   data.append("search", search);
+  //   data.append("jobType", jobType);
+  //   data.append("location", location);
+  //   data.append("disabilityPercentage", disabilityPercentage);
 
-    fetch("http://localhost/MySamvedna/api/controllers/searchJobs.php", {
-      method: "POST",
-      body: data,
-      credentials: "include",
-    })
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        return response.json();
-      })
-      .then((data) => {
-        if (data.success) {
-          navigate("/search-results", { state: { results: data.jobs } })
-        } else {
-          toast.error(data.message);
-        }
-      })
-      .catch((error) => {
-        console.error(error);
-        toast.error("An error occurred: " + error.message);
-      });
-  };
+  //   fetch("http://localhost/MySamvedna/api/controllers/searchJobs.php", {
+  //     method: "POST",
+  //     body: data,
+  //     credentials: "include",
+  //   })
+  //     .then((response) => {
+  //       if (!response.ok) {
+  //         throw new Error(`HTTP error! status: ${response.status}`);
+  //       }
+  //       return response.json();
+  //     })
+  //     .then((data) => {
+  //       if (data.success) {
+  //         navigate("/search-results", { state: { results: data.jobs } });
+  //       } else {
+  //         toast.error(data.message);
+  //       }
+  //     })
+  //     .catch((error) => {
+  //       console.error(error);
+  //       toast.error("An error occurred: " + error.message);
+  //     });
+  // };
   return (
     <Carousel
       autoplay={true}
@@ -78,7 +78,7 @@ const CustomCarousel = () => {
         </div>
       </section>
 
-      <section className="search slider-3">
+      {/* <section className="search slider-3">
         <h1>Search Jobs</h1>
         <form className="slider-form" onSubmit={handleSubmit}>
           <div className="form-group">
@@ -136,7 +136,7 @@ const CustomCarousel = () => {
             Search
           </button>
         </form>
-      </section>
+      </section> */}
     </Carousel>
   );
 };

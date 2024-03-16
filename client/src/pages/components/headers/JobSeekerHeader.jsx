@@ -102,6 +102,15 @@ const RecruiterHeader = () => {
               Company Directory
             </Link>
           </li>
+          <li>
+            <Link
+              className="nav-link"
+              to="/job-seeker-dashboard/search"
+              onClick={handleLinkNavigation}
+            >
+              Search Jobs
+            </Link>
+          </li>
           <div className="btn-container">
             <button className="btn" onClick={handleLogout}>
               Logout

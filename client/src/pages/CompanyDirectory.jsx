@@ -66,7 +66,10 @@ const CompanyDirectory = () => {
         return response.json();
       })
       .then((data) => {
-        setCompanies(data);
+        console.log(data);
+        if (data.success) {
+          setCompanies(data.job);
+        }
       })
       .catch((error) => {
         console.error(error);
