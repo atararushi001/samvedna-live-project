@@ -2,6 +2,7 @@
 include '../includes/config.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $jobSeekerId = $_POST['job_seeker_id'];
     $resumeName = $_POST['resumeName'];
     $firstName = $_POST['firstName'];
     $lastName = $_POST['lastName'];
@@ -25,18 +26,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $published = $_POST['published'];
 
     $stmt = $conn->prepare("INSERT INTO resumes (
-        resumeName, firstName, lastName, suffix, email, 
+        job_seeker_id, resumeName, firstName, lastName, suffix, email, 
         phone, website, linkedin, country, state, 
         city, postalCode, summary, objective, militaryStatus,
         militaryAdditionalInfo, desiredPay, desiredCurrency, desiredPaytime, additionalPreferences, 
         published) VALUES (
-            ?, ?, ?, ?, ?, 
+            ?, ?, ?, ?, ?, ?, 
             ?, ?, ?, ?, ?, 
             ?, ?, ?, ?, ?, 
             ?, ?, ?, ?, ?, 
             ?)");
     $stmt->bind_param(
-        "sssssssssssssssssssss",
+        "ssssssssssssssssssssss",
+        $jobSeekerId,
         $resumeName,
         $firstName,
         $lastName,
@@ -65,8 +67,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // Inserting data into Employers table
     foreach ($_POST['employers'] as $employer) {
-        $stmt = $conn->prepare("INSERT INTO employers (employerName) VALUES (?)");
-        $stmt->bind_param("s", $employer['employerName']);
+        $stmt = $conn->prepare("INSERT INTO employers (resume_id, employerName) VALUES (?, ?)");
+        $stmt->bind_param("ss", $resumeId, $employer['employerName']);
         $stmt->execute();
 
         $employerId = $stmt->insert_id;
@@ -81,8 +83,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // Inserting data into Education table
     foreach ($_POST['education'] as $education) {
-        $stmt = $conn->prepare("INSERT INTO education (institutionName) VALUES (?)");
-        $stmt->bind_param("s", $education['institutionName']);
+        $stmt = $conn->prepare("INSERT INTO education (resume_id, institutionName) VALUES (?, ?)");
+        $stmt->bind_param("ss", $resumeId, $education['institutionName']);
         $stmt->execute();
 
         $educationId = $stmt->insert_id;
@@ -98,8 +100,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // Inserting data into Branches table
     foreach ($_POST['branches'] as $branch) {
-        $stmt = $conn->prepare("INSERT INTO branches (branch, unit, beginningRank, endingRank, startDate, endDate, areaOfExpertise, recognition) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
-        $stmt->bind_param("ssssssss", $branch['branch'], $branch['unit'], $branch['beginningRank'], $branch['endingRank'], $branch['startDate'], $branch['endDate'], $branch['areaOfExpertise'], $branch['recognition']);
+        $stmt = $conn->prepare("INSERT INTO branches (resume_id, branch, unit, beginningRank, endingRank, startDate, endDate, areaOfExpertise, recognition) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
+        $stmt->bind_param("sssssssss", $resumeId, $branch['branch'], $branch['unit'], $branch['beginningRank'], $branch['endingRank'], $branch['startDate'], $branch['endDate'], $branch['areaOfExpertise'], $branch['recognition']);
         $stmt->execute();
     }
 

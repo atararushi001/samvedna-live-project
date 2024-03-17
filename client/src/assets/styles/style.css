@@ -2440,15 +2440,6 @@ table td:last-child {
   margin-top: 0;
 }
 
-.resume-bank .resume-list {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(15rem, 1fr));
-  gap: 1rem;
-  width: 100%;
-  place-content: center;
-  place-items: center;
-}
-
 .resume-bank .resume-list .resume {
   width: 100%;
   display: flex;

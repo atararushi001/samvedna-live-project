@@ -8,6 +8,7 @@ const API = import.meta.env.VITE_API_URL;
 
 const ManageResume = () => {
   const navigate = useNavigate();
+  const jobSeekerId = sessionStorage.getItem("job_seekers_id");
 
   useEffect(() => {
     const isLoggedIn = sessionStorage.getItem("isLoggedIn");
@@ -26,7 +27,7 @@ const ManageResume = () => {
   const [privateResumes, setPrivateResumes] = useState([]);
 
   useEffect(() => {
-    fetch(`${API}/controllers/getResumes.php`, {
+    fetch(`${API}/controllers/getResumes.php?jobSeekerId=${jobSeekerId}`, {
       method: "GET",
       credentials: "include",
     })
@@ -48,7 +49,7 @@ const ManageResume = () => {
         console.error(error);
         toast.error("An error occurred: " + error.message);
       });
-  }, [navigate]);
+  }, [navigate, jobSeekerId]);
 
   return (
     <div className="container">
@@ -73,11 +74,13 @@ const ManageResume = () => {
         <div className="resume-status">
           <Resume
             resumes={publicResumes}
+            where="job-seeker-dashboard"
             title="Public Resumes"
             description={`You don't have a resume active on this site right now. Employers searching for resumes will not be able to find yours unless you have posted it. To post one of your resumes below, choose "Publish on this site" from the options menu.`}
           />
           <Resume
             resumes={privateResumes}
+            where="job-seeker-dashboard"
             title="Private Resumes"
             description="You have no private resumes."
           />

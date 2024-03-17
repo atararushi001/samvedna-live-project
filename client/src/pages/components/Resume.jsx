@@ -5,7 +5,7 @@ import PropTypes from "prop-types";
 
 const API = import.meta.env.VITE_API_URL;
 
-const Resume = ({ resumes, title, description }) => {
+const Resume = ({ resumes, title, description, where }) => {
   const navigate = useNavigate();
 
   const handleDelete = (id) => {
@@ -24,7 +24,6 @@ const Resume = ({ resumes, title, description }) => {
         return response.json();
       })
       .then((data) => {
-        console.log(data);
         if (data.success) {
           toast.success(data.message);
           navigate("/job-seeker-dashboard/manage-resumes");
@@ -47,9 +46,7 @@ const Resume = ({ resumes, title, description }) => {
         {resumes.length > 0 ? (
           resumes.map((resume, index) => (
             <div key={index} className="resume">
-              <Link
-                to={`/job-seeker-dashboard/view-resume/${resume.resume_id}`}
-              >
+              <Link to={`/${where}/view-resume/${resume.resume_id}`}>
                 <h3>{resume.resumeName}</h3>
               </Link>
               {resume.published ? (
@@ -94,6 +91,7 @@ Resume.propTypes = {
   resumes: PropTypes.array.isRequired,
   title: PropTypes.string.isRequired,
   description: PropTypes.string.isRequired,
+  where: PropTypes.string.isRequired,
 };
 
 export default Resume;
