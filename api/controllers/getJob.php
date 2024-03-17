@@ -11,7 +11,7 @@ function handleError($message)
 if ($_SERVER['REQUEST_METHOD'] == "GET") {
     $query = "SELECT job.*, recruiters.profilePicture 
     FROM job 
-    JOIN recruiters ON job.recruiters_id = recruiters.recruiters_id 
+    JOIN recruiters ON job.recruiter_id = recruiters.recruiters_id 
     WHERE job.job_id = ?";
     $stmt = $conn->prepare($query);
     $stmt->bind_param("s", $_GET['job_id']);

@@ -76,19 +76,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $otherInformation = $_POST['otherInformation'];
     $currentDate = date('Y-m-d');
 
-
-    $query = "INSERT INTO `job` (
-        `recruiter_id`, `companyName`, `website`, `natureOfBusiness`, `country`, 
-        `state`, `city`, `fax`, `areaCode`, `landline`, 
-        `mobile`, `email`, `employerName`, `companyDescription`, `jobDesignation`, 
-        `industryCategory`, `jobTitle`, `jobType`, `dutyDescription`, `jobDuration`, 
-        `minimumEducation`, `minimumExperience`, `salaryMin`, `salaryMax`, `workplaceType`, 
-        `placeOfWork`, `ageLimit`, `womenEligible`, `workingHoursFrom`, `workingHoursTo`, 
-        `vacanciesRegular`, `vacanciesTemporary`, `resumesToBeSent`, `resumeEmail`, `resumeWebsite`, 
-        `interviewDetailsDate`, `interviewDetailsTime`, `interviewDetailsAptitudeTest`, `interviewDetailsTechnicalTest`, `interviewDetailsGroupDiscussion`, 
-        `interviewDetailsPersonalInterview`, `interviewDetailsTopics`, `interviewDetailsContactPerson`, `disabilityInfoType`, `disabilityInfoPercentage`, 
-        `disabilityInfoAidOrAppliance`, `ownVehiclePreferred`, `conveyanceProvided`, `conveyanceType`, `otherInformation`, 
-        `postedOn`
+    $query = "INSERT INTO job (
+        recruiter_id, companyName, website, natureOfBusiness, country, 
+        state, city, fax, areaCode, landline, 
+        mobile, email, employerName, companyDescription, jobDesignation, 
+        industryCategory, jobTitle, jobType, dutyDescription, jobDuration, 
+        minimumEducation, minimumExperience, salaryMin, salaryMax, workplaceType, 
+        placeOfWork, ageLimit, womenEligible, workingHoursFrom, workingHoursTo, 
+        vacanciesRegular, vacanciesTemporary, resumesToBeSent, resumeEmail, resumeWebsite, 
+        interviewDetailsDate, interviewDetailsTime, interviewDetailsAptitudeTest, interviewDetailsTechnicalTest, interviewDetailsGroupDiscussion, 
+        interviewDetailsPersonalInterview, interviewDetailsTopics, interviewDetailsContactPerson, disabilityInfoType, disabilityInfoPercentage, 
+        disabilityInfoAidOrAppliance, ownVehiclePreferred, conveyanceProvided, conveyanceType, otherInformation, 
+        postedOn
     ) VALUES (
         ?,?,?,?,?,
         ?,?,?,?,?,
@@ -106,7 +105,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $stmt2 = $conn->prepare($query);
 
     $stmt2->bind_param(
-        "sssssssssssssssssssssssssssssssssssssssssss",
+        "sssssssssssssssssssssssssssssssssssssssssssssssssss",
         $recruiterId,
         $companyName,
         $website,
@@ -159,6 +158,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $otherInformation,
         $currentDate
     );
+
     $stmt2->execute();
 
     $message = "Job posted successfully";

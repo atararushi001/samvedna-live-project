@@ -1,14 +1,17 @@
 import { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 
 const API = import.meta.env.VITE_API_URL;
 
 const EditJob = () => {
-  const [job, setJob] = useState({});
   const { id } = useParams();
-
+  const recruiterId = sessionStorage.getItem("recruiters_id");
   const navigate = useNavigate();
+  const [formData, setFormData] = useState({});
+  const [countries, setCountries] = useState([]);
+  const [states, setStates] = useState([]);
+  const [cities, setCities] = useState([]);
 
   useEffect(() => {
     const isLoggedIn = sessionStorage.getItem("isLoggedIn");
@@ -19,82 +22,192 @@ const EditJob = () => {
       if (jobSeekerId) {
         navigate("/job-seeker-dashboard");
       } else if (recruiterId) {
-        // navigate("/recruiter-dashboard");
+        fetch(`${API}/controllers/getJob.php?job_id=${id}`)
+          .then((response) => response.json())
+          .then((data) => {
+            if (data.success) {
+              setFormData(data.job[0]);
+            } else {
+              toast.error(data.message);
+              navigate("/recruiter-dashboard/view-jobs");
+            }
+          })
+          .catch((error) => {
+            console.error(error);
+            toast.error("Something went wrong");
+            navigate("/recruiter-dashboard/view-jobs");
+          });
       }
     } else {
       navigate("/recruiter-login");
     }
-  }, [navigate]);
+  }, [navigate, id]);
 
   useEffect(() => {
-    try {
-      fetch(`${API}/controllers/getJob.php?job_id=${id}`, {
-        method: "GET",
-        credentials: "include",
+    fetch(`${API}/controllers/getCountry.php`)
+      .then((response) => response.text())
+      .then((data) => {
+        const options = parseOptions(data);
+        setCountries(options);
       })
-        .then((response) => {
-          if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-          }
-          return response.json();
-        })
-        .then((data) => {
-          if (data.success) {
-            setJob(data.job[0]);
-          } else {
-            console.log(data.message);
-          }
-        });
-    } catch (error) {
-      console.error(error);
-    }
+      .catch((error) => console.error(error));
   }, []);
+
+  useEffect(() => {
+    if (formData.country) {
+      fetch(`${API}/controllers/getState.php?country_id=${formData.country}`)
+        .then((response) => response.text())
+        .then((data) => {
+          const options = parseOptions(data);
+          setStates(options);
+        })
+        .catch((error) => console.error(error));
+    }
+  }, [formData.country]);
+
+  useEffect(() => {
+    if (formData.state) {
+      fetch(`${API}/controllers/getCity.php?state_id=${formData.state}`)
+        .then((response) => response.text())
+        .then((data) => {
+          const options = parseOptions(data);
+          setCities(options);
+        })
+        .catch((error) => console.error(error));
+    }
+  }, [formData.state]);
+
+  const parseOptions = (htmlString) => {
+    const parser = new DOMParser();
+    const htmlDoc = parser.parseFromString(htmlString, "text/html");
+    return Array.from(htmlDoc.querySelectorAll("option")).map((opt) => ({
+      value: opt.value,
+      label: opt.textContent,
+    }));
+  };
 
   const handleInputChange = (event) => {
     const { name, value, type, checked } = event.target;
-    const [first, second] = name.split(".");
-    const updatedJob = { ...job };
-
-    if (type === "checkbox") {
-      updatedJob[first][second] = checked;
-    } else {
-      updatedJob[first] = value;
-    }
-
-    setJob(updatedJob);
+    setFormData((prevFormData) => {
+      if (name === "vehiclePreference") {
+        return {
+          ...prevFormData,
+          ownVehiclePreferred: value === "ownVehiclePreferred",
+          conveyanceProvided: value === "conveyanceProvided",
+        };
+      } else if (name.includes(".")) {
+        const [parent, child] = name.split(".");
+        return {
+          ...prevFormData,
+          [parent]: {
+            ...prevFormData[parent],
+            [child]: type === "checkbox" ? checked : value,
+          },
+        };
+      } else {
+        return {
+          ...prevFormData,
+          [name]: type === "checkbox" ? checked : value,
+        };
+      }
+    });
   };
 
-  const handleSubmit = async (event) => {
+  function flattenData(data) {
+    const result = {};
+
+    for (const key in data) {
+      if (typeof data[key] === "object" && data[key] !== null) {
+        const temp = flattenData(data[key]);
+        for (const k in temp) {
+          result[`${key}${k.charAt(0).toUpperCase() + k.slice(1)}`] = temp[k];
+        }
+      } else {
+        result[key] = data[key];
+      }
+    }
+
+    return result;
+  }
+
+  const handleSubmit = (event) => {
     event.preventDefault();
 
-    const formData = new FormData();
-
-    for (const key in job) {
-      formData.append(key, job[key]);
+    if (formData.workingHoursFrom > formData.workingHoursTo) {
+      toast.error("Working hours from should be less than working hours to");
+      return;
     }
 
-    try {
-      const response = await fetch(`${API}/controllers/editJob.php`, {
-        method: "POST",
-        credentials: "include",
-        body: formData,
+    if (formData.interviewDetailsDate < new Date().toISOString().slice(0, 10)) {
+      toast.error("Interview date should be greater than today's date");
+      return;
+    }
+
+    if (
+      formData.interviewDetailsTechnicalTest &&
+      formData.interviewDetailsTopics === ""
+    ) {
+      toast.error("Technical test details should be filled");
+      return;
+    }
+
+    if (formData.resumesToBeSent === "Online" && formData.resumeEmail === "") {
+      toast.error("Resume email should be filled");
+      return;
+    }
+
+    if (
+      formData.disabilityInfoType === "" &&
+      formData.disabilityInfoPercentage === "" &&
+      formData.disabilityInfoAidOrAppliance === ""
+    ) {
+      toast.error("Disability information should be filled");
+      return;
+    }
+
+    if (formData.vehiclePreference === "" && formData.conveyanceType === "") {
+      toast.error("Vehicle preference should be filled");
+      return;
+    }
+
+    if (
+      formData.vehiclePreference === "conveyanceProvided" &&
+      formData.conveyanceType === ""
+    ) {
+      toast.error("Conveyance type should be filled");
+      return;
+    }
+
+    const flattenedData = flattenData(formData);
+
+    const data = new FormData();
+    data.append("recruiter_id", recruiterId);
+
+    for (const key in flattenedData) {
+      data.append(key, flattenedData[key]);
+    }
+
+    fetch(`${API}/controllers/editJob.php`, {
+      method: "POST",
+      body: data,
+      credentials: "include",
+    })
+      .then((res) => {
+        return res.json();
+      })
+      .then((data) => {
+        console.log(data);
+        if (data.success) {
+          toast.success(data.message);
+          navigate("/recruiter-dashboard/view-jobs");
+        } else {
+          toast.error(data.message);
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+        toast.error("Something went wrong");
       });
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      const data = await response.json();
-
-      if (data.success) {
-        toast.success("Job updated successfully!");
-        navigate("/recruiter-dashboard");
-      } else {
-        console.log(data.message);
-      }
-    } catch (error) {
-      console.error(error);
-    }
   };
 
   const handleJobDeactivation = async (e, status) => {
@@ -108,14 +221,14 @@ const EditJob = () => {
       return;
     }
 
-    const formData = new FormData();
-    formData.append("job_id", job.job_id);
+    const newFormData = new FormData();
+    newFormData.append("job_id", id);
 
     try {
       const response = await fetch(`${API}/controllers/getJobStatus.php`, {
         method: "POST",
+        body: newFormData,
         credentials: "include",
-        body: formData,
       });
 
       if (!response.ok) {
@@ -123,6 +236,7 @@ const EditJob = () => {
       }
 
       const data = await response.json();
+      console.log(data);
 
       if (data.success) {
         toast.success("Job status updated successfully!");
@@ -140,7 +254,7 @@ const EditJob = () => {
       <div className="container">
         <section className="post-jobs">
           <h1>
-            <strong className="highlight-text">Post</strong> a Job
+            <strong className="highlight-text">Edit</strong> a Job
           </h1>
           <form onSubmit={handleSubmit}>
             <fieldset>
@@ -149,7 +263,7 @@ const EditJob = () => {
                 type="text"
                 name="companyName"
                 placeholder="Name of the Company"
-                value={job.companyName}
+                value={formData.companyName}
                 onChange={handleInputChange}
                 required
               />
@@ -158,7 +272,7 @@ const EditJob = () => {
                 type="text"
                 name="website"
                 placeholder="Website"
-                value={job.website}
+                value={formData.website}
                 onChange={handleInputChange}
                 required
               />
@@ -167,26 +281,70 @@ const EditJob = () => {
                 type="text"
                 name="natureOfBusiness"
                 placeholder="Nature of Business"
-                value={job.natureOfBusiness}
+                value={formData.natureOfBusiness}
                 onChange={handleInputChange}
                 required
               />
 
-              <input
-                type="text"
-                name="address"
-                placeholder="Address in full"
-                autoComplete="on"
-                value={job.address}
+              <select
+                name="country"
+                id="country"
+                value={formData.country}
                 onChange={handleInputChange}
                 required
-              />
+              >
+                <option value="" disabled>
+                  Select Country
+                </option>
+                {countries.map((country, index) => (
+                  <option
+                    key={`${country.value}-${index}`}
+                    value={country.value}
+                  >
+                    {country.label}
+                  </option>
+                ))}
+              </select>
+
+              <select
+                name="state"
+                id="state"
+                value={formData.state}
+                onChange={handleInputChange}
+                required
+              >
+                <option value="" disabled>
+                  Select State
+                </option>
+                {states.map((state, index) => (
+                  <option key={`${state.value}-${index}`} value={state.value}>
+                    {state.label}
+                  </option>
+                ))}
+              </select>
+
+              <select
+                name="city"
+                id="city"
+                value={formData.city}
+                onChange={handleInputChange}
+                required
+              >
+                <option value="" disabled>
+                  Select City
+                </option>
+                {cities.map((city, index) => (
+                  <option key={`${city.value}-${index}`} value={city.value}>
+                    {city.label}
+                  </option>
+                ))}
+              </select>
 
               <input
                 type="text"
                 name="fax"
                 placeholder="Fax"
-                value={job.fax}
+                value={formData.fax}
                 onChange={handleInputChange}
                 required
               />
@@ -195,7 +353,7 @@ const EditJob = () => {
                 type="text"
                 name="areaCode"
                 placeholder="Area Code"
-                value={job.areaCode}
+                value={formData.areaCode}
                 onChange={handleInputChange}
                 required
               />
@@ -204,7 +362,7 @@ const EditJob = () => {
                 type="text"
                 name="landline"
                 placeholder="Land Line no."
-                value={job.landline}
+                value={formData.landline}
                 onChange={handleInputChange}
                 required
               />
@@ -213,7 +371,7 @@ const EditJob = () => {
                 type="text"
                 name="mobile"
                 placeholder="Mob no."
-                value={job.mobile}
+                value={formData.mobile}
                 onChange={handleInputChange}
                 required
               />
@@ -223,7 +381,7 @@ const EditJob = () => {
                 name="email"
                 placeholder="E-Mail Address"
                 autoComplete="on"
-                value={job.email}
+                value={formData.email}
                 onChange={handleInputChange}
                 required
               />
@@ -235,7 +393,7 @@ const EditJob = () => {
                 type="text"
                 name="employerName"
                 placeholder="Name of Employer"
-                value={job.employerName}
+                value={formData.employerName}
                 onChange={handleInputChange}
                 required
               />
@@ -243,7 +401,7 @@ const EditJob = () => {
               <textarea
                 name="companyDescription"
                 placeholder="Company Description"
-                value={job.companyDescription}
+                value={formData.companyDescription}
                 onChange={handleInputChange}
                 required
               />
@@ -254,15 +412,217 @@ const EditJob = () => {
               <input
                 type="text"
                 name="jobDesignation"
-                placeholder="Job designation offered"
-                value={job.jobDesignation}
+                placeholder="Enter Position Title"
+                value={formData.jobDesignation}
                 onChange={handleInputChange}
                 required
               />
 
               <select
+                name="industryCategory"
+                id="industryCategory"
+                value={formData.industryCategory}
+                onChange={handleInputChange}
+                required
+              >
+                <option value="" disabled>
+                  Select Industry Category
+                </option>
+                <option value="Advertising/Marketing">
+                  Advertising/Marketing
+                </option>
+                <option value="Agricultural">Agricultural</option>
+                <option value="Airline/Aerospace/Aviation">
+                  Airline/Aerospace/Aviation
+                </option>
+                <option value="Apparel/Textiles">Apparel/Textiles</option>
+                <option value="Architecture / Design">
+                  Architecture / Design
+                </option>
+                <option value="Art/Photography">Art/Photography</option>
+                <option value="Automotive-vehicles/parts/service">
+                  Automotive-vehicles/parts/service
+                </option>
+                <option value="Banking / Accounting / Financial">
+                  Banking / Accounting / Financial
+                </option>
+                <option value="Biotechnology">Biotechnology</option>
+                <option value="Broadcasting/Radio/TV">
+                  Broadcasting/Radio/TV
+                </option>
+                <option value="Building Materials">Building Materials</option>
+                <option value="Computer Hardware">Computer Hardware</option>
+                <option value="Computer Software">Computer Software</option>
+                <option value="Construction">Construction</option>
+                <option value="Consulting">Consulting</option>
+                <option value="Consumer Products">Consumer Products</option>
+                <option value="Education / Teaching / Administration">
+                  Education / Teaching / Administration
+                </option>
+                <option value="Electronics">Electronics</option>
+                <option value="Energy/Utilities/Gas/Oil/Electric">
+                  Energy/Utilities/Gas/Oil/Electric
+                </option>
+                <option value="Entertainment">Entertainment</option>
+                <option value="Sports">Sports</option>
+                <option value="Environmental">Environmental</option>
+                <option value="Food/Beverages">Food/Beverages</option>
+                <option value="General">General</option>
+                <option value="Government/Civil Service">
+                  Government/Civil Service
+                </option>
+                <option value="Healthcare / Health Services">
+                  Healthcare / Health Services
+                </option>
+                <option value="Hospitality / Tourism">
+                  Hospitality / Tourism
+                </option>
+                <option value="Human Resources/Staffing">
+                  Human Resources/Staffing
+                </option>
+                <option value="HVAC">HVAC</option>
+                <option value="Industrial/Materials">
+                  Industrial/Materials
+                </option>
+                <option value="Insurance">Insurance</option>
+                <option value="Internet / E-Commerce">
+                  Internet / E-Commerce
+                </option>
+                <option value="Law Enforcement / Security">
+                  Law Enforcement / Security
+                </option>
+                <option value="Legal">Legal</option>
+                <option value="Manufacturing">Manufacturing</option>
+                <option value="Merchandising">Merchandising</option>
+                <option value="Military">Military</option>
+                <option value="Non-Profit / Charity">
+                  Non-Profit / Charity
+                </option>
+                <option value="Office Equipment">Office Equipment</option>
+                <option value="Other">Other</option>
+                <option value="Packaging">Packaging</option>
+                <option value="Pharmaceutical">Pharmaceutical</option>
+                <option value="Printing / Publishing">
+                  Printing / Publishing
+                </option>
+                <option value="Public / Community Relations">
+                  Public / Community Relations
+                </option>
+                <option value="Real Estate/Property Management">
+                  Real Estate/Property Management
+                </option>
+                <option value="Recreation">Recreation</option>
+                <option value="Restaurants / Food Service">
+                  Restaurants / Food Service
+                </option>
+                <option value="Retail">Retail</option>
+                <option value="Semiconductor">Semiconductor</option>
+                <option value="Telecommunications">Telecommunications</option>
+                <option value="Training/Training Products">
+                  Training/Training Products
+                </option>
+              </select>
+
+              <select
+                name="jobTitle"
+                id="jobTitle"
+                value={formData.jobTitle}
+                onChange={handleInputChange}
+              >
+                <option value="" disabled>
+                  Select Job Title
+                </option>
+                <option value="Accounting/Finance">Accounting/Finance</option>
+                <option value="Administrative Support">
+                  Administrative Support
+                </option>
+                <option value="Administrative Services">
+                  Administrative Services
+                </option>
+                <option value="Artificial Intelligence">
+                  Artificial Intelligence
+                </option>
+                <option value="Business Analytics & Consulting">
+                  Business Analytics & Consulting
+                </option>
+                <option value="Business Development & Strategy">
+                  Business Development & Strategy
+                </option>
+                <option value="Clinical">Clinical</option>
+                <option value="Compliance">Compliance</option>
+                <option value="Consultant">Consultant</option>
+                <option value="Customer Service">Customer Service</option>
+                <option value="Art & Design">Art & Design</option>
+                <option value="Education/Training">Education/Training</option>
+                <option value="Engineering">Engineering</option>
+                <option value="Executive/Management">
+                  Executive/Management
+                </option>
+                <option value="Facilities">Facilities</option>
+                <option value="Finance">Finance</option>
+                <option value="General Business">General Business</option>
+                <option value="Global Comms & Corp Marketing">
+                  Global Comms & Corp Marketing
+                </option>
+                <option value="Health Econ, Policy & Reimbursement">
+                  Health Econ, Policy & Reimbursement
+                </option>
+                <option value="Healthcare">Healthcare</option>
+                <option value="Human Resources">Human Resources</option>
+                <option value="Information Technology">
+                  Information Technology
+                </option>
+                <option value="Intern">Intern</option>
+                <option value="Inventory">Inventory</option>
+                <option value="Legal">Legal</option>
+                <option value="Manufacturing">Manufacturing</option>
+                <option value="Marketing">Marketing</option>
+                <option value="Medical">Medical</option>
+                <option value="Office Support">Office Support</option>
+                <option value="Studio Operations">Studio Operations</option>
+                <option value="Professional Services">
+                  Professional Services
+                </option>
+                <option value="Sourcing & Procurement">
+                  Sourcing & Procurement
+                </option>
+                <option value="Quality Assurance">Quality Assurance</option>
+                <option value="Regulatory Affairs">Regulatory Affairs</option>
+                <option value="Research">Research</option>
+                <option value="Safety">Safety</option>
+                <option value="Sales">Sales</option>
+                <option value="Science">Science</option>
+                <option value="Shipping">Shipping</option>
+                <option value="Skilled Labor">Skilled Labor</option>
+                <option value="Strategy/Planning">Strategy/Planning</option>
+                <option value="Supply Chain">Supply Chain</option>
+                <option value="Technicians">Technicians</option>
+                <option value="Public Relations">Public Relations</option>
+                <option value="Digital & Interactive Media">
+                  Digital & Interactive Media
+                </option>
+                <option value="Data & Analytics">Data & Analytics</option>
+                <option value="Security">Security</option>
+                <option value="Hospitality">Hospitality</option>
+                <option value="Retail">Retail</option>
+                <option value="Production (entertainment/media)">
+                  Production (entertainment/media)
+                </option>
+                <option value="Culinary/Food Service">
+                  Culinary/Food Service
+                </option>
+                <option value="Communications & Public Relations">
+                  Communications & Public Relations
+                </option>
+                <option value="Writer">Writer</option>
+                <option value="Cyber Security">Cyber Security</option>
+                <option value="Construction">Construction</option>
+                <option value="Transportation">Transportation</option>
+              </select>
+
+              <select
                 name="jobType"
-                value={job.jobType}
+                value={formData.jobType}
                 onChange={handleInputChange}
                 required
               >
@@ -272,32 +632,116 @@ const EditJob = () => {
                 <option value="Full Time">Full Time</option>
                 <option value="Part Time">Part Time</option>
                 <option value="Contract">Contract</option>
+                <option value="Temporary">Temporary</option>
+                <option value="Temporary-to-Hire">Temporary-to-Hire</option>
                 <option value="Internship">Internship</option>
-                <option value="Work From Home">Work From Home</option>
+                <option value="Volunteer">Volunteer</option>
               </select>
 
               <textarea
                 name="dutyDescription"
-                placeholder="Description of duty"
-                value={job.dutyDescription}
+                placeholder="Enter Job Description"
+                value={formData.dutyDescription}
                 onChange={handleInputChange}
                 required
               />
 
-              <input
-                type="text"
-                name="essentialQualificationEssential"
-                placeholder="Required Essential qualification (Essential)"
-                value={job.essentialQualificationEssential}
+              <select
+                name="jobDuration"
+                id="jobDuration"
+                value={formData.jobDuration}
                 onChange={handleInputChange}
                 required
-              />
+              >
+                <option value="" disabled>
+                  Select Job Duration
+                </option>
+                <option value="Indefinite">Indefinite</option>
+                <option value="1-2 Years">1-2 Years</option>
+                <option value="6-12 Months">6-12 Months</option>
+                <option value="3-6Months">3-6 Months</option>
+                <option value="1-3 Months">1-3 Months</option>
+                <option value="2-4 Weeks">2-4 Weeks</option>
+              </select>
+
+              <select
+                name="minimumEducation"
+                id="minimumEducation"
+                value={formData.minimumEducation}
+                onChange={handleInputChange}
+                required
+              >
+                <option value="" disabled>
+                  Select Minumum Education
+                </option>
+                <option value="None">None</option>
+                <option value="H.S. Diploma/Equivalent">
+                  H.S. Diploma/Equivalent
+                </option>
+                <option value="Associates Degree">Associates Degree</option>
+                <option value="BA/BS/Undergraduate">BA/BS/Undergraduate</option>
+                <option value="Master's Degree">Master&apos;s Degree</option>
+                <option value="Ph.D">Ph.D</option>
+              </select>
+
+              <select
+                name="minimumExperience"
+                id="minumumExperience"
+                value={formData.minimumExperience}
+                onChange={handleInputChange}
+                required
+              >
+                <option value="" disabled>
+                  Select Minumum Experience
+                </option>
+                <option value="None">None</option>
+                <option value="1-2 Years">1-2 Years</option>
+                <option value="2-3 Years">2-3 Years</option>
+                <option value="3-5 Years">3-5 Years</option>
+                <option value="5-7 Years">5-7 Years</option>
+              </select>
+
+              <label htmlFor="salaryMin">Salary</label>
+              <div className="input-group">
+                <input
+                  type="number"
+                  name="salaryMin"
+                  placeholder="Min"
+                  value={formData.salaryMin}
+                  onChange={handleInputChange}
+                  required
+                />
+                <label htmlFor="salaryMax">to</label>
+                <input
+                  type="number"
+                  name="salaryMax"
+                  placeholder="Max"
+                  value={formData.salaryMax}
+                  onChange={handleInputChange}
+                  required
+                />
+              </div>
+
+              <select
+                name="workplaceType"
+                id="workplaceType"
+                value={formData.workplaceType}
+                onChange={handleInputChange}
+                required
+              >
+                <option value="" disabled>
+                  Select Workplace Type
+                </option>
+                <option value="On-Site">On-Site</option>
+                <option value="Hybrid">Hybrid</option>
+                <option value="Remote">Remote</option>
+              </select>
 
               <input
                 type="text"
-                name="essentialQualificationDesirable"
-                placeholder="Required Desirable qualification (Desirable)"
-                value={job.essentialQualificationDesirable}
+                name="placeOfWork"
+                placeholder="Place of work"
+                value={formData.placeOfWork}
                 onChange={handleInputChange}
                 required
               />
@@ -306,7 +750,7 @@ const EditJob = () => {
                 type="text"
                 name="ageLimit"
                 placeholder="Age limit"
-                value={job.ageLimit}
+                value={formData.ageLimit}
                 onChange={handleInputChange}
                 required
               />
@@ -316,7 +760,7 @@ const EditJob = () => {
                   type="checkbox"
                   name="womenEligible"
                   id="womenEligible"
-                  checked={job.womenEligible}
+                  checked={formData.womenEligible}
                   onChange={handleInputChange}
                 />
                 <label htmlFor="womenEligible">
@@ -328,10 +772,10 @@ const EditJob = () => {
                 <label htmlFor="workingHoursFrom">Working Hours - From</label>
                 <input
                   type="time"
+                  format=""
                   name="workingHoursFrom"
-                  id="workingHoursFrom"
                   placeholder="Working Hours From"
-                  value={job.workingHoursFrom}
+                  value={formData.workingHoursFrom}
                   onChange={handleInputChange}
                   required
                 />
@@ -341,9 +785,10 @@ const EditJob = () => {
                 <label htmlFor="workingHoursTo">Working Hours - To</label>
                 <input
                   type="time"
+                  format=""
                   name="workingHoursTo"
                   placeholder="To"
-                  value={job.workingHoursTo}
+                  value={formData.workingHoursTo}
                   onChange={handleInputChange}
                   required
                 />
@@ -353,7 +798,7 @@ const EditJob = () => {
                 type="text"
                 name="vacanciesRegular"
                 placeholder="Number of Vacancies (Regular)"
-                value={job.vacanciesRegular}
+                value={formData.vacanciesRegular}
                 onChange={handleInputChange}
                 required
               />
@@ -362,47 +807,39 @@ const EditJob = () => {
                 type="text"
                 name="vacanciesTemporary"
                 placeholder="Number of Vacancies (Temporary)"
-                value={job.vacanciesTemporary}
-                onChange={handleInputChange}
-                required
-              />
-
-              <input
-                type="text"
-                name="payAndAllowances"
-                placeholder="Pay and Allowances"
-                value={job.payAndAllowances}
-                onChange={handleInputChange}
-                required
-              />
-
-              <input
-                type="text"
-                name="placeOfWork"
-                placeholder="Place of work"
-                value={job.placeOfWork}
+                value={formData.vacanciesTemporary || ""}
                 onChange={handleInputChange}
                 required
               />
 
               <select
                 name="resumesToBeSent"
-                value={job.resumesToBeSent}
+                value={formData.resumesToBeSent}
                 onChange={handleInputChange}
               >
                 <option value="" disabled>
                   Resumes to be sent
                 </option>
                 <option value="Online">Online</option>
-                <option value="Hardcopy">Hardcopy</option>
+                <option value="Website">Website</option>
               </select>
 
-              {job.resumesToBeSent === "Online" && (
+              {formData.resumesToBeSent === "Online" && (
                 <input
                   type="text"
                   name="resumeEmail"
                   placeholder="If online, the email id to which the resume be sent"
-                  value={job.resumeEmail}
+                  value={formData.resumeEmail}
+                  onChange={handleInputChange}
+                />
+              )}
+
+              {formData.resumesToBeSent === "Website" && (
+                <input
+                  type="text"
+                  name="resumeWebsite"
+                  placeholder="If Website, the website to which the resume be sent"
+                  value={formData.resumeWebsite}
                   onChange={handleInputChange}
                 />
               )}
@@ -414,7 +851,7 @@ const EditJob = () => {
                 type="date"
                 name="interviewDetailsDate"
                 placeholder="Date of Interview/Test of Applicant/s"
-                value={job.interviewDetailsDate}
+                value={formData.interviewDetailsDate}
                 onChange={handleInputChange}
                 required
               />
@@ -426,9 +863,9 @@ const EditJob = () => {
                 <input
                   type="time"
                   format=""
-                  name="interviewDetailsTime"
+                  name="interviewDetails.time"
                   placeholder="Time"
-                  value={job.interviewDetailsTime}
+                  value={formData.interviewDetailsTime}
                   onChange={handleInputChange}
                   required
                 />
@@ -438,7 +875,7 @@ const EditJob = () => {
                   type="checkbox"
                   name="interviewDetailsAptitudeTest"
                   id="interviewDetailsAptitudeTest"
-                  checked={job.interviewDetailsAptitudeTest}
+                  checked={formData.interviewDetailsAptitudeTest}
                   onChange={handleInputChange}
                 />
                 <label htmlFor="interviewDetailsAptitudeTest">
@@ -449,7 +886,7 @@ const EditJob = () => {
                   type="checkbox"
                   name="interviewDetailsTechnicalTest"
                   id="interviewDetailsTechnicalTest"
-                  checked={job.interviewDetailsTechnicalTest}
+                  checked={formData.interviewDetailsTechnicalTest}
                   onChange={handleInputChange}
                 />
                 <label htmlFor="interviewDetailsTechnicalTest">
@@ -460,18 +897,18 @@ const EditJob = () => {
                   type="checkbox"
                   name="interviewDetailsGroupDiscussion"
                   id="interviewDetailsGroupDiscussion"
-                  checked={job.interviewDetailGroupDiscussion}
+                  checked={formData.interviewDetailsGroupDiscussion}
                   onChange={handleInputChange}
                 />
-                <label htmlFor="interviewDetailGroupDiscussion">
+                <label htmlFor="interviewDetailsGroupDiscussion">
                   Group Discussion
                 </label>
 
                 <input
                   type="checkbox"
                   name="interviewDetailsPersonalInterview"
-                  id="interviewDetails.personalInterview"
-                  checked={job.interviewDetailsPersonalInterview}
+                  id="interviewDetailsPersonalInterview"
+                  checked={formData.interviewDetailsPersonalInterview}
                   onChange={handleInputChange}
                 />
                 <label htmlFor="interviewDetailsPersonalInterview">
@@ -479,21 +916,21 @@ const EditJob = () => {
                 </label>
               </div>
 
-              {job.interviewDetailsTechnicalTest && (
+              {formData.interviewDetailsTechnicalTest && (
                 <input
                   type="text"
-                  name="interviewDetailsTopics"
+                  name="interviewDetails.topics"
                   placeholder="If yes, please specify likely topics/skill sets"
-                  value={job.interviewDetailsTopics}
+                  value={formData.interviewDetailsTopics}
                   onChange={handleInputChange}
                 />
               )}
 
               <input
                 type="text"
-                name="interviewDetailsContactPerson"
+                name="interviewDetails.contactPerson"
                 placeholder="Contact person to whom to report"
-                value={job.interviewDetailsContactPerson}
+                value={formData.interviewDetailsContactPerson}
                 onChange={handleInputChange}
                 required
               />
@@ -503,7 +940,7 @@ const EditJob = () => {
               <legend>Disability Information</legend>
               <select
                 name="disabilityInfoType"
-                value={job.disabilityInfoType}
+                value={formData.disabilityInfoType}
                 onChange={handleInputChange}
                 required
               >
@@ -517,7 +954,7 @@ const EditJob = () => {
 
               <select
                 name="disabilityInfoPercentage"
-                value={job.disabilityInfoPercentage}
+                value={formData.disabilityInfoPercentage}
                 onChange={handleInputChange}
                 required
               >
@@ -536,7 +973,7 @@ const EditJob = () => {
                 type="text"
                 name="disabilityInfoAidOrAppliance"
                 placeholder="As per nature of Job, aid or appliance using applicant will serve the need"
-                value={job.disabilityInfoAidOrAppliance}
+                value={formData.disabilityInfoAidOrAppliance}
                 onChange={handleInputChange}
                 required
               />
@@ -547,7 +984,7 @@ const EditJob = () => {
                   name="vehiclePreference"
                   id="ownVehiclePreferred"
                   value="ownVehiclePreferred"
-                  checked={job.ownVehiclePreferred}
+                  checked={formData.ownVehiclePreferred}
                   onChange={handleInputChange}
                 />
                 <label htmlFor="ownVehiclePreferred">
@@ -559,7 +996,7 @@ const EditJob = () => {
                   name="vehiclePreference"
                   id="conveyanceProvided"
                   value="conveyanceProvided"
-                  checked={job.conveyanceProvided}
+                  checked={formData.conveyanceProvided}
                   onChange={handleInputChange}
                 />
                 <label htmlFor="conveyanceProvided">
@@ -567,12 +1004,12 @@ const EditJob = () => {
                 </label>
               </div>
 
-              {job.conveyanceProvided && (
+              {formData.conveyanceProvided && (
                 <input
                   type="text"
                   name="conveyanceType"
                   placeholder="What Type of conveyance?"
-                  value={job.conveyanceType}
+                  value={formData.conveyanceType}
                   onChange={handleInputChange}
                 />
               )}
@@ -580,13 +1017,13 @@ const EditJob = () => {
               <textarea
                 name="otherInformation"
                 placeholder="Any other information"
-                value={job.otherInformation}
+                value={formData.otherInformation}
                 onChange={handleInputChange}
               />
             </fieldset>
 
             <div className="input-group row">
-              {job.job_status === 1 ? (
+              {formData.jobStatus === 1 ? (
                 <button
                   type="submit"
                   className="btn btn-delete"
@@ -603,7 +1040,6 @@ const EditJob = () => {
                   Activate Job?
                 </button>
               )}
-
               <button type="submit" className="btn btn-outline">
                 Update
               </button>
