@@ -1,8 +1,5 @@
 <?php
-
 include "../includes/config.php";
-
-
 
 if ($_SERVER['REQUEST_METHOD'] == "POST") {
     $search = isset($_POST['search']) ? trim($_POST['search']) : "";
@@ -16,16 +13,15 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
 
     $query = "SELECT job.*, recruiters.profilePicture 
     FROM job 
-    JOIN recruiters ON job.recruiters_id = recruiters.recruiters_id 
+    JOIN recruiters ON job.recruiter_id = recruiters.recruiters_id 
     WHERE job.jobDesignation LIKE ? 
-        OR job.job_status = ? 
+        OR job.jobStatus = ? 
         OR job.country = ? 
         OR job.state = ? 
-        OR job.disabilityInfoPercentage = ?
-        OR (job.job_date >= ? AND job.job_date <= ?)";
+        OR (job.postedOn >= ? AND job.postedOn <= ?)";
     $stmt = $conn->prepare($query);
 
-    $stmt->bind_param("sssssss", $searchLike, $status, $country, $state, $disabilityPercentage, $postedBetweenStart, $postedBetweenEnd);
+    $stmt->bind_param("ssssss", $searchLike, $status, $country, $state, $postedBetweenStart, $postedBetweenEnd);
 
     try {
         $stmt->execute();
