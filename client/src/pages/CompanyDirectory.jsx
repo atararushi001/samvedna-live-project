@@ -34,32 +34,39 @@ const CompanyDirectory = () => {
 
   const handleSearchChange = (event) => {
     event.preventDefault();
+    if (event.target.value === "") {
+      fetch(`${API}/controllers/getCompanies.php`, {
+        method: "GET",
+        credentials: "include",
+      })
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+          return response.json();
+        })
+        .then((data) => {
+          console.log(data);
+          if (data.success) {
+            setCompanies(data.job);
+          }
+        })
+        .catch((error) => {
+          console.error(error);
+          toast.error("An error occurred: " + error.message);
+        });
+    }
     setSearch(event.target.value);
+    return;
   };
 
   const handleSearchSubmit = (event) => {
     event.preventDefault();
-    fetch(`${API}/controllers/searchCompany.php`, {
-      method: "POST",
-      credentials: "include",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ search }),
-    })
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        return response.json();
-      })
-      .then((data) => {
-        setCompanies(data);
-      })
-      .catch((error) => {
-        console.error(error);
-        toast.error("An error occurred: " + error.message);
-      });
+
+    const filteredCompanies = companies.filter((company) =>
+      company.name.toLowerCase().includes(search.toLowerCase())
+    );
+    setCompanies(filteredCompanies);
   };
 
   const handleNumberOfEntries = (event) => {
