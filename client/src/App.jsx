@@ -37,6 +37,7 @@ import EditJob from "./pages/EditJob";
 import ManageResume from "./pages/ManageResume";
 import CreateResume from "./pages/CreateResume";
 import EditResume from "./pages/EditResume";
+import ViewResume from "./pages/ViewResume";
 import Search from "./pages/Search";
 import SearchResults from "./pages/SearchResults";
 
@@ -85,6 +86,7 @@ const App = () => {
 
           <Route path="job-seeker-dashboard" element={<JobSeeker />}>
             <Route index element={<JobSeekerDashboard />} />
+            <Route path="view-resume/:id" element={<ViewResume />} />
             <Route path="manage-resumes" element={<ManageResume />} />
             <Route path="create-resume" element={<CreateResume />} />
             <Route path="edit-resume/:id" element={<EditResume />} />

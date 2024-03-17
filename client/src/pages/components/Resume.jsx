@@ -9,8 +9,12 @@ const Resume = ({ resumes, title, description }) => {
   const navigate = useNavigate();
 
   const handleDelete = (id) => {
-    fetch(`${API}/controllers/deleteResume.php?id=${id}`, {
+    const formData = new FormData();
+    formData.append("resume_id", id);
+
+    fetch(`${API}/controllers/deleteResume.php`, {
       method: "POST",
+      body: formData,
       credentials: "include",
     })
       .then((response) => {
@@ -20,12 +24,12 @@ const Resume = ({ resumes, title, description }) => {
         return response.json();
       })
       .then((data) => {
+        console.log(data);
         if (data.success) {
           toast.success(data.message);
           navigate("/job-seeker-dashboard/manage-resumes");
         } else {
           toast.error(data.message);
-          navigate("/job-seeker-dashboard/manage-resumes");
         }
       })
       .catch((error) => {
@@ -43,7 +47,11 @@ const Resume = ({ resumes, title, description }) => {
         {resumes.length > 0 ? (
           resumes.map((resume, index) => (
             <div key={index} className="resume">
-              <h3>{resume.resumeName}</h3>
+              <Link
+                to={`/job-seeker-dashboard/view-resume/${resume.resume_id}`}
+              >
+                <h3>{resume.resumeName}</h3>
+              </Link>
               {resume.published ? (
                 <p>
                   Published on:{" "}

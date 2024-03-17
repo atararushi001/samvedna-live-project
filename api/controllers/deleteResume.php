@@ -3,21 +3,19 @@ include "../includes/config.php";
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     try {
-        $stmt = $conn->prepare("DELETE FROM jobresume WHERE res_id  = ?");
-        $stmt->bind_param("s", $_POST['res_id']);
+        $stmt = $conn->prepare("DELETE FROM resumes WHERE resume_id  = ?");
+        $stmt->bind_param("s", $_POST['resume_id']);
         $stmt->execute();
 
-        $result = $stmt->get_result();
-
-        if(!$result) {
+        if ($conn->affected_rows > 0) {
             $response = array(
                 'success' => true,
-                'message' => 'Job deleted!',
+                'message' => 'Resume deleted!',
             );
         } else {
             $response = array(
                 'success' => false,
-                'message' => 'Job not Found!',
+                'message' => 'Resume not Found!',
             );
         }
 

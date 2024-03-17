@@ -9,7 +9,7 @@ function handleError($message)
 }
 
 if ($_SERVER['REQUEST_METHOD'] == "GET") {
-    $query = "SELECT * FROM `job` WHERE `recruiters_id` = ?";
+    $query = "SELECT * FROM `job` WHERE `recruiter_id` = ?";
     $stmt = $conn->prepare($query);
     $stmt->bind_param("s", $_SESSION['recruiters_id']);
 

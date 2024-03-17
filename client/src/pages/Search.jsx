@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
@@ -14,11 +14,42 @@ const Search = () => {
     state: "",
   });
 
+  const [countries, setCountries] = useState([]);
+  const [states, setStates] = useState([]);
   const navigate = useNavigate();
 
   const handleChange = (event) => {
     setFormData({ ...formData, [event.target.id]: event.target.value });
   };
+
+  const parseOptions = (htmlString) => {
+    const parser = new DOMParser();
+    const htmlDoc = parser.parseFromString(htmlString, "text/html");
+    return Array.from(htmlDoc.querySelectorAll("option")).map((opt) => ({
+      value: opt.value,
+      label: opt.textContent,
+    }));
+  };
+  useEffect(() => {
+    fetch(`${API}/controllers/getCountry.php`)
+      .then((response) => response.text())
+      .then((data) => {
+        const options = parseOptions(data);
+        setCountries(options);
+      })
+      .catch((error) => console.error(error));
+  }, []);
+  useEffect(() => {
+    if (formData.country) {
+      fetch(`${API}/controllers/getState.php?country_id=${formData.country}`)
+        .then((response) => response.text())
+        .then((data) => {
+          const options = parseOptions(data);
+          setStates(options);
+        })
+        .catch((error) => console.error(error));
+    }
+  }, [formData.country]);
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -41,6 +72,7 @@ const Search = () => {
       })
       .then((data) => {
         if (data.success) {
+          console.log(data);
           toast.success(data.message);
           navigate("/job-seeker-dashboard/search-results", {
             state: { results: data.jobs },
@@ -111,24 +143,38 @@ const Search = () => {
             </select>
           </div>
           <div className="form-group">
-            <input
-              type="text"
+            <select
               name="country"
               id="country"
-              placeholder="Enter Country"
               value={formData.country}
               onChange={handleChange}
-            />
+            >
+              <option value="" disabled>
+                Select country
+              </option>
+              {countries.map((country, index) => (
+                <option key={`${country.value}-${index}`} value={country.value}>
+                  {country.label}
+                </option>
+              ))}
+            </select>
           </div>
           <div className="form-group">
-            <input
-              type="text"
+            <select
               name="state"
               id="state"
-              placeholder="Enter State"
               value={formData.state}
               onChange={handleChange}
-            />
+            >
+              <option value="" disabled>
+                Select State
+              </option>
+              {states.map((state, index) => (
+                <option key={`${state.value}-${index}`} value={state.value}>
+                  {state.label}
+                </option>
+              ))}
+            </select>
           </div>
           <button type="submit" className="btn btn-primary">
             Search

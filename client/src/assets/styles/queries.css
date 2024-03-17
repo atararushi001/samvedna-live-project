@@ -63,6 +63,10 @@
   .resume-bank .resume-list {
     grid-template-columns: repeat(2, 1fr) !important;
   }
+
+  .view-resume .resume {
+    grid-template-columns: repeat(1, 1fr) !important;
+  }
 }
 
 @media screen and (max-width: 768px) {

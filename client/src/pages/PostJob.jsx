@@ -27,7 +27,9 @@ const PostJob = () => {
     companyName: "",
     website: "",
     natureOfBusiness: "",
-    address: "",
+    country: "",
+    state: "",
+    city: "",
     fax: "",
     areaCode: "",
     landline: "",
@@ -82,6 +84,53 @@ const PostJob = () => {
     conveyanceType: "",
     otherInformation: "",
   });
+
+  const [countries, setCountries] = useState([]);
+  const [states, setStates] = useState([]);
+  const [cities, setCities] = useState([]);
+
+  useEffect(() => {
+    fetch(`${API}/controllers/getCountry.php`)
+      .then((response) => response.text())
+      .then((data) => {
+        const options = parseOptions(data);
+        setCountries(options);
+      })
+      .catch((error) => console.error(error));
+  }, []);
+
+  useEffect(() => {
+    if (formData.country) {
+      fetch(`${API}/controllers/getState.php?country_id=${formData.country}`)
+        .then((response) => response.text())
+        .then((data) => {
+          const options = parseOptions(data);
+          setStates(options);
+        })
+        .catch((error) => console.error(error));
+    }
+  }, [formData.country]);
+
+  useEffect(() => {
+    if (formData.state) {
+      fetch(`${API}/controllers/getCity.php?state_id=${formData.state}`)
+        .then((response) => response.text())
+        .then((data) => {
+          const options = parseOptions(data);
+          setCities(options);
+        })
+        .catch((error) => console.error(error));
+    }
+  }, [formData.state]);
+
+  const parseOptions = (htmlString) => {
+    const parser = new DOMParser();
+    const htmlDoc = parser.parseFromString(htmlString, "text/html");
+    return Array.from(htmlDoc.querySelectorAll("option")).map((opt) => ({
+      value: opt.value,
+      label: opt.textContent,
+    }));
+  };
 
   const handleInputChange = (event) => {
     const { name, value, type, checked } = event.target;
@@ -246,15 +295,59 @@ const PostJob = () => {
                 required
               />
 
-              <input
-                type="text"
-                name="address"
-                placeholder="Address in full"
-                autoComplete="on"
-                value={formData.address}
+              <select
+                name="country"
+                id="country"
+                value={formData.country}
                 onChange={handleInputChange}
                 required
-              />
+              >
+                <option value="" disabled>
+                  Select Country
+                </option>
+                {countries.map((country, index) => (
+                  <option
+                    key={`${country.value}-${index}`}
+                    value={country.value}
+                  >
+                    {country.label}
+                  </option>
+                ))}
+              </select>
+
+              <select
+                name="state"
+                id="state"
+                value={formData.state}
+                onChange={handleInputChange}
+                required
+              >
+                <option value="" disabled>
+                  Select State
+                </option>
+                {states.map((state, index) => (
+                  <option key={`${state.value}-${index}`} value={state.value}>
+                    {state.label}
+                  </option>
+                ))}
+              </select>
+
+              <select
+                name="city"
+                id="city"
+                value={formData.city}
+                onChange={handleInputChange}
+                required
+              >
+                <option value="" disabled>
+                  Select City
+                </option>
+                {cities.map((city, index) => (
+                  <option key={`${city.value}-${index}`} value={city.value}>
+                    {city.label}
+                  </option>
+                ))}
+              </select>
 
               <input
                 type="text"

@@ -161,7 +161,7 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
         }
 
         header('Content-Type: application/json');
-        echo json_encode(array('success' => true, 'message' => 'Data inserted successfully', 'resume' => $response));
+        echo json_encode(array('success' => true, 'message' => 'Resume Found!', 'resume' => $response));
     } catch (Exception $e) {
         handleError("Database error: " . $e->getMessage());
     } finally {

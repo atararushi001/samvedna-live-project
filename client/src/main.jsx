@@ -17,6 +17,10 @@ import {
   faPen,
   faTrash,
   faFile,
+  faPrint,
+  faEnvelope,
+  faPhone,
+  faGlobe,
 } from "@fortawesome/free-solid-svg-icons";
 
 library.add(
@@ -31,7 +35,11 @@ library.add(
   faQuoteLeft,
   faPen,
   faTrash,
-  faFile
+  faFile,
+  faPrint,
+  faEnvelope,
+  faPhone,
+  faGlobe
 );
 
 import App from "./App.jsx";
