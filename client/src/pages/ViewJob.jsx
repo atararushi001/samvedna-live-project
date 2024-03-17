@@ -28,6 +28,7 @@ const ViewJob = () => {
       })
       .then((data) => {
         if (data.success) {
+          console.log(data.job[0]);
           setJob(data.job[0]);
         } else {
           console.log(data.message);
@@ -56,16 +57,34 @@ const ViewJob = () => {
               <p>{job.email}</p>
             </div>
             <div className="job-detail">
-              <h3>Job Type:</h3>
+              <h3>Job Title</h3>
+              <p>{job.jobTitle}</p>
+            </div>
+            <div className="job-detail">
+              <h3>Job Designation</h3>
               <p>{job.jobDesignation}</p>
             </div>
             <div className="job-detail">
+              <h3>Job Type:</h3>
+              <p>{job.jobType}</p>
+            </div>
+            <div className="job-detail">
+              <h3>Industry:</h3>
+              <p>{job.industryCategory}</p>
+            </div>
+            <div className="job-detail">
+              <h3>Job Duration:</h3>
+              <p>{job.jobDuration}</p>
+            </div>
+            <div className="job-detail">
               <h3>Location:</h3>
-              <p>{job.placeOfWork}</p>
+              <p>{job.cityname}</p>
             </div>
             <div className="job-detail">
               <h3>Salary:</h3>
-              <p>{job.payAndAllowances}</p>
+              <p>
+                {job.salaryMin} - {job.salaryMax}
+              </p>
             </div>
             <div className="job-detail">
               <h3>Nature of Business:</h3>
@@ -73,7 +92,9 @@ const ViewJob = () => {
             </div>
             <div className="job-detail">
               <h3>Address:</h3>
-              <p>{job.address}</p>
+              <p>
+                {job.cityname}, {job.statename}, {job.countryname}
+              </p>
             </div>
             <div className="job-detail">
               <h3>Job Description:</h3>
@@ -84,12 +105,12 @@ const ViewJob = () => {
               <p>{job.companyDescription}</p>
             </div>
             <div className="job-detail">
-              <h3>Essential Qualification:</h3>
-              <p>{job.essentialQualificationEssential}</p>
+              <h3>Minumum Education:</h3>
+              <p>{job.minimumEducation}</p>
             </div>
             <div className="job-detail">
-              <h3>Desirable Qualification:</h3>
-              <p>{job.essentialQualificationDesirable}</p>
+              <h3>Minumum Experience:</h3>
+              <p>{job.minimumExperience}</p>
             </div>
             <div className="job-detail">
               <h3>Age Limit:</h3>
@@ -104,6 +125,10 @@ const ViewJob = () => {
               <p>
                 {job.workingHoursFrom} to {job.workingHoursTo}
               </p>
+            </div>
+            <div className="job-detail">
+              <h3>Work Place Type:</h3>
+              <p>{job.workplaceType}</p>
             </div>
             <div className="job-detail">
               <h3>Resumes to be Sent:</h3>

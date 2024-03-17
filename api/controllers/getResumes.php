@@ -9,14 +9,20 @@ function handleError($message)
 }
 
 if ($_SERVER['REQUEST_METHOD'] == "GET") {
-    $baseQuery = "SELECT * FROM resumes";
+    $baseQuery = "SELECT * FROM resumes WHERE resumes.job_seeker_id = ?";
+    $jobSeekerId = $_GET['jobSeekerId'];
 
-    $publishedQuery = $baseQuery . " WHERE resumes.published = 'true' GROUP BY resumes.resume_id";
-    $privateQuery = $baseQuery . " WHERE resumes.published = 'false' GROUP BY resumes.resume_id";
+    if (!$jobSeekerId) {
+        handleError("jobSeekerId is required");
+    }
+
+    $publishedQuery = $baseQuery . " AND resumes.published = 'true' GROUP BY resumes.resume_id";
+    $privateQuery = $baseQuery . " AND resumes.published = 'false' GROUP BY resumes.resume_id";
 
 
     try {
         $stmt = $conn->prepare($publishedQuery);
+        $stmt->bind_param("s", $jobSeekerId);
         $stmt->execute();
         $result = $stmt->get_result();
         $publishedResumes = $result->fetch_all(MYSQLI_ASSOC);
@@ -28,6 +34,7 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
         $stmt->close();
 
         $stmt = $conn->prepare($privateQuery);
+        $stmt->bind_param("s", $jobSeekerId);
         $stmt->execute();
         $result = $stmt->get_result();
         $privateResumes = $result->fetch_all(MYSQLI_ASSOC);

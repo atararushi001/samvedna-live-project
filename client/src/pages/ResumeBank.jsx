@@ -1,5 +1,10 @@
 import { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+
+import Resume from "./components/Resume";
+
+const API = import.meta.env.VITE_API_URL;
 
 const ResumeBank = () => {
   const navigate = useNavigate();
@@ -19,24 +24,55 @@ const ResumeBank = () => {
 
   const [search, setSearch] = useState("");
   const [resumes, setResumes] = useState([]);
-  const [filteredResumes, setFilteredResumes] = useState(resumes);
+  const [filteredResumes, setFilteredResumes] = useState([]);
 
-  const numberOfResumes = resumes.length;
-  const numberOfPages = Math.ceil(numberOfResumes / 10);
-
-  const [currentPage, setCurrentPage] = useState(numberOfPages === 0 ? 0 : 1);
+  useEffect(() => {
+    fetch(`${API}/controllers/getResumes.php`, {
+      method: "GET",
+      credentials: "include",
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+      })
+      .then((data) => {
+        if (data.success) {
+          setResumes(data.publicResumes);
+          setFilteredResumes(data.publicResumes);
+        } else {
+          toast.error(data.message);
+        }
+      })
+      .catch((error) => {
+        console.error(error);
+        toast.error("An error occurred: " + error.message);
+      });
+  }, [navigate]);
 
   const handleSearchChange = (e) => {
+    if (e.target.value === "") {
+      setFilteredResumes(resumes);
+    }
     setSearch(e.target.value);
   };
 
   const handleSearch = (e) => {
     e.preventDefault();
-    console.log(search);
-  };
 
-  const handlePageChange = (pageNum) => {
-    setCurrentPage(pageNum);
+    if (search === "") {
+      setFilteredResumes(resumes);
+    } else {
+      const filtered = resumes.filter((resume) => {
+        return (
+          resume.resumeName.toLowerCase().includes(search.toLowerCase()) ||
+          resume.firstName.toLowerCase().includes(search.toLowerCase()) ||
+          resume.lastName.toLowerCase().includes(search.toLowerCase())
+        );
+      });
+      setFilteredResumes(filtered);
+    }
   };
 
   return (
@@ -58,92 +94,12 @@ const ResumeBank = () => {
             </button>
           </form>
         </div>
-        <div className="pagination">
-          <button
-            className={"btn" + (currentPage <= 1 ? " disabled" : "")}
-            onClick={() => handlePageChange(currentPage - 1)}
-            disabled={currentPage === 1}
-          >
-            Previous
-          </button>
-          <div className="page-links">
-            {Array.from({ length: numberOfPages }, (_, index) => (
-              <button
-                key={index}
-                className={`link no-outline ${
-                  currentPage === index + 1 ? "active" : ""
-                }`}
-                onClick={() => handlePageChange(index + 1)}
-              >
-                {index + 1}
-              </button>
-            ))}
-          </div>
-          <button
-            className={
-              "btn" + (currentPage === numberOfPages ? " disabled" : "")
-            }
-            onClick={() => handlePageChange(currentPage + 1)}
-            disabled={currentPage === numberOfPages}
-          >
-            Next
-          </button>
-        </div>
-        {numberOfResumes === 0 ? (
-          <div className="default">
-            <p>No resumes found</p>
-          </div>
-        ) : (
-          <div className="resume-list">
-            {filteredResumes.map((resume, index) => (
-              <Link
-                key={index}
-                to={`/recruiter-dashboard/view-resume/${resume.id}`}
-              >
-                <div className="resume">
-                  <h2>{resume.name}</h2>
-                  <p>{resume.email}</p>
-                  <p>{resume.phone}</p>
-                  <p>{resume.skills}</p>
-                  <p>{resume.experience}</p>
-                  <p>{resume.education}</p>
-                  <p>{resume.location}</p>
-                </div>
-              </Link>
-            ))}
-          </div>
-        )}
-        <div className="pagination">
-          <button
-            className={"btn" + (currentPage <= 1 ? " disabled" : "")}
-            onClick={() => handlePageChange(currentPage - 1)}
-            disabled={currentPage === 1}
-          >
-            Previous
-          </button>
-          <div className="page-links">
-            {Array.from({ length: numberOfPages }, (_, index) => (
-              <button
-                key={index}
-                className={`link no-outline ${
-                  currentPage === index + 1 ? "active" : ""
-                }`}
-                onClick={() => handlePageChange(index + 1)}
-              >
-                {index + 1}
-              </button>
-            ))}
-          </div>
-          <button
-            className={
-              "btn" + (currentPage === numberOfPages ? " disabled" : "")
-            }
-            onClick={() => handlePageChange(currentPage + 1)}
-            disabled={currentPage === numberOfPages}
-          >
-            Next
-          </button>
-        </div>
+        <Resume
+          resumes={filteredResumes}
+          where="recruiter-dashboard"
+          title="Resumes"
+          description="No resumes found!"
+        />
       </section>
     </div>
   );

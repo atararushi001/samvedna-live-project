@@ -532,8 +532,9 @@ footer .footer-bottom p {
 .job-slider .jobs-container .job .job-body .job-details {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  width: 80%;
+  justify-content: center;
+  gap: 2rem;
+  width: 100%;
 }
 
 /* Pages > View Jobs */
@@ -2437,15 +2438,6 @@ table td:last-child {
 
 .resume-bank .pagination {
   margin-top: 0;
-}
-
-.resume-bank .resume-list {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(15rem, 1fr));
-  gap: 1rem;
-  width: 100%;
-  place-content: center;
-  place-items: center;
 }
 
 .resume-bank .resume-list .resume {

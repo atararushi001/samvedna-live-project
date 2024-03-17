@@ -21,10 +21,10 @@ const JobCarousel = ({ jobData }) => {
       }
     };
 
-    window.addEventListener('resize', handleResize);
+    window.addEventListener("resize", handleResize);
     handleResize();
 
-    return () => window.removeEventListener('resize', handleResize);
+    return () => window.removeEventListener("resize", handleResize);
   }, []);
 
   return (
@@ -50,25 +50,32 @@ const JobCarousel = ({ jobData }) => {
                 <div className="job-header">
                   <h2>{job.jobDesignation}</h2>
                   <h3>{job.jobType}</h3>
-                  <h3><FontAwesomeIcon className="icon" icon='location-dot' />&nbsp;{job.placeOfWork}</h3>
+                  <h3>
+                    <FontAwesomeIcon className="icon" icon="location-dot" />
+                    &nbsp;{job.cityname}
+                  </h3>
                 </div>
                 <div className="job-body">
                   <p className="job-description">
-                    {
-                      job.dutyDescription
-                        .split(" ")
-                        .slice(0, 10)
-                        .join(" ")
-                        .concat("...")
-                    }
+                    {job.dutyDescription.length > 10
+                      ? `${job.dutyDescription.substring(0, 100)}...`
+                      : job.dutyDescription}
                   </p>
                   <div className="job-details">
-                    <p><FontAwesomeIcon className="icon" icon="wheelchair"/>&nbsp;{job.disabilityInfoType}</p>
-                    <p>{job.disabilityInfoPercentage}&nbsp;<FontAwesomeIcon className="icon" icon="percent"/></p>
+                    <p>
+                      <FontAwesomeIcon className="icon" icon="wheelchair" />
+                      &nbsp;{job.disabilityInfoType}
+                    </p>
+                    <p>
+                      {job.disabilityInfoPercentage}&nbsp;
+                      <FontAwesomeIcon className="icon" icon="percent" />
+                    </p>
                   </div>
                 </div>
                 <div className="job-footer">
-                  <p><strong>Job Posted By:</strong></p>
+                  <p>
+                    <strong>Job Posted By:</strong>
+                  </p>
                   <p>{job.companyName}</p>
                 </div>
               </div>

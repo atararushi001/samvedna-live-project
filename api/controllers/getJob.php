@@ -9,9 +9,12 @@ function handleError($message)
 }
 
 if ($_SERVER['REQUEST_METHOD'] == "GET") {
-    $query = "SELECT job.*, recruiters.profilePicture 
+    $query = "SELECT job.*, recruiters.profilePicture ,cities.name as cityname,states.name as statename ,country.name as countryname
     FROM job 
-    JOIN recruiters ON job.recruiter_id = recruiters.recruiters_id 
+    JOIN recruiters ON job.recruiter_id = recruiters.recruiters_id
+      join cities on job.city = cities.id
+      join states on job.state = states.id
+      join country on job.country = country.id
     WHERE job.job_id = ?";
     $stmt = $conn->prepare($query);
     $stmt->bind_param("s", $_GET['job_id']);

@@ -44,6 +44,7 @@ import SearchResults from "./pages/SearchResults";
 import CompanyDirectory from "./pages/CompanyDirectory";
 
 import ResumeBank from "./pages/ResumeBank";
+import ViewResumeRecruiter from "./pages/ViewResumeRecruiter";
 
 const App = () => {
   return (
@@ -82,6 +83,7 @@ const App = () => {
             <Route path="post-job" element={<PostJob />} />
             <Route path="edit-job/:id" element={<EditJob />} />
             <Route path="resume-bank" element={<ResumeBank />} />
+            <Route path="view-resume/:id" element={<ViewResumeRecruiter />} />
           </Route>
 
           <Route path="job-seeker-dashboard" element={<JobSeeker />}>
