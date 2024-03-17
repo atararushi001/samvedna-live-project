@@ -5,24 +5,26 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
     try {
         $stmt = $conn->prepare(
             "SELECT 
-                j.job_id, 
-                j.companyName,
-                j.jobDesignation,
-                j.jobType,
-                j.placeOfWork,
-                j.disabilityInfoPercentage,
-                j.disabilityInfoType,
-                j.dutyDescription,
-                r.profilePicture
-            FROM 
-                job j
-            INNER JOIN 
-                recruiters r 
-            ON 
-                j.recruiters_id = r.recruiters_id
-            ORDER BY 
-                j.job_id 
-            DESC;"
+            j.job_id, 
+            j.companyName,
+            j.jobDesignation,
+            j.jobType,
+            j.city,
+            j.disabilityInfoPercentage,
+            j.disabilityInfoType,
+            j.dutyDescription,
+            r.profilePicture,
+            c.name as cityname
+        FROM 
+            job j
+        INNER JOIN 
+            recruiters r 
+        ON 
+            j.recruiter_id = r.recruiters_id
+        join cities as c on j.city = c.id
+        ORDER BY 
+            j.job_id 
+        DESC;"
         );
         $stmt->execute();
 
