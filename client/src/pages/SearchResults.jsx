@@ -12,11 +12,13 @@ const SearchResults = () => {
 
   const results = location.state.results;
 
+  console.log(results);
+
   return (
     <div className="container">
       <section className="results" id="results">
         <h1>Results</h1>
-        <div className="persons" key={results.length}>
+        <div className="jobs" key={results.length}>
           {results.map((job) => (
             <div className="job" key={job.job_id}>
               <img
@@ -28,7 +30,7 @@ const SearchResults = () => {
                 <h4>Job Type</h4>
                 <p>{job.jobType}</p>
                 <h4>Location</h4>
-                <p>{job.placeOfWork}</p>
+                <p>{job.city}</p>
                 <h4>Disability Percentage</h4>
                 <p>{job.disabilityInfoPercentage}</p>
               </div>
