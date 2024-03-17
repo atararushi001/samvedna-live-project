@@ -3,7 +3,7 @@ include "../includes/config.php";
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     try {
-        $stmt = $conn->prepare("UPDATE job SET job_status = 1 - job_status WHERE job_id = ?");
+        $stmt = $conn->prepare("UPDATE job SET jobStatus = 1 - jobStatus WHERE job_id = ?");
         $stmt->bind_param("s", $_POST['job_id']);
         $stmt->execute();
 

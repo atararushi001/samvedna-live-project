@@ -1,5 +1,4 @@
 <?php
-/*
 header('Content-Type: application/json');
 
 include '../includes/config.php';
@@ -25,12 +24,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit();
     }
 
-
     $recruiterId = $_POST['recruiter_id'];
     $companyName = $_POST['companyName'];
     $website = $_POST['website'];
     $natureOfBusiness = $_POST['natureOfBusiness'];
-    $address = $_POST['address'];
+    $country = $_POST['country'];
+    $state = $_POST['state'];
+    $city = $_POST['city'];
     $fax = $_POST['fax'];
     $areaCode = $_POST['areaCode'];
     $landline = $_POST['landline'];
@@ -39,18 +39,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $employerName = $_POST['employerName'];
     $companyDescription = $_POST['companyDescription'];
     $jobDesignation = $_POST['jobDesignation'];
+    $industryCategory = $_POST['industryCategory'];
+    $jobTitle = $_POST['jobTitle'];
     $jobType = $_POST['jobType'];
     $dutyDescription = $_POST['dutyDescription'];
-    $essentialQualificationEssential = $_POST['essentialQualificationEssential'];
-    $essentialQualificationDesirable = $_POST['essentialQualificationDesirable'];
+    $jobDuration = $_POST['jobDuration'];
+    $minimumEducation = $_POST['minimumEducation'];
+    $minimumExperience = $_POST['minimumExperience'];
+    $salaryMin = $_POST['salaryMin'];
+    $salaryMax = $_POST['salaryMax'];
+    $workplaceType = $_POST['workplaceType'];
+    $placeOfWork = $_POST['placeOfWork'];
     $ageLimit = $_POST['ageLimit'];
     $womenEligible = $_POST['womenEligible'];
     $workingHoursFrom = $_POST['workingHoursFrom'];
     $workingHoursTo = $_POST['workingHoursTo'];
     $vacanciesRegular = $_POST['vacanciesRegular'];
     $vacanciesTemporary = $_POST['vacanciesTemporary'];
-    $payAndAllowances = $_POST['payAndAllowances'];
-    $placeOfWork = $_POST['placeOfWork'];
     $resumesToBeSent = $_POST['resumesToBeSent'];
     $resumeEmail = $_POST['resumeEmail'];
     $resumeWebsite = $_POST['resumeWebsite'];
@@ -69,20 +74,34 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $conveyanceProvided = $_POST['conveyanceProvided'];
     $conveyanceType = $_POST['conveyanceType'];
     $otherInformation = $_POST['otherInformation'];
+    $currentDate = date('Y-m-d');
 
 
-
-    $query = "INSERT INTO job (
-            recruiters_id, companyName, website, natureOfBusiness, address, 
-            fax, areaCode, landline, mobile, email, 
-            employerName, companyDescription, jobDesignation, jobType, dutyDescription, 
-            essentialQualificationEssential, essentialQualificationDesirable, ageLimit, womenEligible, workingHoursFrom, 
-            workingHoursTo, vacanciesRegular, vacanciesTemporary, payAndAllowances, placeOfWork, 
-            resumesToBeSent, resumeEmail, resumeWebsite, interviewDetailsDate, interviewDetailsTime, 
-            interviewDetailsAptitudeTest, interviewDetailsTechnicalTest, interviewDetailsGroupDiscussion, interviewDetailsPersonalInterview, interviewDetailsTopics, 
-            interviewDetailsContactPerson, disabilityInfoType, disabilityInfoPercentage, disabilityInfoAidOrAppliance, ownVehiclePreferred, 
-            conveyanceProvided, conveyanceType, otherInformation) 
-        VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+    $query = "INSERT INTO `job` (
+        `recruiter_id`, `companyName`, `website`, `natureOfBusiness`, `country`, 
+        `state`, `city`, `fax`, `areaCode`, `landline`, 
+        `mobile`, `email`, `employerName`, `companyDescription`, `jobDesignation`, 
+        `industryCategory`, `jobTitle`, `jobType`, `dutyDescription`, `jobDuration`, 
+        `minimumEducation`, `minimumExperience`, `salaryMin`, `salaryMax`, `workplaceType`, 
+        `placeOfWork`, `ageLimit`, `womenEligible`, `workingHoursFrom`, `workingHoursTo`, 
+        `vacanciesRegular`, `vacanciesTemporary`, `resumesToBeSent`, `resumeEmail`, `resumeWebsite`, 
+        `interviewDetailsDate`, `interviewDetailsTime`, `interviewDetailsAptitudeTest`, `interviewDetailsTechnicalTest`, `interviewDetailsGroupDiscussion`, 
+        `interviewDetailsPersonalInterview`, `interviewDetailsTopics`, `interviewDetailsContactPerson`, `disabilityInfoType`, `disabilityInfoPercentage`, 
+        `disabilityInfoAidOrAppliance`, `ownVehiclePreferred`, `conveyanceProvided`, `conveyanceType`, `otherInformation`, 
+        `postedOn`
+    ) VALUES (
+        ?,?,?,?,?,
+        ?,?,?,?,?,
+        ?,?,?,?,?,
+        ?,?,?,?,?,
+        ?,?,?,?,?,
+        ?,?,?,?,?,
+        ?,?,?,?,?,
+        ?,?,?,?,?,
+        ?,?,?,?,?,
+        ?,?,?,?,?,
+        ?
+    )";
 
     $stmt2 = $conn->prepare($query);
 
@@ -92,7 +111,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $companyName,
         $website,
         $natureOfBusiness,
-        $address,
+        $country,
+        $state,
+        $city,
         $fax,
         $areaCode,
         $landline,
@@ -101,186 +122,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $employerName,
         $companyDescription,
         $jobDesignation,
+        $industryCategory,
+        $jobTitle,
         $jobType,
         $dutyDescription,
-        $essentialQualificationEssential,
-        $essentialQualificationDesirable,
+        $jobDuration,
+        $minimumEducation,
+        $minimumExperience,
+        $salaryMin,
+        $salaryMax,
+        $workplaceType,
+        $placeOfWork,
         $ageLimit,
         $womenEligible,
         $workingHoursFrom,
         $workingHoursTo,
         $vacanciesRegular,
         $vacanciesTemporary,
-        $payAndAllowances,
-        $placeOfWork,
-        $resumesToBeSent,
-        $resumeEmail,
-        $resumeWebsite,
-        $interviewDetailsDate,
-        $interviewDetailsTime,
-        $interviewDetailsAptitudeTest,
-        $interviewDetailsTechnicalTest,
-        $interviewDetailsGroupDiscussion,
-        $interviewDetailsPersonalInterview,
-        $interviewDetailsTopics,
-        $interviewDetailsContactPerson,
-        $disabilityInfoType,
-        $disabilityInfoPercentage,
-        $disabilityInfoAidOrAppliance,
-        $ownVehiclePreferred,
-        $conveyanceProvided,
-        $conveyanceType,
-        $otherInformation
-    );
-    $stmt2->execute();
-
-    $message = "Job posted successfully";
-    $response = array(
-        'success' => true,
-        'message' => $message,
-    );
-
-    header('Content-Type: application/json');
-    echo json_encode($response);
-    exit();
-} else {
-    $message = 'Invalid request method';
-    $response = array(
-        'success' => false,
-        'message' => $message,
-    );
-
-    header('Content-Type: application/json');
-    $jsonResponse = json_encode($response);
-    echo $jsonResponse;
-
-    exit();
-}
-*/
-header('Content-Type: application/json');
-
-include '../includes/config.php';
-
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-
-    $stmt = $conn->prepare("SELECT * FROM recruiters where recruiters_id = ?");
-    $stmt->bind_param("s", $_POST['recruiter_id']);
-    $stmt->execute();
-
-    $result = $stmt->get_result();
-
-    if ($result->num_rows < 1) {
-        $message = 'Recruiter does not exist';
-        $response = array(
-            'success' => false,
-            'message' => $message,
-        );
-
-        header('Content-Type: application/json');
-        $jsonResponse = json_encode($response);
-        echo $jsonResponse;
-        exit();
-    }
-
-
-    $recruiterId = $_POST['recruiter_id'];
-    $companyName = $_POST['companyName'];
-    $website = $_POST['website'];
-    $natureOfBusiness = $_POST['natureOfBusiness'];
-    $address = $_POST['address'];
-    $fax = $_POST['fax'];
-    $areaCode = $_POST['areaCode'];
-    $landline = $_POST['landline'];
-    $mobile = $_POST['mobile'];
-    $email = $_POST['email'];
-    $employerName = $_POST['employerName'];
-    $companyDescription = $_POST['companyDescription'];
-    $jobDesignation = $_POST['jobDesignation'];
-    $jobType = $_POST['jobType'];
-    $dutyDescription = $_POST['dutyDescription'];
-    $essentialQualificationEssential = $_POST['essentialQualificationEssential'];
-    $essentialQualificationDesirable = $_POST['essentialQualificationDesirable'];
-    $ageLimit = $_POST['ageLimit'];
-    $womenEligible = $_POST['womenEligible'];
-    $workingHoursFrom = $_POST['workingHoursFrom'];
-    $workingHoursTo = $_POST['workingHoursTo'];
-    $vacanciesRegular = $_POST['vacanciesRegular'];
-    $vacanciesTemporary = $_POST['vacanciesTemporary'];
-    $payAndAllowances = $_POST['payAndAllowances'];
-    $placeOfWork = $_POST['placeOfWork'];
-    $resumesToBeSent = $_POST['resumesToBeSent'];
-    $resumeEmail = $_POST['resumeEmail'];
-    $resumeWebsite = $_POST['resumeWebsite'];
-    $interviewDetailsDate = $_POST['interviewDetailsDate'];
-    $interviewDetailsTime = $_POST['interviewDetailsTime'];
-    $interviewDetailsAptitudeTest = $_POST['interviewDetailsAptitudeTest'];
-    $interviewDetailsTechnicalTest = $_POST['interviewDetailsTechnicalTest'];
-    $interviewDetailsGroupDiscussion = $_POST['interviewDetailsGroupDiscussion'];
-    $interviewDetailsPersonalInterview = $_POST['interviewDetailsPersonalInterview'];
-    $interviewDetailsTopics = $_POST['interviewDetailsTopics'];
-    $interviewDetailsContactPerson = $_POST['interviewDetailsContactPerson'];
-    $disabilityInfoType = $_POST['disabilityInfoType'];
-    $disabilityInfoPercentage = $_POST['disabilityInfoPercentage'];
-    $disabilityInfoAidOrAppliance = $_POST['disabilityInfoAidOrAppliance'];
-    $ownVehiclePreferred = $_POST['ownVehiclePreferred'];
-    $conveyanceProvided = $_POST['conveyanceProvided'];
-    $conveyanceType = $_POST['conveyanceType'];
-    $otherInformation = $_POST['otherInformation'];
-
-
-
-    $industryCategory = $_POST['industryCategory'];
-    $jobTitle = $_POST['jobTitle'];
-    $jobDuration = $_POST['jobDuration'];
-    $minimumEducation = $_POST['minimumEducation'];
-    $minimumExperience = $_POST['minimumExperience'];
-    $salary = $_POST['salary'];
-    $workplaceType = $_POST['workplaceType'];
-
-
-
-    $query = "INSERT INTO job (
-            recruiters_id, companyName, website, natureOfBusiness, address, 
-            fax, areaCode, landline, mobile, email, 
-            employerName, companyDescription, jobDesignation, jobType, dutyDescription, 
-            essentialQualificationEssential, essentialQualificationDesirable, ageLimit, womenEligible, workingHoursFrom, 
-            workingHoursTo, vacanciesRegular, vacanciesTemporary, payAndAllowances, placeOfWork, 
-            resumesToBeSent, resumeEmail, resumeWebsite, interviewDetailsDate, interviewDetailsTime, 
-            interviewDetailsAptitudeTest, interviewDetailsTechnicalTest, interviewDetailsGroupDiscussion, interviewDetailsPersonalInterview, interviewDetailsTopics, 
-            interviewDetailsContactPerson, disabilityInfoType, disabilityInfoPercentage, disabilityInfoAidOrAppliance, ownVehiclePreferred, 
-            conveyanceProvided, conveyanceType, otherInformation   
-            industryCategory,jobTitle,jobDuration,minimumEducation,minimumExperience,salary,workplaceType) 
-        VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
-
-    $stmt2 = $conn->prepare($query);
-
-    $stmt2->bind_param(
-        "ssssssssssssssssssssssssssssssssssssssssssssssssss",
-        $recruiterId,
-        $companyName,
-        $website,
-        $natureOfBusiness,
-        $address,
-        $fax,
-        $areaCode,
-        $landline,
-        $mobile,
-        $email,
-        $employerName,
-        $companyDescription,
-        $jobDesignation,
-        $jobType,
-        $dutyDescription,
-        $essentialQualificationEssential,
-        $essentialQualificationDesirable,
-        $ageLimit,
-        $womenEligible,
-        $workingHoursFrom,
-        $workingHoursTo,
-        $vacanciesRegular,
-        $vacanciesTemporary,
-        $payAndAllowances,
-        $placeOfWork,
         $resumesToBeSent,
         $resumeEmail,
         $resumeWebsite,
@@ -299,13 +157,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $conveyanceProvided,
         $conveyanceType,
         $otherInformation,
-        $industryCategory,
-        $jobTitle,
-        $jobDuration,
-        $minimumEducation,
-        $minimumExperience,
-        $salary,
-        $workplaceType,
+        $currentDate
     );
     $stmt2->execute();
 

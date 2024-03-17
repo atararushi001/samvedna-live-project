@@ -43,7 +43,11 @@ const Resume = ({ resumes, title, description }) => {
         {resumes.length > 0 ? (
           resumes.map((resume, index) => (
             <div key={index} className="resume">
-              <h3>{resume.resumeName}</h3>
+              <Link
+                to={`/job-seeker-dashboard/view-resume/${resume.resume_id}`}
+              >
+                <h3>{resume.resumeName}</h3>
+              </Link>
               {resume.published ? (
                 <p>
                   Published on:{" "}
