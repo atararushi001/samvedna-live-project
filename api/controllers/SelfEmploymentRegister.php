@@ -6,12 +6,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $stmt->bind_param("s", $_POST['email']);
     $stmt->execute();
 
-
-
     $result = $stmt->get_result();
 
     if ($result->num_rows > 0) {
-        $message = 'Email already exists';
+        $message = 'You have already submitted your Form!';
         $response = array(
             'success' => false,
             'message' => $message,
@@ -22,6 +20,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         echo $jsonResponse;
         exit();
     }
+
+
     $name = $_POST['name'];
     $disabilityType = $_POST['disabilityType'];
     $percentage = $_POST['percentage'];
@@ -65,7 +65,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $assistanceNedeed
     );
 
-    $last_id = $conn->insert_id;
+    $stmt->execute();
+    $last_id = $stmt->insert_id;
     $count = 0;
 
     while (isset($_POST['product' . $count])) {
