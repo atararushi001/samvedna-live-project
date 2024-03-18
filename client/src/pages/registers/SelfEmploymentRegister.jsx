@@ -109,29 +109,65 @@ const SelfEmploymentRegister = () => {
     <>
       <section id="quotes">
         <div className="container">
-          <blockquote>
-            <p>
-              &ldquo;NEVER GIVE UP! No one will know that we are the HIGH
-              POTENTIAL person until we make an IMPACT on other people.&rdquo;
-              <br /> -<span className="highlight-text">Andrew Parengkuan</span>
-            </p>
-            <p>
-              &ldquo;If alphabet &apos;O&apos; stands for Opportunity, its
-              absent in yesterday, once in today, and thrice in tomorrow. So
-              theres always a new opportunity waiting for you tomorrow.&rdquo;{" "}
-              <br />- <span className="highlight-text">Anonymous</span>
-            </p>
-          </blockquote>
+          <h1>
+            <strong>
+              <span className="highlight-text">
+                EMPOWERING SELF-EMPLOYMENT:
+              </span>{" "}
+              A VISION FOR INDEPENDENCE
+            </strong>
+          </h1>
+          <p className="sub-text">
+            <strong>
+              Empowerment Beyond Barriers - Unleashing Potential for a More
+              Inclusive Tomorrow
+            </strong>
+          </p>
 
           <p className="sub-text">
-            People with disABILITY face challenges and limited opportunities.
-            Self-employment and small businesses are crucial for their economic
-            independence and social upliftment.
+            <strong>
+              &ldquo;We Prefer PWD to Work Rather Than to Live on
+              Charity.&rdquo;
+            </strong>
+            &nbsp;We recognize that employment opportunities for people with
+            disabilities are scarce. In response, we champion self-employment as
+            a pathway to economic independence and social upliftment.
           </p>
           <p className="sub-text">
-            SAMVEDNA supports and guides unemployed Persons with disABILITY
-            towards self-employment, providing information and resources for
-            small business ventures.
+            Self-employment offers individuals with disabilities the freedom to
+            create their own opportunities, break free from the constraints of
+            traditional employment, and carve out a niche for themselves in the
+            market. It&apos;s a chance to earn a livelihood with dignity,
+            leveraging their unique skills and talents.
+          </p>
+          <p className="sub-text">
+            <strong>&ldquo;Samvedna&rdquo;</strong> is committed to empowering
+            individuals with disabilities to pursue self-employment ventures by
+            providing them with the necessary guidance, resources, and support.
+            Through our platform, we aim to bridge the gap between aspiring
+            entrepreneurs and available opportunities, facilitating connections
+            and fostering a sense of community.
+          </p>
+          <p className="sub-text">
+            We invite self-employed professionals across various fields - from
+            carpentry and plumbing to web development and legal consultancy - to
+            join our initiative and showcase their businesses. By registering on
+            our portal, professionals with disabilities can gain visibility,
+            attract clients, and grow their enterprises.
+          </p>
+          <p className="sub-text">
+            Additionally, we urge individuals with disabilities to support one
+            another by patronizing businesses run by their peers. Together, we
+            can create a network of empowerment and collaboration, where every
+            transaction contributes to the economic empowerment of the
+            community.
+          </p>
+          <p className="sub-text">
+            Join us in our mission to promote self-employment among people with
+            disabilities and build a more inclusive and prosperous society.
+            Together, we can turn dreams into reality and unlock the full
+            potential of every individual, one entrepreneurial venture at a
+            time.
           </p>
         </div>
       </section>
