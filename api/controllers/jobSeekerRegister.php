@@ -2,6 +2,25 @@
 include '../includes/config.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $stmt = $conn->prepare("SELECT * FROM recruiters where email = ?");
+    $stmt->bind_param("s", $_POST['email']);
+    $stmt->execute();
+
+    $result = $stmt->get_result();
+
+    if ($result->num_rows > 0) {
+        $message = 'Account already exists as a recruiter. Please login to continue.';
+        $response = array(
+            'success' => false,
+            'message' => $message,
+        );
+
+        header('Content-Type: application/json');
+        $jsonResponse = json_encode($response);
+        echo $jsonResponse;
+        exit();
+    }
+
     $stmt = $conn->prepare("SELECT * FROM job_seekers where email = ?");
     $stmt->bind_param("s", $_POST['email']);
     $stmt->execute();

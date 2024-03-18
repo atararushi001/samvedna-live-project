@@ -8,6 +8,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     move_uploaded_file($file_tmp, "../uploads/profilePictures/" . $file_name);
 
+
+    $stmt = $conn->prepare("SELECT * FROM job_seekers WHERE email = ?");
+    $stmt->bind_param("s", $_POST['email']);
+    $stmt->execute();
+
+    $results = $stmt->get_result();
+
+    if ($results->num_rows > 0) {
+        $message = 'Account already exists as a job seeker. Please login to continue.';
+        $response = array(
+            'success' => false,
+            'message' => $message,
+        );
+
+        header('Content-Type: application/json');
+        $jsonResponse = json_encode($response);
+        echo $jsonResponse;
+        exit();
+    }
+
     $stmt = $conn->prepare("SELECT * FROM recruiters where email = ?");
     $stmt->bind_param("s", $_POST['email']);
     $stmt->execute();
