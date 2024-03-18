@@ -55,7 +55,7 @@ const App = () => {
             <Route index element={<Home />} />
             <Route path="/donate" element={<Donate />} />
             <Route path="/blogs" element={<Blogs />} />
-            <Route path="/blog/:blogId" element={<Blog />} />
+            <Route path="/blog" element={<Blog />} />
             <Route path="/gallery" element={<Gallery />} />
             <Route path="/about" element={<About />} />
             <Route path="/contact" element={<Contact />} />

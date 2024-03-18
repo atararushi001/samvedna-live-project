@@ -1,46 +1,44 @@
 import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 
 const API = import.meta.env.VITE_API_URL;
 
 const Blogs = () => {
   const [blogs, setBlogs] = useState([]);
-  const [filters, setFilters] = useState({
-    latest: true,
-    popular: false,
-    search: false,
-  });
   const [search, setSearch] = useState("");
   const [searchResults, setSearchResults] = useState([]);
 
-  const handleFilterChange = (e) => {
-    setFilters({
-      latest: false,
-      popular: false,
-      search: false,
-      [e.target.name]: true,
-    });
-  };
-
   const handleSearchChange = (e) => {
     setSearch(e.target.value);
+
+    if (e.target.value.trim() === "") {
+      setSearchResults([]);
+    }
   };
 
-  const handleSearch = (e) => {
+  const handleSearchSubmit = (e) => {
     e.preventDefault();
-    setFilters({
-      latest: false,
-      popular: false,
-      search: true,
-    });
+    if (search.trim() === "") {
+      setSearchResults([]);
+      return;
+    }
 
-    fetch(`${API}/controllers/searchBlogs.php?search=${search}`, {
+    const results = blogs.filter((blog) =>
+      blog.title.toLowerCase().includes(search.toLowerCase())
+    );
+
+    setSearchResults(results);
+  };
+
+  useEffect(() => {
+    fetch(`${API}/controllers/getBlogs.php?popular=true`, {
       method: "GET",
       credentials: "include",
     })
       .then((response) => response.json())
       .then((data) => {
         if (data.success) {
-          setSearchResults(data.blogs);
+          setBlogs(data.blogs);
         } else {
           console.log(data.message);
         }
@@ -48,133 +46,76 @@ const Blogs = () => {
       .catch((error) => {
         console.error(error);
       });
-  };
-
-  useEffect(() => {
-    if (filters.latest) {
-      fetch(`${API}/controllers/getBlogs.php?latest=true`, {
-        method: "GET",
-        credentials: "include",
-      })
-        .then((response) => response.json())
-        .then((data) => {
-          if (data.success) {
-            setBlogs(data.blogs);
-          } else {
-            console.log(data.message);
-          }
-        })
-        .catch((error) => {
-          console.error(error);
-        });
-    } else if (filters.popular) {
-      fetch(`${API}/controllers/getBlogs.php?popular=true`, {
-        method: "GET",
-        credentials: "include",
-      })
-        .then((response) => response.json())
-        .then((data) => {
-          if (data.success) {
-            setBlogs(data.blogs);
-          } else {
-            console.log(data.message);
-          }
-        })
-        .catch((error) => {
-          console.error(error);
-        });
-    }
-  }, [filters.latest, filters.popular]);
+  }, []);
 
   return (
     <div className="container">
       <div className="blogs">
         <h1>Blogs</h1>
-        <div className="filters">
-          <select name="filters" id="filters" className="filter-dropdown">
-            <option value="latest" onClick={handleFilterChange}>
-              Latest
-            </option>
-            <option value="popular" onClick={handleFilterChange}>
-              Popular
-            </option>
-          </select>
-          <form onSubmit={handleSearch}>
-            <input
-              type="text"
-              placeholder="Search"
-              value={search}
-              onChange={handleSearchChange}
-            />
-            <button type="submit" className="btn">
-              Search
-            </button>
-          </form>
-        </div>
+        <form className="filters" onSubmit={handleSearchSubmit}>
+          <input
+            type="text"
+            placeholder="Search"
+            value={search}
+            onChange={handleSearchChange}
+          />
+          <button type="submit" className="btn">
+            Search
+          </button>
+        </form>
 
         <div className="blog-list">
-          {filters.search
+          {searchResults.length > 0
             ? searchResults.map((blog) => (
-                <div className="blog" key={blog.blogId}>
-                  <img
-                    src={`${API}/uploads/blogImages/${blog.blogImage}`}
-                    alt={blog.blogImage}
-                  />
-                  <h2>{blog.blogTitle}</h2>
-                  <p>{blog.blogContent}</p>
-                </div>
+                <Link key={blog.id} to="/blog" state={{ id: blog.id }}>
+                  <div className="blog">
+                    <img
+                      src={`${API}/uploads/covers/${blog.cover}`}
+                      alt={blog.cover}
+                    />
+                    <h2>{blog.title}</h2>
+                    <p>
+                      {blog.content.length > 100
+                        ? blog.content.substring(0, 100) + "..."
+                        : blog.content}
+                    </p>
+
+                    <div className="blog-footer">
+                      <p>Author: {blog.author}</p>
+                      <p>
+                        Published On:{" "}
+                        {new Date(blog.published).toLocaleDateString()}
+                      </p>
+                    </div>
+                  </div>
+                </Link>
               ))
             : blogs.map((blog) => (
-                <div className="blog" key={blog.blogId}>
-                  <img
-                    src={`${API}/uploads/blogImages/${blog.blogImage}`}
-                    alt={blog.blogImage}
-                  />
-                  <h2>{blog.blogTitle}</h2>
-                  <p>{blog.blogContent}</p>
-                </div>
+                <Link key={blog.id} to="/blog" state={{ id: blog.id }}>
+                  <div className="blog">
+                    <img
+                      src={`${API}/uploads/covers/${blog.cover}`}
+                      alt={blog.cover}
+                    />
+                    <h2>{blog.title}</h2>
+                    <p>
+                      {blog.content.length > 100
+                        ? blog.content.substring(0, 100) + "..."
+                        : blog.content}
+                    </p>
+
+                    <div className="blog-footer">
+                      <p>
+                        <strong>Author:</strong> {blog.author}
+                      </p>
+                      <p>
+                        <strong>Published On: </strong>
+                        {new Date(blog.published).toLocaleDateString()}
+                      </p>
+                    </div>
+                  </div>
+                </Link>
               ))}
-
-          <div className="blog">
-            <img src="https://via.placeholder.com/150" alt="Blog" />
-            <h2>Blog Title</h2>
-            <p>Blog Content</p>
-
-            <div className="blog-footer">
-              <p>Author: Author Name</p>
-              <p>Published On: Date</p>
-            </div>
-          </div>
-          <div className="blog">
-            <img src="https://via.placeholder.com/150" alt="Blog" />
-            <h2>Blog Title</h2>
-            <p>Blog Content</p>
-
-            <div className="blog-footer">
-              <p>Author: Author Name</p>
-              <p>Published On: Date</p>
-            </div>
-          </div>
-          <div className="blog">
-            <img src="https://via.placeholder.com/150" alt="Blog" />
-            <h2>Blog Title</h2>
-            <p>Blog Content</p>
-
-            <div className="blog-footer">
-              <p>Author: Author Name</p>
-              <p>Published On: Date</p>
-            </div>
-          </div>
-          <div className="blog">
-            <img src="https://via.placeholder.com/150" alt="Blog" />
-            <h2>Blog Title</h2>
-            <p>Blog Content</p>
-
-            <div className="blog-footer">
-              <p>Author: Author Name</p>
-              <p>Published On: Date</p>
-            </div>
-          </div>
         </div>
       </div>
     </div>
