@@ -23,18 +23,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $checkStmt->close();
 
-    $publishedQuery = $conn->prepare("SELECT published FROM resumes WHERE resume_id = ?");
-    $publishedQuery->bind_param("s", $resumeId);
-    $publishedQuery->execute();
-    $publishedResult = $publishedQuery->get_result();
+    // $publishedQuery = $conn->prepare("SELECT published FROM resumes WHERE resume_id = ?");
+    // $publishedQuery->bind_param("s", $resumeId);
+    // $publishedQuery->execute();
+    // $publishedResult = $publishedQuery->get_result();
 
-    $publishedRow = $publishedResult->fetch_assoc();
-    $publishedOn = null;
+    // $publishedRow = $publishedResult->fetch_assoc();
+    // $publishedOn = null;
 
-    if ($publishedRow['published'] === 'false' && $_POST['published'] === 'true') {
-        date_default_timezone_set('Asia/Kolkata');
-        $publishedOn = date('Y/m/d');
-    }
+    // if ($publishedRow['published'] === 'false' && $_POST['published'] === 'true') {
+    //     date_default_timezone_set('Asia/Kolkata');
+    //     $publishedOn = date('Y/m/d');
+    // }
 
     // Resume exists, proceed with update
     $resumeName = $_POST['resumeName'];
@@ -58,14 +58,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $desiredPaytime = $_POST['desiredPaytime'];
     $additionalPreferences = $_POST['additionalPreferences'];
     $published = $_POST['published'];
+    $desiredJobType =  implode(",", $_POST['desiredJobType']);
 
-    // Prepare and execute the SQL UPDATE statement for resumes table
     $stmt = $conn->prepare("UPDATE resumes SET
         resumeName = ?, firstName = ?, lastName = ?, suffix = ?, email = ?, 
         phone = ?, website = ?, linkedin = ?, country = ?, state = ?, 
         city = ?, postalCode = ?, summary = ?, objective = ?, militaryStatus = ?,
         militaryAdditionalInfo = ?, desiredPay = ?, desiredCurrency = ?, desiredPaytime = ?, additionalPreferences = ?, 
-        published = ?, published_on = ? WHERE resume_id = ?");
+        published = ?, desiredJobType = ? WHERE resume_id = ?");
     $stmt->bind_param(
         "sssssssssssssssssssssss",
         $resumeName,
@@ -89,7 +89,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $desiredPaytime,
         $additionalPreferences,
         $published,
-        $publishedOn,
+        $desiredJobType,
         $resumeId
     );
     $stmt->execute();
@@ -269,27 +269,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     foreach ($branchIdsToDelete as $id) {
         $conn->query("DELETE FROM branches WHERE branch_id = $id");
     }
-
-    // Handle updating job_types table
-    if (isset($_POST['desiredJobType']) && is_array($_POST['desiredJobType'])) {
-        foreach ($_POST['desiredJobType'] as $jobType) {
-            // Prepare and execute the SQL UPDATE statement for job_types table
-            $updateJobTypeStmt = $conn->prepare("SELECT * FROM job_types WHERE resume_id = ?");
-            $updateJobTypeStmt->bind_param("s", $resumeId);
-            $updateJobTypeStmt->execute();
-            $result = $updateJobTypeStmt->get_result();
-
-            $row = $result->fetch_assoc();
-            if ($row['jobType'] !== $jobType) {
-                $updateJobTypeStmt = $conn->prepare("UPDATE job_types SET jobType = ? WHERE resume_id = ?");
-                $updateJobTypeStmt->bind_param("ss", $jobType, $resumeId);
-                $updateJobTypeStmt->execute();
-            }
-
-            $updateJobTypeStmt->close();
-        }
-    }
-
     echo json_encode(array('success' => true, 'message' => 'Resume updated successfully'));
 } else {
     echo json_encode(array('success' => false, 'message' => 'Invalid request method'));

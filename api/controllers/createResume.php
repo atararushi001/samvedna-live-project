@@ -24,20 +24,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $desiredPaytime = $_POST['desiredPaytime'];
     $additionalPreferences = $_POST['additionalPreferences'];
     $published = $_POST['published'];
+    // $createdOn = date("Y/m/d");
+    $desiredJobType = implode(",", $_POST['desiredJobType']);
 
     $stmt = $conn->prepare("INSERT INTO resumes (
         job_seeker_id, resumeName, firstName, lastName, suffix, email, 
         phone, website, linkedin, country, state, 
         city, postalCode, summary, objective, militaryStatus,
         militaryAdditionalInfo, desiredPay, desiredCurrency, desiredPaytime, additionalPreferences, 
-        published) VALUES (
+        published, desiredJobType) VALUES (
             ?, ?, ?, ?, ?, ?, 
             ?, ?, ?, ?, ?, 
             ?, ?, ?, ?, ?, 
             ?, ?, ?, ?, ?, 
-            ?)");
+            ?, ?)");
     $stmt->bind_param(
-        "ssssssssssssssssssssss",
+        "sssssssssssssssssssssss",
         $jobSeekerId,
         $resumeName,
         $firstName,
@@ -59,7 +61,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $desiredCurrency,
         $desiredPaytime,
         $additionalPreferences,
-        $published
+        $published,
+        $desiredJobType
     );
     $stmt->execute();
 
@@ -97,18 +100,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 
-
     // Inserting data into Branches table
     foreach ($_POST['branches'] as $branch) {
         $stmt = $conn->prepare("INSERT INTO branches (resume_id, branch, unit, beginningRank, endingRank, startDate, endDate, areaOfExpertise, recognition) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
         $stmt->bind_param("sssssssss", $resumeId, $branch['branch'], $branch['unit'], $branch['beginningRank'], $branch['endingRank'], $branch['startDate'], $branch['endDate'], $branch['areaOfExpertise'], $branch['recognition']);
-        $stmt->execute();
-    }
-
-    // Inserting data into desired_jobs table
-    foreach ($_POST['desiredJobType'] as $desiredJob) {
-        $stmt = $conn->prepare("INSERT INTO job_types (resume_id, jobType) VALUES (?, ?)");
-        $stmt->bind_param("ss", $resumeId, $desiredJob);
         $stmt->execute();
     }
 

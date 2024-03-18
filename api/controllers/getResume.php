@@ -46,12 +46,12 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
             'militaryStatus' => $resume['militaryStatus'],
             'militaryAdditionalInfo' => $resume['militaryAdditionalInfo'],
             'branches' => array(),
-            'desiredJobType' => array(),
             'desiredPay' => $resume['desiredPay'],
             'desiredCurrency' => $resume['desiredCurrency'],
             'desiredPaytime' => $resume['desiredPaytime'],
             'additionalPreferences' => $resume['additionalPreferences'],
             'published' => $resume['published'],
+            'desiredJobType' => explode(",", $resume['desiredJobType'])
         );
 
         // Fetch employers and positions
@@ -142,16 +142,6 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
                 'branch_id' => $row['branch_id'] // Add branch_id to the response for updating purposes
             );
             $response['branches'][] = $branch;
-        }
-        $stmt->close();
-
-        // Fetch Desired Job Types
-        $stmt = $conn->prepare("SELECT * FROM job_types WHERE resume_id = ?");
-        $stmt->bind_param("s", $resume_id);
-        $stmt->execute();
-        $result = $stmt->get_result();
-        while ($row = $result->fetch_assoc()) {
-            $response['desiredJobType'][] = $row['jobType'];
         }
         $stmt->close();
 

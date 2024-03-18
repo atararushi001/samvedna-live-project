@@ -2,13 +2,6 @@
 include '../includes/config.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $file_tmp = $_FILES['profilePicture']['tmp_name'];
-    $ext = pathinfo($_FILES['profilePicture']['name'], PATHINFO_EXTENSION);
-    $file_name = time() . '.' . $ext;
-
-    move_uploaded_file($file_tmp, "../uploads/profilePictures/" . $file_name);
-
-
     $stmt = $conn->prepare("SELECT * FROM job_seekers WHERE email = ?");
     $stmt->bind_param("s", $_POST['email']);
     $stmt->execute();
@@ -27,6 +20,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         echo $jsonResponse;
         exit();
     }
+
+
+    $file_tmp = $_FILES['profilePicture']['tmp_name'];
+    $ext = pathinfo($_FILES['profilePicture']['name'], PATHINFO_EXTENSION);
+    $file_name = time() . '.' . $ext;
+
+    move_uploaded_file($file_tmp, "../uploads/profilePictures/" . $file_name);
 
     $stmt = $conn->prepare("SELECT * FROM recruiters where email = ?");
     $stmt->bind_param("s", $_POST['email']);
