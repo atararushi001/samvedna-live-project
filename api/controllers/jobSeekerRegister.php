@@ -21,12 +21,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit();
     }
 
-    $stmt = $conn->prepare("SELECT * FROM job_seekers where email = ?");
-    $stmt->bind_param("s", $_POST['email']);
-    $stmt->execute();
+    $stmt->close();
+
+    $stmt2 = $conn->prepare("SELECT * FROM job_seekers where email = ?");
+    $stmt2->bind_param("s", $_POST['email']);
+    $stmt2->execute();
 
 
-    $result = $stmt->get_result();
+    $result = $stmt2->get_result();
 
     if ($result->num_rows > 0) {
         $message = 'Email already exists';
@@ -40,6 +42,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         echo $jsonResponse;
         exit();
     }
+
+    $stmt2->close();
+    // die(json_encode($_POST));
 
     $email = $_POST['email'];
     $username = $_POST['username'];
@@ -85,9 +90,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             ?,?,?,?,?,
             ?,?)";
 
-    $stmt = $conn->prepare($sql);
+    $stmt3 = $conn->prepare($sql);
 
-    $stmt->bind_param(
+    $stmt3->bind_param(
         "sssssssssssssssssssssssssss",
         $email,
         $username,
@@ -119,8 +124,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     );
 
 
-    if (!$stmt->execute()) {
-        die('Error in execute statement: ' . $stmt->error);
+    if (!$stmt3->execute()) {
+        die('Error in execute statement: ' . $stmt3->error);
     } else {
         $message = 'Registration Successful!';
         $response = array(
@@ -133,7 +138,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         echo $jsonResponse;
     }
 
-    $stmt->close();
+    $stmt3->close();
 
     $conn->close();
 }

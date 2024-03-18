@@ -272,6 +272,7 @@ const CreateResume = () => {
         return response.json();
       })
       .then((data) => {
+        console.log(data);
         if (data.success) {
           toast.success(data.message);
           navigate("/job-seeker-dashboard/manage-resumes");
@@ -981,7 +982,7 @@ const CreateResume = () => {
                   type="checkbox"
                   name="desiredJobType"
                   id="desiredJobType1"
-                  value="Full-time"
+                  value="Full-Time"
                   onChange={handleInputChange}
                 />
                 <label htmlFor="desiredJobType1">Full-time</label>
@@ -991,7 +992,7 @@ const CreateResume = () => {
                   type="checkbox"
                   name="desiredJobType"
                   id="desiredJobType2"
-                  value="Part-time"
+                  value="Part-Time"
                   onChange={handleInputChange}
                 />
                 <label htmlFor="desiredJobType2">Part-time</label>
