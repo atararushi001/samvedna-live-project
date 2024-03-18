@@ -93,82 +93,180 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     );
     $stmt->execute();
 
-    // Handle updating employers table
-    foreach ($_POST['employers'] as $employer) {
-        $employerId = $employer['employer_id']; // Assuming you have employer ID in the form
+    // Handle updating employers and positions table
+    foreach ($_POST['employers'] as &$employer) {
         $employerName = $employer['employerName'];
+        $employerId = $employer['employer_id'] ?? null; // get the employer ID, or null if it's not set
 
-        $updateEmployerStmt = $conn->prepare("UPDATE employers SET employerName = ? WHERE employer_id = ?");
-        $updateEmployerStmt->bind_param("ss", $employerName, $employerId);
-        $updateEmployerStmt->execute();
-    }
+        if ($employerId) {
+            // If the employer ID is set, update the existing employer record
+            $updateEmployerStmt = $conn->prepare("UPDATE employers SET employerName = ? WHERE employer_id = ?");
+            $updateEmployerStmt->bind_param("ss", $employerName, $employerId);
+            $updateEmployerStmt->execute();
+        } else {
+            // If the employer ID is not set, insert a new employer record
+            $insertEmployerStmt = $conn->prepare("INSERT INTO employers (employerName, resume_id) VALUES (?, ?)");
+            $insertEmployerStmt->bind_param("ss", $employerName, $resumeId);
+            $insertEmployerStmt->execute();
 
-    // Handle updating positions table
-    foreach ($_POST['employers'] as $employer) {
-        foreach ($employer['positions'] as $position) {
-            $positionId = $position['position_id']; // Assuming you have position ID in the form
+            // Get the ID of the newly inserted employer record
+            $employerId = $conn->insert_id;
+            $employer['employer_id'] = $employerId; // update the employer record in the $_POST array with the new employer ID
+        }
+
+        // Handle positions for this employer
+        foreach ($employer['positions'] as &$position) {
             $positionTitle = $position['positionTitle'];
             $startDate = $position['startDate'];
             $endDate = $position['endDate'];
             $isCurrentPosition = $position['isCurrentPosition'];
             $jobDescription = $position['jobDescription'];
+            $positionId = $position['position_id'] ?? null; // get the position ID,or null if it's not set
 
-            $updatePositionStmt = $conn->prepare("UPDATE positions SET positionTitle = ?, startDate = ?, endDate = ?, isCurrentPosition = ?, jobDescription = ? WHERE position_id = ?");
-            $updatePositionStmt->bind_param("ssssss", $positionTitle, $startDate, $endDate, $isCurrentPosition, $jobDescription, $positionId);
-            $updatePositionStmt->execute();
-        }
-    }
+            if ($positionId) {
+                // If the position ID is set, update the existing position record
+                $updatePositionStmt = $conn->prepare("UPDATE positions SET positionTitle = ?, startDate = ?, endDate = ?, isCurrentPosition = ?, jobDescription = ? WHERE position_id = ?");
+                $updatePositionStmt->bind_param("ssssss", $positionTitle, $startDate, $endDate, $isCurrentPosition, $jobDescription, $positionId);
+                $updatePositionStmt->execute();
+            } else {
+                // If the position ID is not set, insert a new position record
+                $insertPositionStmt = $conn->prepare("INSERT INTO positions (employer_id, positionTitle, startDate, endDate, isCurrentPosition, jobDescription) VALUES (?, ?, ?, ?, ?, ?)");
+                $insertPositionStmt->bind_param("ssssss", $employerId, $positionTitle, $startDate, $endDate, $isCurrentPosition, $jobDescription);
+                $insertPositionStmt->execute();
 
-    // Handle updating education table
-    if (isset($_POST['education']) && is_array($_POST['education'])) {
-        foreach ($_POST['education'] as $education) {
-            $educationId = $education['institution_id']; // Assuming you have education ID in the form
-            $institutionName = $education['institutionName'];
-
-            // Prepare and execute the SQL UPDATE statement for education table
-            $updateEducationStmt = $conn->prepare("UPDATE education SET institutionName = ? WHERE institution_id = ?");
-            $updateEducationStmt->bind_param("ss", $institutionName, $educationId);
-            $updateEducationStmt->execute();
-
-            // Update degrees information
-            if (isset($education['degrees']) && is_array($education['degrees'])) {
-                foreach ($education['degrees'] as $degree) {
-                    $degreeId = $degree['degree_id']; // Assuming you have degree ID in the form
-                    $degreeValue = $degree['degree'];
-                    $educationCompleted = $degree['educationCompleted'];
-                    $graduationDate = $degree['graduationDate'];
-                    $major = $degree['major'];
-                    $additionalInfo = $degree['additionalInfo'];
-                    $grade = $degree['grade'];
-                    $outOf = $degree['outOf'];
-
-                    // Prepare and execute the SQL UPDATE statement for degrees table
-                    $updateDegreeStmt = $conn->prepare("UPDATE degrees SET degree = ?, educationCompleted = ?, graduationDate = ?, major = ?, additionalInfo = ?, grade = ?, outOf = ? WHERE degree_id = ?");
-                    $updateDegreeStmt->bind_param("ssssssss", $degreeValue, $educationCompleted, $graduationDate, $major, $additionalInfo, $grade, $outOf, $degreeId);
-                    $updateDegreeStmt->execute();
-                }
+                // Get the ID of the newly inserted position record
+                $positionId = $conn->insert_id;
+                $position['position_id'] = $positionId; // update the position record in the $_POST array with the new position ID
             }
         }
     }
 
-    // Handle updating branches table
-    if (isset($_POST['branches']) && is_array($_POST['branches'])) {
-        foreach ($_POST['branches'] as $branch) {
-            $branchId = $branch['branch_id']; // Assuming you have branch ID in the form
-            $branchName = $branch['branch'];
-            $unit = $branch['unit'];
-            $beginningRank = $branch['beginningRank'];
-            $endingRank = $branch['endingRank'];
-            $startDate = $branch['startDate'];
-            $endDate = $branch['endDate'];
-            $areaOfExpertise = $branch['areaOfExpertise'];
-            $recognition = $branch['recognition'];
+    unset($employer, $position); // unset the references to the last elements of the arrays
 
-            // Prepare and execute the SQL UPDATE statement for branches table
-            $updateBranchStmt = $conn->prepare("UPDATE branches SET branch = ?, unit = ?, beginningRank = ?, endingRank = ?, startDate = ?, endDate = ?, areaOfExpertise = ?, recognition = ? WHERE branch_id = ?");
-            $updateBranchStmt->bind_param("sssssssss", $branchName, $unit, $beginningRank, $endingRank, $startDate, $endDate, $areaOfExpertise, $recognition, $branchId);
-            $updateBranchStmt->execute();
+    $postEmployerIds = array_column($_POST['employers'], 'employer_id');
+    $postPositionIds = [];
+    foreach ($_POST['employers'] as $employer) {
+        $postPositionIds = array_merge($postPositionIds, array_column($employer['positions'], 'position_id'));
+    }
+
+    // Get all the employer and position IDs from the database
+    $dbEmployerIds = array_column($conn->query("SELECT employer_id FROM employers")->fetch_all(MYSQLI_ASSOC), 'employer_id');
+    $dbPositionIds = array_column($conn->query("SELECT position_id FROM positions")->fetch_all(MYSQLI_ASSOC), 'position_id');
+
+    // Find the IDs that are in the database but not in the $_POST data
+    $employerIdsToDelete = array_diff($dbEmployerIds, $postEmployerIds);
+    $positionIdsToDelete = array_diff($dbPositionIds, $postPositionIds);
+
+    // Delete the employers and positions with these IDs
+    foreach ($employerIdsToDelete as $id) {
+        $conn->query("DELETE FROM employers WHERE employer_id = $id");
+    }
+    foreach ($positionIdsToDelete as $id) {
+        $conn->query("DELETE FROM positions WHERE position_id = $id");
+    }
+
+    // Handle Updating Education and Institutions Table
+    // Education
+    foreach ($_POST['education'] as &$education) {
+        $educationId = $education['institution_id'] ?? null; // get the education ID, or null if it's not set
+
+        if ($educationId) {
+            // If the education ID is set, update the existing education record
+            $updateEducationStmt = $conn->prepare("UPDATE education SET institutionName = ? WHERE institution_id = ?");
+            $updateEducationStmt->bind_param("ss", $education['institutionName'], $educationId);
+            $updateEducationStmt->execute();
+        } else {
+            // If the education ID is not set, insert a new education record
+            $insertEducationStmt = $conn->prepare("INSERT INTO education (institutionName, resume_id) VALUES (?, ?)");
+            $insertEducationStmt->bind_param("ss", $education['institutionName'], $resumeId);
+            $insertEducationStmt->execute();
+
+            // Get the ID of the newly inserted education record
+            $educationId = $conn->insert_id;
+            $education['institution_id'] = $educationId; // update the education record in the $_POST array with the new education ID
         }
+
+        // Handle degrees for this education
+        foreach ($education['degrees'] as &$degree) {
+            $degreeId = $degree['degree_id'] ?? null; // get the degree ID, or null if it's not set
+
+            if ($degreeId) {
+                // If the degree ID is set, update the existing degree record
+                $updateDegreeStmt = $conn->prepare("UPDATE degrees SET degree = ?, educationCompleted = ?, graduationDate = ?, major = ?, additionalInfo = ?, grade = ?, outOf = ? WHERE degree_id = ?");
+                $updateDegreeStmt->bind_param("ssssssss", $degree['degree'], $degree['educationCompleted'], $degree['graduationDate'], $degree['major'], $degree['additionalInfo'], $degree['grade'], $degree['outOf'], $degreeId);
+                $updateDegreeStmt->execute();
+            } else {
+                // If the degree ID is not set, insert a new degree record
+                $insertDegreeStmt = $conn->prepare("INSERT INTO degrees (institution_id, degree, educationCompleted, graduationDate, major, additionalInfo, grade, outOf) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+                $insertDegreeStmt->bind_param("isssssss", $educationId, $degree['degree'], $degree['educationCompleted'], $degree['graduationDate'], $degree['major'], $degree['additionalInfo'], $degree['grade'], $degree['outOf']);
+                $insertDegreeStmt->execute();
+
+                // Get the ID of the newly inserted degree record
+                $degreeId = $conn->insert_id;
+                $degree['degree_id'] = $degreeId; // update the degree record in the $_POST array with the new degree ID
+            }
+        }
+    }
+
+    unset($education, $degree); // unset the references to the last elements of the arrays
+
+    $postEducationIds = array_column($_POST['education'], 'institution_id');
+    $postDegreeIds = [];
+    foreach ($_POST['education'] as $education) {
+        $postDegreeIds = array_merge($postDegreeIds, array_column($education['degrees'], 'degree_id'));
+    }
+
+    // Get all the education and degree IDs from the database
+    $dbEducationIds = array_column($conn->query("SELECT institution_id FROM education")->fetch_all(MYSQLI_ASSOC), 'institution_id');
+    $dbDegreeIds = array_column($conn->query("SELECT degree_id FROM degrees")->fetch_all(MYSQLI_ASSOC), 'degree_id');
+
+    // Find the IDs that are in the database but not in the $_POST data
+    $educationIdsToDelete = array_diff($dbEducationIds, $postEducationIds);
+    $degreeIdsToDelete = array_diff($dbDegreeIds, $postDegreeIds);
+
+    // Delete the educations and degrees with these IDs
+    foreach ($educationIdsToDelete as $id) {
+        $conn->query("DELETE FROM education WHERE institution_id = $id");
+    }
+    foreach ($degreeIdsToDelete as $id) {
+        $conn->query("DELETE FROM degrees WHERE degree_id = $id");
+    }
+
+    // Handle updating branches table
+    // Branches
+    foreach ($_POST['branches'] as &$branch) {
+        $branchId = $branch['branch_id'] ?? null; // get the branch ID, or null if it's not set
+
+        if ($branchId) {
+            // If the branch ID is set, update the existing branch record
+            $updateBranchStmt = $conn->prepare("UPDATE branches SET branch = ?, unit = ?, beginningRank = ?, endingRank = ?, startDate = ?, endDate = ?, areaOfExpertise = ?, recognition = ? WHERE branch_id = ?");
+            $updateBranchStmt->bind_param("sssssssss", $branch['branch'], $branch['unit'], $branch['beginningRank'], $branch['endingRank'], $branch['startDate'], $branch['endDate'], $branch['areaOfExpertise'], $branch['recognition'], $branchId);
+            $updateBranchStmt->execute();
+        } else {
+            // If the branch ID is not set, insert a new branch record
+            $insertBranchStmt = $conn->prepare("INSERT INTO branches (resume_id, branch, unit, beginningRank, endingRank, startDate, endDate, areaOfExpertise, recognition) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
+            $insertBranchStmt->bind_param("sssssssss", $resumeId, $branch['branch'], $branch['unit'], $branch['beginningRank'], $branch['endingRank'], $branch['startDate'], $branch['endDate'], $branch['areaOfExpertise'], $branch['recognition']);
+            $insertBranchStmt->execute();
+
+            // Get the ID of the newly inserted branch record
+            $branchId = $conn->insert_id;
+            $branch['branch_id'] = $branchId; // update the branch record in the $_POST array with the new branch ID
+        }
+    }
+
+    unset($branch); // unset the reference to the last element of the array
+
+    $postBranchIds = array_column($_POST['branches'], 'branch_id');
+
+    // Get all the branch IDs fromthe database
+    $dbBranchIds = array_column($conn->query("SELECT branch_id FROM branches")->fetch_all(MYSQLI_ASSOC), 'branch_id');
+
+    // Find the IDs that are in the database but not in the $_POST data
+    $branchIdsToDelete = array_diff($dbBranchIds, $postBranchIds);
+
+    // Delete the branches with these IDs
+    foreach ($branchIdsToDelete as $id) {
+        $conn->query("DELETE FROM branches WHERE branch_id = $id");
     }
 
     // Handle updating job_types table
