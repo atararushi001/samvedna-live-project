@@ -10,7 +10,12 @@ function handleError($message)
 }
 
 if ($_SERVER['REQUEST_METHOD'] == "GET") {
-    $query = " SELECT * FROM `recruiters`";
+    $query = "SELECT DISTINCT recruiters.*, 
+                cities.name as cityname, states.name as statename, country.name as countryname
+                FROM recruiters
+                    JOIN cities on recruiters.city = cities.id
+                    JOIN states on recruiters.state = states.id
+                    JOIN country on recruiters.country = country.id";
     $stmt = $conn->prepare($query);
 
     try {

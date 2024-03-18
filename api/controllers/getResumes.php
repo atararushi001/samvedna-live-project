@@ -19,7 +19,6 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
     $publishedQuery = $baseQuery . " AND resumes.published = 'true' GROUP BY resumes.resume_id";
     $privateQuery = $baseQuery . " AND resumes.published = 'false' GROUP BY resumes.resume_id";
 
-
     try {
         $stmt = $conn->prepare($publishedQuery);
         $stmt->bind_param("s", $jobSeekerId);

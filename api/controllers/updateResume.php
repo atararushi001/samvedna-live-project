@@ -32,7 +32,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $publishedOn = null;
 
     if ($publishedRow['published'] === 'false' && $_POST['published'] === 'true') {
-        $publishedOn = date('Y-m-d');
+        date_default_timezone_set('Asia/Kolkata');
+        $publishedOn = date('Y/m/d');
     }
 
     // Resume exists, proceed with update

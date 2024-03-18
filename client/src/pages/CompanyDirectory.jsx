@@ -184,8 +184,8 @@ const CompanyDirectory = () => {
                   )
                   .map((company, index) => (
                     <tr key={index}>
-                      <td>{company.name}</td>
-                      <td>{company.location}</td>
+                      <td>{company.company}</td>
+                      <td>{company.cityname}</td>
                     </tr>
                   ))}
               </tbody>
