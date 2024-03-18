@@ -89,7 +89,6 @@ const CompanyDirectory = () => {
         return response.json();
       })
       .then((data) => {
-        console.log(data);
         if (data.success) {
           setCompanies(data.job);
         }
@@ -184,8 +183,8 @@ const CompanyDirectory = () => {
                   )
                   .map((company, index) => (
                     <tr key={index}>
-                      <td>{company.name}</td>
-                      <td>{company.location}</td>
+                      <td>{company.company}</td>
+                      <td>{company.cityname}</td>
                     </tr>
                   ))}
               </tbody>

@@ -35,18 +35,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $company = $_POST['company'];
     $designation = $_POST['designation'];
     $contactNumber = $_POST['contactNumber'];
+    $country = $_POST['country'];
+    $state = $_POST['state'];
+    $city = $_POST['city'];
 
-    $stmt = $conn->prepare("INSERT INTO `recruiters`(`profilePicture`, `name`, `email`, `password`,  `company`, `designation`, `contactNumber`) VALUES (?, ?, ?, ?, ?, ?,?)");
+    $stmt = $conn->prepare("INSERT INTO `recruiters`(`profilePicture`, `name`, `email`, `password`,  `company`, `designation`, `contactNumber`, `country`, `state`, `city`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
     $stmt->bind_param(
-        "sssssss",
+        "ssssssssss",
         $profilePicture,
         $name,
         $email,
         $password,
         $company,
         $designation,
-        $contactNumber
+        $contactNumber,
+        $country,
+        $state,
+        $city
     );
     if (!$stmt->execute()) {
         die('Error in execute statement: ' . $stmt->error);

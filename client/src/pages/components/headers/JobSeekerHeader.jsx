@@ -6,6 +6,8 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import Logo from "../../../assets/images/Logo.png";
 
+const API = import.meta.env.VITE_API_URL;
+
 const RecruiterHeader = () => {
   const navigate = useNavigate();
   const [icon, setIcon] = useState("bars");
@@ -57,10 +59,30 @@ const RecruiterHeader = () => {
   };
 
   const handleLogout = () => {
-    sessionStorage.removeItem("isLoggedIn");
-    sessionStorage.removeItem("job_seekers_id");
-    toast.success("Logged out Successfully!");
-    navigate("/job-seeker-login");
+    fetch(`${API}/controllers/handleLogout.php`, {
+      method: "GET",
+      credentials: "include",
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+      })
+      .then((data) => {
+        if (data.success) {
+          sessionStorage.removeItem("isLoggedIn");
+          sessionStorage.removeItem("job_seekers_id");
+          toast.success(data.message);
+          navigate("/job-seeker-login");
+        } else {
+          toast.error(data.message);
+        }
+      })
+      .catch((error) => {
+        console.error(error);
+        toast.error("An error occurred: " + error.message);
+      });
   };
 
   return (

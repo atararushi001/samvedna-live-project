@@ -27,7 +27,7 @@ const ResumeBank = () => {
   const [filteredResumes, setFilteredResumes] = useState([]);
 
   useEffect(() => {
-    fetch(`${API}/controllers/getResumes.php`, {
+    fetch(`${API}/controllers/getAllResumes.php`, {
       method: "GET",
       credentials: "include",
     })
@@ -39,8 +39,8 @@ const ResumeBank = () => {
       })
       .then((data) => {
         if (data.success) {
-          setResumes(data.publicResumes);
-          setFilteredResumes(data.publicResumes);
+          setResumes(data.resumes);
+          setFilteredResumes(data.resumes);
         } else {
           toast.error(data.message);
         }

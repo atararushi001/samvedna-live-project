@@ -9,21 +9,24 @@ function handleError($message)
 }
 
 if ($_SERVER['REQUEST_METHOD'] == "GET") {
-    $query = "SELECT * FROM `recruiters`";
-    $stmt = $conn->prepare($query);
+    $query = "SELECT * FROM resumes WHERE resumes.published = 'true'";
 
     try {
+        $stmt = $conn->prepare($query);
         $stmt->execute();
-
         $result = $stmt->get_result();
-        $rows = $result->fetch_all(MYSQLI_ASSOC);
+        $resumes = $result->fetch_all(MYSQLI_ASSOC);
 
+        foreach ($resumes as $index => $resume) {
+            $resumes[$index]['published'] = $resume['published'] === 'true' ? true : false;
+        }
 
+        $stmt->close();
 
         $response = array(
             'success' => true,
-            'message' => 'company found!',
-            'job' => $rows,
+            'message' => 'job resumes found!',
+            'resumes' => $resumes,
         );
 
         header('Content-Type: application/json');
@@ -31,7 +34,6 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
     } catch (Exception $e) {
         handleError("Database error: " . $e->getMessage());
     } finally {
-        $stmt->close();
         $conn->close();
     }
 }

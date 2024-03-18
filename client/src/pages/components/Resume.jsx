@@ -59,24 +59,26 @@ const Resume = ({ resumes, title, description, where }) => {
                   Created on: {new Date(resume.created_on).toLocaleDateString()}
                 </p>
               )}
-              <div className="controls">
-                <Link
-                  className="link"
-                  to={`/job-seeker-dashboard/edit-resume/${resume.resume_id}`}
-                >
-                  <FontAwesomeIcon icon="pen" />
-                </Link>
-                <button
-                  className="link"
-                  style={{
-                    outline: "none",
-                    border: "none",
-                  }}
-                  onClick={() => handleDelete(resume.resume_id)}
-                >
-                  <FontAwesomeIcon icon="trash" className="link delete" />
-                </button>
-              </div>
+              {where === "job-seeker-dashboard" ? (
+                <div className="controls">
+                  <Link
+                    className="link"
+                    to={`/job-seeker-dashboard/edit-resume/${resume.resume_id}`}
+                  >
+                    <FontAwesomeIcon icon="pen" />
+                  </Link>
+                  <button
+                    className="link"
+                    style={{
+                      outline: "none",
+                      border: "none",
+                    }}
+                    onClick={() => handleDelete(resume.resume_id)}
+                  >
+                    <FontAwesomeIcon icon="trash" className="link delete" />
+                  </button>
+                </div>
+              ) : null}
             </div>
           ))
         ) : (

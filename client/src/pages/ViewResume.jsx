@@ -26,7 +26,6 @@ const ViewResume = () => {
         return response.json();
       })
       .then((data) => {
-        console.log(data.resume);
         if (data.success) {
           setResume(data.resume);
         } else {
