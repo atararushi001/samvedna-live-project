@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 
 import Logo from "../../assets/images/Logo.png";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 const Footer = () => {
   return (
@@ -39,6 +40,50 @@ const Footer = () => {
             <li>
               <Link to="/contact" className="nav-link">
                 Contact
+              </Link>
+            </li>
+          </ul>
+        </div>
+        <div className="footer-body">
+          <h2>Follow Us:</h2>
+          <ul>
+            <li>
+              <Link to="https://www.facebook.com/mysamvedna" target="_blank">
+                <FontAwesomeIcon icon={["fab", "facebook"]} />
+              </Link>
+            </li>
+            <li>
+              <Link
+                to="https://www.facebook.com/samvednatrust2010"
+                target="_blank"
+              >
+                <FontAwesomeIcon icon={["fab", "facebook"]} />
+              </Link>
+            </li>
+            <li>
+              <Link
+                to="https://www.instagram.com/samvednatrust_2010"
+                target="_blank"
+              >
+                <FontAwesomeIcon icon={["fab", "instagram"]} />
+              </Link>
+            </li>
+            <li>
+              <Link to="https://twitter.com/SAMVEDNA2010" target="_blank">
+                <FontAwesomeIcon icon={["fab", "twitter"]} />
+              </Link>
+            </li>
+            <li>
+              <Link
+                to="https://www.linkedin.com/in/samvedna-disabled-persons-social-welfare-trust-7301972b6"
+                target="_blank"
+              >
+                <FontAwesomeIcon icon={["fab", "linkedin"]} />
+              </Link>
+            </li>
+            <li>
+              <Link to="https://www.linkedin.com/in/mayank-don" target="_blank">
+                <FontAwesomeIcon icon={["fab", "linkedin"]} />
               </Link>
             </li>
           </ul>

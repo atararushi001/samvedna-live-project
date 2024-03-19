@@ -146,7 +146,8 @@ const Donate = () => {
       <div className="container">
         <section id="donate-now" className="to-animate" ref={sectionRef2}>
           <h1>
-            Support <span className="highlight-text">Our Cause Today!</span>
+            <span className="highlight-text">Be a Beacon of Hope:</span> Support
+            Our Cause Today!
           </h1>
           <p>
             <strong>

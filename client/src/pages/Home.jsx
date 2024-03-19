@@ -196,9 +196,22 @@ const Home = () => {
           <p>
             Step into a realm where compassion meets action, where every
             heartbeat resonates with the promise of empowerment. SAMVEDNA
-            isn&apos;t just an organization; it&aspo;s a beacon of hope,
+            isn&apos;t just an organization; it&apos;s a beacon of hope,
             illuminating the path towards a brighter tomorrow for those often
             overlooked in society.
+          </p>
+          <p>
+            Our mission transcends boundaries, fueled by the unwavering belief
+            that every individual, regardless of ability, deserves a chance to
+            shine. From nurturing dreams of self-reliance to igniting the flames
+            of entrepreneurship, we&apos;re the architects of change, sculpting
+            a landscape where obstacles are mere stepping stones to success.
+          </p>
+          <p>
+            Join us in rewriting the narrative, in championing the cause of
+            inclusivity and dignity. Together, let&apos;s paint a masterpiece of
+            possibility, where every stroke of kindness leaves an indelible mark
+            on the canvas of humanity.
           </p>
         </div>
       </section>
@@ -244,7 +257,8 @@ const Home = () => {
             ref={(el) => elementsRef.current.push(el)}
           >
             <div className="card">
-              <h2 className="highlight-text">INTENTION</h2>
+              <h2 className="highlight-text">OUR INTENTION</h2>
+              <h3>Unlocking the Potential of PWDs</h3>
               <p>
                 At <strong>&ldquo;SAMVEDNA&rdquo;,</strong> we believe in
                 harnessing the abilities of individuals with disabilities by
@@ -256,7 +270,8 @@ const Home = () => {
               </p>
             </div>
             <div className="card ">
-              <h2 className="highlight-text">AIM</h2>
+              <h2 className="highlight-text">OUR AIM</h2>
+              <h3>Empowering PWDs for Independence</h3>
               <p>
                 Our goal is to support and empower physically challenged
                 individuals who lack adequate support in society. Through skill
@@ -269,7 +284,8 @@ const Home = () => {
               </p>
             </div>
             <div className="card ">
-              <h2 className="highlight-text">BELIEF</h2>
+              <h2 className="highlight-text">OUR BELIEF - Values of Life</h2>
+              <h3>Adding Value Through Empowerment</h3>
               <p>
                 <strong>&ldquo;SAMVEDNA&rdquo;</strong> is committed to adding
                 value to the lives of persons with disabilities through
@@ -282,7 +298,8 @@ const Home = () => {
             </div>
 
             <div className="card ">
-              <h2 className="highlight-text">EXPECTATION</h2>
+              <h2 className="highlight-text">OUR EXPECTATION</h2>
+              <h3>Creating Equal Opportunities</h3>
               <p>
                 Our mission is to create equal opportunities for persons with
                 disabilities, ensuring their full participation and inclusion in
@@ -293,7 +310,8 @@ const Home = () => {
               </p>
             </div>
             <div className="card ">
-              <h2 className="highlight-text">VISION</h2>
+              <h2 className="highlight-text">OUR VISION</h2>
+              <h3>Humanitarian Excellence</h3>
               <p>
                 We envision a society where every individual is empowered to
                 make a difference in the lives of others. Through our
@@ -305,7 +323,8 @@ const Home = () => {
               </p>
             </div>
             <div className="card ">
-              <h2 className="highlight-text">MISSION</h2>
+              <h2 className="highlight-text">OUR MISSION</h2>
+              <h3>Empowering Lives, One Step at a Time</h3>
               <p>
                 Our mission is to empower persons with disabilities by providing
                 them with the support and resources they need to thrive. Through
@@ -317,6 +336,41 @@ const Home = () => {
               </p>
             </div>
           </div>
+        </section>
+        <section className="performance">
+          <h1>
+            Exceptional <span className="highlight-text">Performance</span> &
+            <span className="highlight-text"> Abilities</span>
+          </h1>
+          <p>
+            At <strong>&ldquo;SAMVEDNA&rdquo;</strong>, we recognize that
+            individuals with physical disabilities may face unique challenges.
+            However, history has shown that these individuals have not let their
+            disabilities define them. Instead, they have risen above their
+            challenges and excelled in various fields, showcasing their
+            remarkable abilities. Today, we proudly refer to them as{" "}
+            <strong>&ldquo;UNIQUELY ABLED CHAMPIONS&rdquo;</strong> a term
+            recently endorsed by the Honorable Prime Minister of India Narendra
+            Modi as <strong>&ldquo;DIVYANG&rdquo;</strong>. We celebrate their
+            resilience, strength, and achievements, emphasizing their
+            exceptional talents and contributions to society.
+          </p>
+        </section>
+        <section className="initiative">
+          <h1>
+            An Initiative - <span className="highlight-text">H.O.P.E</span>
+          </h1>
+          <p>
+            We are thrilled to introduce H.O.P.E - Host Opportunity Promote
+            Employment, a targeted campaign designed exclusively for employers
+            like you. Our goal is simple: to encourage and empower companies to
+            host job opportunities for persons with disabilities (PWDs) and
+            thereby promote inclusive employment practices. By participating in
+            this initiative, you not only contribute to creating a more diverse
+            and equitable workforce but also open doors to talented individuals
+            who are often overlooked. Join us in our mission to build a more
+            inclusive society where everyone has the opportunity to thrive.
+          </p>
         </section>
       </div>
       <section className="journey" ref={counterRef}>
