@@ -22,6 +22,7 @@ import Register from "./pages/Register";
 import RecruiterRegister from "./pages/registers/RecruiterRegister";
 import JobSeekerRegister from "./pages/registers/JobSeekerRegister";
 import SelfEmploymentRegister from "./pages/registers/SelfEmploymentRegister";
+import Volunteer from "./pages/Volunteer";
 
 import RecruiterDashboard from "./pages/dashboards/RecruiterDashboard";
 import JobSeekerDashboard from "./pages/dashboards/JobSeekerDashboard";
@@ -75,6 +76,7 @@ const App = () => {
               path="/self-employment-register"
               element={<SelfEmploymentRegister />}
             />
+            <Route path="/volunteer-register" element={<Volunteer />} />
           </Route>
 
           <Route path="recruiter-dashboard" element={<Recruiter />}>
