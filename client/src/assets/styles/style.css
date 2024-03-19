@@ -360,6 +360,32 @@ footer .footer-header {
   padding-block: 1rem;
 }
 
+footer .footer-body {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  width: 100%;
+  padding-block: 1rem;
+}
+
+footer .footer-body ul {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+}
+
+footer .footer-body ul li a {
+  font-size: 1.5rem;
+  font-weight: 300;
+  text-transform: capitalize;
+}
+
+footer .footer-body ul li a:hover {
+  color: var(--primary);
+}
+
 @media (max-width: 768px) {
   footer .footer-header {
     flex-direction: column;
@@ -806,6 +832,24 @@ footer .footer-bottom p {
   box-shadow: 0 0.2rem 0.8rem rgba(0, 0, 0, 0.25);
   padding: 2rem;
   border-radius: 0.25rem;
+}
+
+.performance,
+.initiative {
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3rem;
+  padding-block: 3rem;
+}
+
+.performance p,
+.initiative p {
+  font-size: 1.5rem;
+  font-weight: 400;
+  text-align: center;
 }
 
 .journey {
