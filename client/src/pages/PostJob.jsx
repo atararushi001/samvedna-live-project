@@ -2,26 +2,23 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
+import UserStore from "../stores/UserStore";
+
 const API = import.meta.env.VITE_API_URL;
 
 const PostJob = () => {
-  const recruiterId = sessionStorage.getItem("recruiters_id");
   const navigate = useNavigate();
-  useEffect(() => {
-    const isLoggedIn = sessionStorage.getItem("isLoggedIn");
-    const jobSeekerId = sessionStorage.getItem("job_seekers_id");
-    const recruiterId = sessionStorage.getItem("recruiters_id");
+  const { loginState, userDetails } = UserStore();
 
-    if (isLoggedIn) {
-      if (jobSeekerId) {
+  useEffect(() => {
+    if (loginState) {
+      if (userDetails.type === "Job Seeker") {
         navigate("/job-seeker-dashboard");
-      } else if (recruiterId) {
-        // navigate("/recruiter-dashboard");
       }
     } else {
       navigate("/recruiter-login");
     }
-  }, [navigate]);
+  }, [navigate, loginState, userDetails]);
 
   const [formData, setFormData] = useState({
     companyName: "",
@@ -90,22 +87,20 @@ const PostJob = () => {
   const [cities, setCities] = useState([]);
 
   useEffect(() => {
-    fetch(`${API}/controllers/getCountry.php`)
-      .then((response) => response.text())
+    fetch(`${API}/utils/countries`)
+      .then((response) => response.json())
       .then((data) => {
-        const options = parseOptions(data);
-        setCountries(options);
+        setCountries(data.results);
       })
       .catch((error) => console.error(error));
   }, []);
 
   useEffect(() => {
     if (formData.country) {
-      fetch(`${API}/controllers/getState.php?country_id=${formData.country}`)
-        .then((response) => response.text())
+      fetch(`${API}/utils/states/${formData.country}`)
+        .then((response) => response.json())
         .then((data) => {
-          const options = parseOptions(data);
-          setStates(options);
+          setStates(data.results);
         })
         .catch((error) => console.error(error));
     }
@@ -113,24 +108,14 @@ const PostJob = () => {
 
   useEffect(() => {
     if (formData.state) {
-      fetch(`${API}/controllers/getCity.php?state_id=${formData.state}`)
-        .then((response) => response.text())
+      fetch(`${API}/utils/cities/${formData.state}`)
+        .then((response) => response.json())
         .then((data) => {
-          const options = parseOptions(data);
-          setCities(options);
+          setCities(data.results);
         })
         .catch((error) => console.error(error));
     }
   }, [formData.state]);
-
-  const parseOptions = (htmlString) => {
-    const parser = new DOMParser();
-    const htmlDoc = parser.parseFromString(htmlString, "text/html");
-    return Array.from(htmlDoc.querySelectorAll("option")).map((opt) => ({
-      value: opt.value,
-      label: opt.textContent,
-    }));
-  };
 
   const handleInputChange = (event) => {
     const { name, value, type, checked } = event.target;
@@ -176,7 +161,7 @@ const PostJob = () => {
     return result;
   }
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
 
     if (formData.workingHours.from > formData.workingHours.to) {
@@ -228,34 +213,23 @@ const PostJob = () => {
 
     const flattenedData = flattenData(formData);
 
-    const data = new FormData();
-    data.append("recruiter_id", recruiterId);
-
-    for (const key in flattenedData) {
-      data.append(key, flattenedData[key]);
-    }
-
-    fetch(`${API}/controllers/postJob.php`, {
+    const response = await fetch(`${API}/recruiter/post-job`, {
       method: "POST",
-      body: data,
-      credentials: "include",
-    })
-      .then((res) => {
-        return res.json();
-      })
-      .then((data) => {
-        console.log(data);
-        if (data.success) {
-          toast.success(data.message);
-          navigate("/recruiter-dashboard/view-jobs");
-        } else {
-          toast.error(data.message);
-        }
-      })
-      .catch((err) => {
-        console.log(err);
-        toast.error("Something went wrong");
-      });
+      headers: {
+        "Content-Type": "application/json",
+        "x-auth-token": userDetails.token,
+      },
+      body: JSON.stringify(flattenedData),
+    });
+
+    const data = await response.json();
+
+    if (response.ok) {
+      toast.success(data.message);
+      navigate("/recruiter-dashboard/view-jobs");
+    } else {
+      toast.error(data.message);
+    }
   };
 
   return (
@@ -306,11 +280,8 @@ const PostJob = () => {
                   Select Country
                 </option>
                 {countries.map((country, index) => (
-                  <option
-                    key={`${country.value}-${index}`}
-                    value={country.value}
-                  >
-                    {country.label}
+                  <option key={`${country.name}-${index}`} value={country.id}>
+                    {country.name}
                   </option>
                 ))}
               </select>
@@ -326,8 +297,8 @@ const PostJob = () => {
                   Select State
                 </option>
                 {states.map((state, index) => (
-                  <option key={`${state.value}-${index}`} value={state.value}>
-                    {state.label}
+                  <option key={`${state.name}-${index}`} value={state.id}>
+                    {state.name}
                   </option>
                 ))}
               </select>
@@ -343,8 +314,8 @@ const PostJob = () => {
                   Select City
                 </option>
                 {cities.map((city, index) => (
-                  <option key={`${city.value}-${index}`} value={city.value}>
-                    {city.label}
+                  <option key={`${city.name}-${index}`} value={city.id}>
+                    {city.name}
                   </option>
                 ))}
               </select>

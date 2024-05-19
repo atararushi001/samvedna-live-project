@@ -2,28 +2,25 @@ import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
+import UserStore from "../../stores/UserStore";
+
 const API = import.meta.env.VITE_API_URL;
 
 const JobSeekerLogin = () => {
   const navigate = useNavigate();
+  const { loginData, userDetails, loginState, setLoginState } = UserStore();
 
   useEffect(() => {
-    const isLoggedIn = sessionStorage.getItem("isLoggedIn");
-    const jobSeekerId = sessionStorage.getItem("job_seekers_id");
-    const recruiterId = sessionStorage.getItem("recruiters_id");
-
-    if (isLoggedIn) {
-      if (jobSeekerId) {
+    if (loginState) {
+      if (userDetails.type === "Job Seeker") {
         navigate("/job-seeker-dashboard");
-      } else if (recruiterId) {
+      } else if (userDetails.type === "Recruiter") {
         navigate("/recruiter-dashboard");
       }
-    }
-    else {
+    } else {
       navigate("/job-seeker-login");
-
     }
-  }, [navigate]);
+  }, [navigate, loginState, userDetails]);
 
   const [formData, setFormData] = useState({
     email: "",
@@ -37,27 +34,25 @@ const JobSeekerLogin = () => {
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-    const data = new FormData();
-    data.append("email", formData.email);
-    data.append("password", formData.password);
-
     try {
-      const response = await fetch(`${API}/controllers/jobSeekerLogin.php`, {
+      const response = await fetch(`${API}/job-seeker/login`, {
         method: "POST",
-        body: data,
-        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
       });
 
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
+      // if (!response.ok) {
+      //   throw new Error(`HTTP error! status: ${response.status}`);
+      // }
 
       const responseData = await response.json();
 
-      if (responseData.success) {
+      if (response.status === 200) {
         toast.success(responseData.message);
-        sessionStorage.setItem("isLoggedIn", true);
-        sessionStorage.setItem("job_seekers_id", responseData.job_seeker_id);
+        setLoginState(true);
+        loginData(responseData.user);
         navigate("/job-seeker-dashboard");
       } else {
         toast.error(responseData.message);

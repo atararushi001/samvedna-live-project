@@ -1,9 +1,11 @@
 import { useState, useEffect, useRef } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { faLinkedin } from "@fortawesome/free-brands-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import ReactToPrint from "react-to-print";
+
+import UserStore from "../stores/UserStore";
 
 import "../assets/styles/style.css";
 
@@ -13,30 +15,41 @@ const ViewResume = () => {
   const { id } = useParams();
   const [resume, setResume] = useState({});
   const componentRef = useRef(null);
+  const navigate = useNavigate();
+
+  const { loginState, userDetails } = UserStore();
 
   useEffect(() => {
-    fetch(`${API}/controllers/getResume.php?id=${id}`, {
-      method: "GET",
-      credentials: "include",
-    })
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        return response.json();
-      })
-      .then((data) => {
-        if (data.success) {
-          setResume(data.resume);
-        } else {
-          toast.error(data.message);
-        }
-      })
-      .catch((error) => {
-        console.error(error);
-        toast.error("An error occurred: " + error.message);
+    if (loginState) {
+      if (userDetails.type === "Recruiter") {
+        navigate("/recruiter-dashboard");
+      }
+    } else {
+      navigate("/job-seeker-login");
+    }
+
+    const getResume = async () => {
+      const response = await fetch(`${API}/job-seeker/get-resume/${id}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          "x-auth-token": userDetails.token,
+        },
       });
-  }, [id]);
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setResume(data);
+      } else {
+        toast.error(data.message);
+      }
+    };
+
+    if (loginState) {
+      getResume();
+    }
+  }, [navigate, id, loginState, userDetails]);
 
   return (
     <div className="container">

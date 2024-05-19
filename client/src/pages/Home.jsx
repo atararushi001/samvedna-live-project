@@ -26,7 +26,7 @@ const Home = () => {
   };
 
   useEffect(() => {
-    fetch(`${API}/controllers/renderLatestJobs.php`, {
+    fetch(`${API}/utils/latest-jobs`, {
       method: "GET",
       credentials: "include",
     })
@@ -37,10 +37,10 @@ const Home = () => {
         return response.json();
       })
       .then((data) => {
-        if (data.success) {
-          setJobData(data.jobs);
+        if (data.results) {
+          setJobData(data.results);
         } else {
-          console.log(data.message);
+          console.log("No results found");
         }
       })
       .catch((error) => {
@@ -524,10 +524,6 @@ const Home = () => {
                 </p>
               </div>
               <div className="testimonial-author">
-                <img
-                  src="https://randomuser.me/api/portraits/men/58.jpg"
-                  alt="testimonial author"
-                />
                 <h3>- Priya Sharma, Mumbai</h3>
               </div>
             </div>
@@ -543,10 +539,6 @@ const Home = () => {
                 </p>
               </div>
               <div className="testimonial-author">
-                <img
-                  src="https://randomuser.me/api/portraits/men/5.jpg"
-                  alt="testimonial author"
-                />
                 <h3>- Ananya Patel, Ahmedabad</h3>
               </div>
             </div>
@@ -562,10 +554,6 @@ const Home = () => {
                 </p>
               </div>
               <div className="testimonial-author">
-                <img
-                  src="https://randomuser.me/api/portraits/men/69.jpg"
-                  alt="testimonial author"
-                />
                 <h3>- Neha Gupta, Pune</h3>
               </div>
             </div>
@@ -581,10 +569,6 @@ const Home = () => {
                 </p>
               </div>
               <div className="testimonial-author">
-                <img
-                  src="https://randomuser.me/api/portraits/men/69.jpg"
-                  alt="testimonial author"
-                />
                 <h3>- Deepak Singh, Kolkatae</h3>
               </div>
             </div>
@@ -600,10 +584,6 @@ const Home = () => {
                 </p>
               </div>
               <div className="testimonial-author">
-                <img
-                  src="https://randomuser.me/api/portraits/men/69.jpg"
-                  alt="testimonial author"
-                />
                 <h3>- Riya Verma, Hyderabad</h3>
               </div>
             </div>
@@ -619,10 +599,6 @@ const Home = () => {
                 </p>
               </div>
               <div className="testimonial-author">
-                <img
-                  src="https://randomuser.me/api/portraits/men/69.jpg"
-                  alt="testimonial author"
-                />
                 <h3>- Arjun Kumar, Chandigarh</h3>
               </div>
             </div>

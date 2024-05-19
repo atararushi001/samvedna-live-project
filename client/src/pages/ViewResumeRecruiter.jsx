@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { faLinkedin } from "@fortawesome/free-brands-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -7,37 +7,47 @@ import ReactToPrint from "react-to-print";
 
 import "../assets/styles/style.css";
 
+import UserStore from "../stores/UserStore";
+
 const API = import.meta.env.VITE_API_URL;
 
 const ViewResumeRecruiter = () => {
+  const navigate = useNavigate();
   const { id } = useParams();
   const [resume, setResume] = useState({});
   const componentRef = useRef(null);
 
+  const { loginState, userDetails } = UserStore();
+
   useEffect(() => {
-    fetch(`${API}/controllers/getResume.php?id=${id}`, {
-      method: "GET",
-      credentials: "include",
-    })
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        return response.json();
-      })
-      .then((data) => {
-        console.log(data.resume);
-        if (data.success) {
-          setResume(data.resume);
-        } else {
-          toast.error(data.message);
-        }
-      })
-      .catch((error) => {
-        console.error(error);
-        toast.error("An error occurred: " + error.message);
+    if (loginState) {
+      if (userDetails.type === "Job Seeker") {
+        navigate("/job-seeker-dashboard");
+      }
+    } else {
+      navigate("/recruiter-login");
+    }
+
+    const fetchResume = async () => {
+      const response = await fetch(`${API}/recruiter/get-resume/${id}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          "x-auth-token": userDetails.token,
+        },
       });
-  }, [id]);
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setResume(data);
+      } else {
+        toast.error(data.message);
+      }
+    };
+
+    fetchResume();
+  }, [id, navigate, loginState, userDetails]);
 
   return (
     <div className="container">
@@ -74,8 +84,8 @@ const ViewResumeRecruiter = () => {
                 </li>
                 <li>
                   <FontAwesomeIcon className="icon" icon="location-dot" />
-                  {resume.city}, {resume.state}, {resume.postalCode},{" "}
-                  {resume.country}
+                  {resume.cityname}, {resume.statename}, {resume.postalCode},{" "}
+                  {resume.countryname}
                 </li>
               </ul>
             </div>

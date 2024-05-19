@@ -4,12 +4,13 @@ import { toast } from "react-toastify";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
-import Logo from "../../../assets/images/Logo.png";
+import UserStore from "../../../stores/UserStore";
 
-const API = import.meta.env.VITE_API_URL;
+import Logo from "../../../assets/images/Logo.png";
 
 const RecruiterHeader = () => {
   const navigate = useNavigate();
+  const { logout } = UserStore();
   const [icon, setIcon] = useState("bars");
 
   useEffect(() => {
@@ -59,30 +60,9 @@ const RecruiterHeader = () => {
   };
 
   const handleLogout = () => {
-    fetch(`${API}/controllers/handleLogout.php`, {
-      method: "GET",
-      credentials: "include",
-    })
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        return response.json();
-      })
-      .then((data) => {
-        if (data.success) {
-          sessionStorage.removeItem("isLoggedIn");
-          sessionStorage.removeItem("job_seekers_id");
-          toast.success(data.message);
-          navigate("/job-seeker-login");
-        } else {
-          toast.error(data.message);
-        }
-      })
-      .catch((error) => {
-        console.error(error);
-        toast.error("An error occurred: " + error.message);
-      });
+    logout();
+    navigate("/job-seeker-login");
+    toast.success("Logged out successfully");
   };
 
   return (

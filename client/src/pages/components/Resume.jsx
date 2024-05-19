@@ -3,38 +3,31 @@ import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import PropTypes from "prop-types";
 
+import UserStore from "../../stores/UserStore";
+
 const API = import.meta.env.VITE_API_URL;
 
 const Resume = ({ resumes, title, description, where }) => {
   const navigate = useNavigate();
+  const { userDetails } = UserStore();
 
-  const handleDelete = (id) => {
-    const formData = new FormData();
-    formData.append("resume_id", id);
+  const handleDelete = async (id) => {
+    const response = await fetch(`${API}/job-seeker/delete-resume/${id}`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        "x-auth-token": userDetails.token,
+      },
+    });
 
-    fetch(`${API}/controllers/deleteResume.php`, {
-      method: "POST",
-      body: formData,
-      credentials: "include",
-    })
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        return response.json();
-      })
-      .then((data) => {
-        if (data.success) {
-          toast.success(data.message);
-          navigate("/job-seeker-dashboard/manage-resumes");
-        } else {
-          toast.error(data.message);
-        }
-      })
-      .catch((error) => {
-        console.error(error);
-        toast.error("An error occurred: " + error.message);
-      });
+    const data = await response.json();
+
+    if (response.ok) {
+      toast.success(data.message);
+      navigate("/job-seeker-dashboard");
+    } else {
+      toast.error("Error deleting resume");
+    }
   };
 
   return (

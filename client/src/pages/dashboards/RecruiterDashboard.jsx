@@ -1,24 +1,22 @@
 import { useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
+import UserStore from "../../stores/UserStore";
+
 const RecruiterDashboard = () => {
   const navigate = useNavigate();
+  const { loginState, userDetails } = UserStore();
 
   useEffect(() => {
-    const isLoggedIn = sessionStorage.getItem("isLoggedIn");
-    const jobSeekerId = sessionStorage.getItem("job_seekers_id");
-    const recruiterId = sessionStorage.getItem("recruiters_id");
-
-    if (isLoggedIn) {
-      if (jobSeekerId) {
+    if (loginState) {
+      if (userDetails.type === "Job Seeker") {
         navigate("/job-seeker-dashboard");
-      } else if (recruiterId) {
-        navigate("/recruiter-dashboard");
       }
     } else {
       navigate("/recruiter-login");
     }
-  }, [navigate]);
+  }, [navigate, loginState, userDetails]);
+
   return (
     <>
       <div className="container">

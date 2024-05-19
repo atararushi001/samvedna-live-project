@@ -2,23 +2,23 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
+import UserStore from "../stores/UserStore";
+
 const API = import.meta.env.VITE_API_URL;
 
 const CompanyDirectory = () => {
   const navigate = useNavigate();
+  const { loginState, userDetails } = UserStore();
 
   useEffect(() => {
-    const isLoggedIn = sessionStorage.getItem("isLoggedIn");
-    const recruiterId = sessionStorage.getItem("recruiters_id");
-
-    if (isLoggedIn) {
-      if (recruiterId) {
+    if (loginState) {
+      if (userDetails.role === "Recruiter") {
         navigate("/recruiter-dashboard");
       }
     } else {
       navigate("/job-seeker-login");
     }
-  }, [navigate]);
+  }, [navigate, loginState, userDetails]);
 
   const [companies, setCompanies] = useState([]);
   const [search, setSearch] = useState("");
@@ -32,32 +32,27 @@ const CompanyDirectory = () => {
     setCurrentPage(pageNum);
   };
 
-  const handleSearchChange = (event) => {
-    event.preventDefault();
-    if (event.target.value === "") {
-      fetch(`${API}/controllers/getCompanies.php`, {
+  const handleSearchChange = async (event) => {
+    const { value } = event.target;
+    setSearch(value);
+
+    if (value === "") {
+      const response = await fetch(`${API}/job-seeker/company-directory`, {
         method: "GET",
-        credentials: "include",
-      })
-        .then((response) => {
-          if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-          }
-          return response.json();
-        })
-        .then((data) => {
-          console.log(data);
-          if (data.success) {
-            setCompanies(data.job);
-          }
-        })
-        .catch((error) => {
-          console.error(error);
-          toast.error("An error occurred: " + error.message);
-        });
+        headers: {
+          "Content-Type": "application/json",
+          "x-auth-token": userDetails.token,
+        },
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setCompanies(data);
+      } else {
+        toast.error(data.message);
+      }
     }
-    setSearch(event.target.value);
-    return;
   };
 
   const handleSearchSubmit = (event) => {
@@ -78,26 +73,27 @@ const CompanyDirectory = () => {
   };
 
   useEffect(() => {
-    fetch(`${API}/controllers/getCompanies.php`, {
-      method: "GET",
-      credentials: "include",
-    })
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        return response.json();
-      })
-      .then((data) => {
-        if (data.success) {
-          setCompanies(data.job);
-        }
-      })
-      .catch((error) => {
-        console.error(error);
-        toast.error("An error occurred: " + error.message);
+    const fetchCompanies = async () => {
+      const response = await fetch(`${API}/job-seeker/company-directory`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          "x-auth-token": userDetails.token,
+        },
       });
-  }, []);
+
+      const data = await response.json();
+
+      if (response.ok) {
+        console.log(data);
+        setCompanies(data);
+      } else {
+        toast.error(data.message);
+      }
+    };
+
+    fetchCompanies();
+  }, [userDetails]);
 
   return (
     <div className="container">
@@ -175,7 +171,7 @@ const CompanyDirectory = () => {
                   .filter((company) =>
                     alphabetFilter === "All"
                       ? company
-                      : company.name[0] === alphabetFilter
+                      : company.company[0].toUpperCase() === alphabetFilter
                   )
                   .slice(
                     (currentPage - 1) * numberOfEntries,

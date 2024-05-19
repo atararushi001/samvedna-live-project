@@ -3,6 +3,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
 const API = import.meta.env.VITE_API_URL;
+const STATIC_URL = import.meta.env.VITE_STATIC_FILES_URL;
 
 const Blog = () => {
   const [blog, setBlog] = useState({});
@@ -16,23 +17,21 @@ const Blog = () => {
   const id = location.state.id;
 
   useEffect(() => {
-    fetch(`${API}/controllers/getBlog.php?id=${id}`, {
-      method: "GET",
-      credentials: "include",
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        if (data.success) {
-          setBlog(data.blog);
-        } else {
-          toast.error(data.message);
-          console.log(data.message);
-        }
-      })
-      .catch((error) => {
-        toast.error("An error occurred. Please try again later.");
-        console.error(error);
+    const getBlog = async () => {
+      const response = await fetch(`${API}/blogs/${id}`, {
+        method: "GET",
       });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setBlog(data);
+      } else {
+        toast.error(data.message);
+      }
+    };
+
+    getBlog();
   }, [id]);
 
   return (
@@ -44,7 +43,10 @@ const Blog = () => {
             <p>Author: {blog.author}</p>
             <p>Published: {new Date(blog.published).toLocaleDateString()}</p>
           </div>
-          <img src={`${API}/uploads/covers/${blog.cover}`} alt={blog.cover} />
+          <img
+            src={`${STATIC_URL}/uploads/covers/${blog.cover}`}
+            alt={blog.cover}
+          />
           <p>{blog.content}</p>
         </div>
       </section>

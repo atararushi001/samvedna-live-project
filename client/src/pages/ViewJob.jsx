@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 
 const API = import.meta.env.VITE_API_URL;
+const STATIC_API = import.meta.env.VITE_STATIC_FILES_URL;
 
 const ViewJob = () => {
   const navigate = useNavigate();
@@ -16,27 +17,21 @@ const ViewJob = () => {
   const [job, setJob] = useState({});
 
   useEffect(() => {
-    fetch(`${API}/controllers/getJob.php?job_id=${jobId}`, {
-      method: "GET",
-      credentials: "include",
-    })
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        return response.json();
-      })
-      .then((data) => {
-        if (data.success) {
-          console.log(data.job[0]);
-          setJob(data.job[0]);
-        } else {
-          console.log(data.message);
-        }
-      })
-      .catch((error) => {
-        console.error(error);
+    const fetchJob = async () => {
+      const response = await fetch(`${API}/utils/job/${jobId}`, {
+        method: "GET",
       });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setJob(data.results[0]);
+      } else {
+        console.error(data.message);
+      }
+    };
+
+    fetchJob();
   }, [jobId]);
 
   return (
@@ -47,7 +42,7 @@ const ViewJob = () => {
         </h1>
         <div className="job">
           <img
-            src={`${API}/uploads/profilePictures/${job.profilePicture}`}
+            src={`${STATIC_API}/uploads/profilePictures/${job.profilePicture}`}
             alt={job.profilePicture}
           />
           <h2>{job.jobDesignation}</h2>
@@ -228,7 +223,12 @@ const ViewJob = () => {
             {job.resumeWebsite && (
               <a
                 className="btn"
-                href={job.resumeWebsite}
+                href={
+                  job.resumeWebsite.startsWith("http://") ||
+                  job.resumeWebsite.startsWith("https://")
+                    ? job.resumeWebsite
+                    : `http://${job.resumeWebsite}`
+                }
                 target="_blank"
                 rel="noreferrer"
               >

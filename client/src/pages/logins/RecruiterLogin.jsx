@@ -1,23 +1,24 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+
+import UserStore from "../../stores/UserStore";
+
 const API = import.meta.env.VITE_API_URL;
 
 const RecruiterLogin = () => {
   const navigate = useNavigate();
-  useEffect(() => {
-    const isLoggedIn = sessionStorage.getItem("isLoggedIn");
-    const jobSeekerId = sessionStorage.getItem("job_seekers_id");
-    const recruiterId = sessionStorage.getItem("recruiters_id");
+  const { loginState, userDetails, loginData, setLoginState } = UserStore();
 
-    if (isLoggedIn) {
-      if (jobSeekerId) {
+  useEffect(() => {
+    if (loginState) {
+      if (userDetails.type === "Job Seeker") {
         navigate("/job-seeker-dashboard");
-      } else if (recruiterId) {
+      } else if (userDetails.type === "Recruiter") {
         navigate("/recruiter-dashboard");
       }
     }
-  }, [navigate]);
+  }, [navigate, loginState, userDetails]);
 
   const [formData, setFormData] = useState({
     email: "",
@@ -34,33 +35,22 @@ const RecruiterLogin = () => {
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-    const data = new FormData();
-    data.append("email", formData.email);
-    data.append("password", formData.password);
+    const response = await fetch(`${API}/recruiter/login`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(formData),
+    });
 
-    try {
-      const response = await fetch(`${API}/controllers/recruiterLogin.php`, {
-        method: "POST",
-        body: data,
-        credentials: "include",
-      });
+    const data = await response.json();
 
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      const responseData = await response.json();
-      if (responseData.success) {
-        toast.success(responseData.message);
-        sessionStorage.setItem("isLoggedIn", true);
-        sessionStorage.setItem("recruiters_id", responseData.recruiters_id);
-
-        navigate("/recruiter-dashboard");
-      } else {
-        toast.error(responseData.message);
-      }
-    } catch (error) {
-      console.error(error);
-      toast.error("An error occurred: " + error.message);
+    if (response.ok) {
+      toast.success(data.message);
+      setLoginState(true);
+      loginData(data.user);
+    } else {
+      toast.error(data.message);
     }
   };
 

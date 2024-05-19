@@ -94,6 +94,12 @@ const Footer = () => {
           &copy; 2010-{new Date().getFullYear()}
           &nbsp;<strong>MySamvedna.</strong> All Rights Reserved.
         </p>
+        <p>
+          Designed and Developed by&nbsp;
+          <Link to="https://desproitsolutions.com/" target="_blank">
+            Despro IT Solutions
+          </Link>
+        </p>
       </div>
     </footer>
   );

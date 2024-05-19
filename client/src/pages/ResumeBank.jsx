@@ -2,54 +2,51 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
+import UserStore from "../stores/UserStore";
+
 import Resume from "./components/Resume";
 
 const API = import.meta.env.VITE_API_URL;
 
 const ResumeBank = () => {
   const navigate = useNavigate();
+  const { loginState, userDetails } = UserStore();
 
   useEffect(() => {
-    const isLoggedIn = sessionStorage.getItem("isLoggedIn");
-    const jobSeekerId = sessionStorage.getItem("job_seekers_id");
-
-    if (isLoggedIn) {
-      if (jobSeekerId) {
+    if (loginState) {
+      if (userDetails.type === "Job Seeker") {
         navigate("/job-seeker-dashboard");
       }
     } else {
       navigate("/recruiter-login");
     }
-  }, [navigate]);
+  }, [navigate, loginState, userDetails]);
 
   const [search, setSearch] = useState("");
   const [resumes, setResumes] = useState([]);
   const [filteredResumes, setFilteredResumes] = useState([]);
 
   useEffect(() => {
-    fetch(`${API}/controllers/getAllResumes.php`, {
-      method: "GET",
-      credentials: "include",
-    })
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        return response.json();
-      })
-      .then((data) => {
-        if (data.success) {
-          setResumes(data.resumes);
-          setFilteredResumes(data.resumes);
-        } else {
-          toast.error(data.message);
-        }
-      })
-      .catch((error) => {
-        console.error(error);
-        toast.error("An error occurred: " + error.message);
+    const getResumes = async () => {
+      const response = await fetch(`${API}/recruiter/resumes`, {
+        method: "GET",
+        headers: {
+          "x-auth-token": userDetails.token,
+        },
       });
-  }, [navigate]);
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setResumes(data);
+        setFilteredResumes(data);
+      } else {
+        toast.error(data.message);
+      }
+    };
+
+    getResumes();
+  }, [navigate, loginState, userDetails]);
 
   const handleSearchChange = (e) => {
     if (e.target.value === "") {
@@ -68,7 +65,13 @@ const ResumeBank = () => {
         return (
           resume.resumeName.toLowerCase().includes(search.toLowerCase()) ||
           resume.firstName.toLowerCase().includes(search.toLowerCase()) ||
-          resume.lastName.toLowerCase().includes(search.toLowerCase())
+          resume.lastName.toLowerCase().includes(search.toLowerCase()) ||
+          resume.email.toLowerCase().includes(search.toLowerCase()) ||
+          resume.phone.toLowerCase().includes(search.toLowerCase()) ||
+          resume.city.toLowerCase().includes(search.toLowerCase()) ||
+          resume.state.toLowerCase().includes(search.toLowerCase()) ||
+          resume.country.toLowerCase().includes(search.toLowerCase()) ||
+          resume.desiredJobType.toLowerCase().includes(search.toLowerCase())
         );
       });
       setFilteredResumes(filtered);

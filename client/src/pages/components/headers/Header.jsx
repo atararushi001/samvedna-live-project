@@ -3,32 +3,14 @@ import { Link, useNavigate } from "react-router-dom";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
+import UserStore from "../../../stores/UserStore";
+
 import Logo from "../../../assets/images/Logo.png";
 
 const Header = () => {
   const navigate = useNavigate();
+  const { loginState, userDetails } = UserStore();
   const [icon, setIcon] = useState("bars");
-
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [jobSeekerId, setJobSeekerId] = useState(null);
-  const [recruiterId, setRecruiterId] = useState(null);
-
-  useEffect(() => {
-    const isLoggedIn = sessionStorage.getItem("isLoggedIn");
-    const jobSeekerId = sessionStorage.getItem("job_seekers_id");
-    const recruiterId = sessionStorage.getItem("recruiters_id");
-
-    if (isLoggedIn) {
-      setIsLoggedIn(true);
-      if (jobSeekerId) {
-        setJobSeekerId(jobSeekerId);
-        // navigate("/job-seeker-dashboard");
-      } else if (recruiterId) {
-        setRecruiterId(recruiterId);
-        // navigate("/recruiter-dashboard");
-      }
-    }
-  }, [navigate]);
 
   useEffect(() => {
     window.addEventListener("resize", () => {
@@ -132,10 +114,10 @@ const Header = () => {
               Contact
             </Link>
           </li>
-          {isLoggedIn ? (
+          {loginState ? (
             <>
               <li>
-                {recruiterId ? (
+                {userDetails.type === "Recruiter" ? (
                   <Link
                     className="nav-link"
                     to="/recruiter-dashboard"
@@ -144,7 +126,7 @@ const Header = () => {
                     Dashboard
                   </Link>
                 ) : null}
-                {jobSeekerId ? (
+                {userDetails.type === "Job Seeker" ? (
                   <Link
                     className="nav-link"
                     to="/job-seeker-dashboard"

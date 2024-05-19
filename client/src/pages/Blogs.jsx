@@ -1,7 +1,9 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import { toast } from "react-toastify";
 
 const API = import.meta.env.VITE_API_URL;
+const STATIC_URL = import.meta.env.VITE_STATIC_FILES_URL;
 
 const Blogs = () => {
   const [blogs, setBlogs] = useState([]);
@@ -31,21 +33,21 @@ const Blogs = () => {
   };
 
   useEffect(() => {
-    fetch(`${API}/controllers/getBlogs.php?popular=true`, {
-      method: "GET",
-      credentials: "include",
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        if (data.success) {
-          setBlogs(data.blogs);
-        } else {
-          console.log(data.message);
-        }
-      })
-      .catch((error) => {
-        console.error(error);
+    const getBlogs = async () => {
+      const response = await fetch(`${API}/blogs`, {
+        method: "GET",
       });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setBlogs(data);
+      } else {
+        toast.error(data.message);
+      }
+    };
+
+    getBlogs();
   }, []);
 
   return (
@@ -70,7 +72,7 @@ const Blogs = () => {
                 <Link key={blog.id} to="/blog" state={{ id: blog.id }}>
                   <div className="blog">
                     <img
-                      src={`${API}/uploads/covers/${blog.cover}`}
+                      src={`${STATIC_URL}/uploads/covers/${blog.cover}`}
                       alt={blog.cover}
                     />
                     <h2>{blog.title}</h2>
@@ -94,7 +96,7 @@ const Blogs = () => {
                 <Link key={blog.id} to="/blog" state={{ id: blog.id }}>
                   <div className="blog">
                     <img
-                      src={`${API}/uploads/covers/${blog.cover}`}
+                      src={`${STATIC_URL}/uploads/covers/${blog.cover}`}
                       alt={blog.cover}
                     />
                     <h2>{blog.title}</h2>

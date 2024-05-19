@@ -2,24 +2,24 @@ import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 
+import UserStore from "../stores/UserStore";
+
 const API = import.meta.env.VITE_API_URL;
 
 const EditResume = () => {
   const navigate = useNavigate();
   const { id } = useParams();
+  const { loginState, userDetails } = UserStore();
 
   useEffect(() => {
-    const isLoggedIn = sessionStorage.getItem("isLoggedIn");
-    const recruiterId = sessionStorage.getItem("recruiters_id");
-
-    if (isLoggedIn) {
-      if (recruiterId) {
+    if (loginState) {
+      if (userDetails.userType === "Recruiter") {
         navigate("/recruiter-dashboard");
       }
     } else {
       navigate("/job-seeker-login");
     }
-  }, [navigate]);
+  }, [navigate, loginState, userDetails]);
 
   const [formData, setFormData] = useState({
     resumeName: "",
@@ -227,88 +227,51 @@ const EditResume = () => {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const data = new FormData();
+    const response = await fetch(`${API}/job-seeker/update-resume/${id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        "x-auth-token": userDetails.token,
+      },
+      body: JSON.stringify(formData),
+    });
 
-    for (const key in formData) {
-      if (Array.isArray(formData[key])) {
-        if (key === "desiredJobType") {
-          formData[key].forEach((item, index) => {
-            data.append(`${key}[${index}]`, item);
-          });
-        } else {
-          formData[key].forEach((item, index) => {
-            for (const subKey in item) {
-              if (Array.isArray(item[subKey])) {
-                item[subKey].forEach((subItem, subIndex) => {
-                  for (const subSubKey in subItem) {
-                    data.append(
-                      `${key}[${index}][${subKey}][${subIndex}][${subSubKey}]`,
-                      subItem[subSubKey]
-                    );
-                  }
-                });
-              } else {
-                data.append(`${key}[${index}][${subKey}]`, item[subKey]);
-              }
-            }
-          });
-        }
-      } else {
-        data.append(key, formData[key]);
-      }
+    const data = await response.json();
+
+    if (response.ok) {
+      toast.success(data.message);
+      navigate("/job-seeker-dashboard/manage-resumes");
+    } else {
+      toast.error(data.message);
     }
-
-    fetch(`${API}/controllers/updateResume.php`, {
-      method: "POST",
-      body: data,
-      credentials: "include",
-    })
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        return response.json();
-      })
-      .then((data) => {
-        console.log(data);
-        if (data.success) {
-          toast.success(data.message);
-          navigate("/job-seeker-dashboard/manage-resumes");
-        } else {
-          toast.error(data.message);
-        }
-      })
-      .catch((error) => {
-        console.error(error);
-        toast.error("An error occurred: " + error.message);
-      });
   };
 
   useEffect(() => {
-    fetch(`${API}/controllers/getResume.php?id=${id}`, {
-      credentials: "include",
-    })
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        return response.json();
-      })
-      .then((data) => {
-        if (data.success) {
-          setFormData(data.resume);
-        } else {
-          toast.error(data.message);
-        }
-      })
-      .catch((error) => {
-        console.error(error);
-        toast.error("An error occurred: " + error.message);
+    const fetchResume = async () => {
+      const response = await fetch(`${API}/job-seeker/get-resume/${id}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          "x-auth-token": userDetails.token,
+        },
       });
-  }, [id, navigate]);
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setFormData(data);
+      } else {
+        toast.error(data.message);
+      }
+    };
+
+    if (loginState) {
+      fetchResume();
+    }
+  }, [id, navigate, loginState, userDetails]);
 
   return (
     <div className="container">
@@ -553,7 +516,15 @@ const EditResume = () => {
                         name="startDate"
                         id="startDate"
                         placeholder="Start Date"
-                        value={position.startDate}
+                        value={
+                          position &&
+                          position.startDate &&
+                          !isNaN(new Date(position.startDate))
+                            ? new Date(position.startDate)
+                                .toISOString()
+                                .split("T")[0]
+                            : ""
+                        }
                         onChange={(e) =>
                           handleInputChange(
                             e,
@@ -573,7 +544,15 @@ const EditResume = () => {
                         name="endDate"
                         id="endDate"
                         placeholder="End Date"
-                        value={position.endDate}
+                        value={
+                          position &&
+                          position.endDate &&
+                          !isNaN(new Date(position.endDate))
+                            ? new Date(position.endDate)
+                                .toISOString()
+                                .split("T")[0]
+                            : ""
+                        }
                         onChange={(e) =>
                           handleInputChange(
                             e,
@@ -746,7 +725,15 @@ const EditResume = () => {
                         name="graduationDate"
                         id="graduationDate"
                         placeholder="Graduation Date"
-                        value={degree.graduationDate}
+                        value={
+                          degree &&
+                          degree.graduationDate &&
+                          !isNaN(new Date(degree.graduationDate))
+                            ? new Date(degree.graduationDate)
+                                .toISOString()
+                                .split("T")[0]
+                            : ""
+                        }
                         onChange={(e) =>
                           handleInputChange(
                             e,
@@ -937,7 +924,15 @@ const EditResume = () => {
                       name="startDate"
                       id="startDate"
                       placeholder="Start Date"
-                      value={branch.startDate}
+                      value={
+                        branch &&
+                        branch.startDate &&
+                        !isNaN(new Date(branch.startDate))
+                          ? new Date(branch.startDate)
+                              .toISOString()
+                              .split("T")[0]
+                          : ""
+                      }
                       onChange={(e) => handleInputChange(e, index, "branches")}
                       required
                     />
@@ -949,7 +944,13 @@ const EditResume = () => {
                       name="endDate"
                       id="endDate"
                       placeholder="End Date"
-                      value={branch.endDate}
+                      value={
+                        branch &&
+                        branch.endDate &&
+                        !isNaN(new Date(branch.endDate))
+                          ? new Date(branch.endDate).toISOString().split("T")[0]
+                          : ""
+                      }
                       onChange={(e) => handleInputChange(e, index, "branches")}
                       required
                     />

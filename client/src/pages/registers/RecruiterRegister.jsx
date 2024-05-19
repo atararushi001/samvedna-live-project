@@ -2,24 +2,23 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
+import UserStore from "../../stores/UserStore";
+
 const API = import.meta.env.VITE_API_URL;
 
 const RecruiterRegister = () => {
   const navigate = useNavigate();
+  const { loginState, userDetails } = UserStore();
 
   useEffect(() => {
-    const isLoggedIn = sessionStorage.getItem("isLoggedIn");
-    const jobSeekerId = sessionStorage.getItem("job_seekers_id");
-    const recruiterId = sessionStorage.getItem("recruiters_id");
-
-    if (isLoggedIn) {
-      if (jobSeekerId) {
+    if (loginState) {
+      if (userDetails.type === "Job Seeker") {
         navigate("/job-seeker-dashboard");
-      } else if (recruiterId) {
+      } else if (userDetails.type === "Recruiter") {
         navigate("/recruiter-dashboard");
       }
     }
-  }, [navigate]);
+  }, [navigate, loginState, userDetails]);
 
   const [formData, setFormData] = useState({
     profilePicture: [],
@@ -40,22 +39,20 @@ const RecruiterRegister = () => {
   const [countries, setCountries] = useState([]);
 
   useEffect(() => {
-    fetch(`${API}/controllers/getCountry.php`)
-      .then((response) => response.text())
+    fetch(`${API}/utils/countries`)
+      .then((response) => response.json())
       .then((data) => {
-        const options = parseOptions(data);
-        setCountries(options);
+        setCountries(data.results);
       })
       .catch((error) => console.error(error));
   }, []);
 
   useEffect(() => {
     if (formData.country) {
-      fetch(`${API}/controllers/getState.php?country_id=${formData.country}`)
-        .then((response) => response.text())
+      fetch(`${API}/utils/states/${formData.country}`)
+        .then((response) => response.json())
         .then((data) => {
-          const options = parseOptions(data);
-          setStates(options);
+          setStates(data.results);
         })
         .catch((error) => console.error(error));
     }
@@ -63,24 +60,14 @@ const RecruiterRegister = () => {
 
   useEffect(() => {
     if (formData.state) {
-      fetch(`${API}/controllers/getCity.php?state_id=${formData.state}`)
-        .then((response) => response.text())
+      fetch(`${API}/utils/cities/${formData.state}`)
+        .then((response) => response.json())
         .then((data) => {
-          const options = parseOptions(data);
-          setCities(options);
+          setCities(data.results);
         })
         .catch((error) => console.error(error));
     }
   }, [formData.state]);
-
-  const parseOptions = (htmlString) => {
-    const parser = new DOMParser();
-    const htmlDoc = parser.parseFromString(htmlString, "text/html");
-    return Array.from(htmlDoc.querySelectorAll("option")).map((opt) => ({
-      value: opt.value,
-      label: opt.textContent,
-    }));
-  };
 
   const handleInputChange = (event) => {
     const { name, value, files } = event.target;
@@ -112,34 +99,24 @@ const RecruiterRegister = () => {
     }
 
     const data = new FormData();
+
     for (const key in formData) {
       data.append(key, formData[key]);
     }
 
-    fetch(`${API}/controllers/recruiterRegister.php`, {
+    const response = await fetch(`${API}/recruiter/register`, {
       method: "POST",
       body: data,
-      credentials: "include",
-    })
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        return response.json();
-      })
-      .then((data) => {
-        console.log(data);
-        if (data.success) {
-          toast.success(data.message);
-          navigate("/recruiter-login");
-        } else {
-          toast.error(data.message);
-        }
-      })
-      .catch((error) => {
-        console.error(error);
-        toast.error("An error occurred: " + error.message);
-      });
+    });
+
+    const responseData = await response.json();
+
+    if (response.ok) {
+      toast.success(responseData.message);
+      navigate("/recruiter-login");
+    } else {
+      toast.error(responseData.message);
+    }
   };
 
   return (
@@ -224,8 +201,8 @@ const RecruiterRegister = () => {
                 Select Country
               </option>
               {countries.map((country, index) => (
-                <option key={`${country.value}-${index}`} value={country.value}>
-                  {country.label}
+                <option key={`${country.name}-${index}`} value={country.id}>
+                  {country.name}
                 </option>
               ))}
             </select>
@@ -241,8 +218,8 @@ const RecruiterRegister = () => {
                 Select State
               </option>
               {states.map((state, index) => (
-                <option key={`${state.value}-${index}`} value={state.value}>
-                  {state.label}
+                <option key={`${state.name}-${index}`} value={state.id}>
+                  {state.name}
                 </option>
               ))}
             </select>
@@ -258,8 +235,8 @@ const RecruiterRegister = () => {
                 Select City
               </option>
               {cities.map((city, index) => (
-                <option key={`${city.value}-${index}`} value={city.value}>
-                  {city.label}
+                <option key={`${city.name}-${index}`} value={city.id}>
+                  {city.name}
                 </option>
               ))}
             </select>

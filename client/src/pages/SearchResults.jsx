@@ -1,6 +1,6 @@
 import { useLocation, useNavigate, Link } from "react-router-dom";
 
-const API = import.meta.env.VITE_API_URL;
+const API = import.meta.env.VITE_STATIC_FILES_URL;
 
 const SearchResults = () => {
   const navigate = useNavigate();

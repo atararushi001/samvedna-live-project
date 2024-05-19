@@ -2,26 +2,25 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
+import UserStore from "../stores/UserStore";
+
 const API = import.meta.env.VITE_API_URL;
 
 const CreateResume = () => {
   const navigate = useNavigate();
+  const { loginState, userDetails } = UserStore();
 
   useEffect(() => {
-    const isLoggedIn = sessionStorage.getItem("isLoggedIn");
-    const recruiterId = sessionStorage.getItem("recruiters_id");
-
-    if (isLoggedIn) {
-      if (recruiterId) {
+    if (loginState) {
+      if (userDetails.type === "Recruiter") {
         navigate("/recruiter-dashboard");
       }
     } else {
       navigate("/job-seeker-login");
     }
-  }, [navigate]);
+  }, [navigate, loginState, userDetails]);
 
   const [formData, setFormData] = useState({
-    job_seeker_id: sessionStorage.getItem("job_seekers_id"),
     resumeName: "",
     firstName: "",
     lastName: "",
@@ -227,63 +226,26 @@ const CreateResume = () => {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    const data = new FormData();
 
-    for (const key in formData) {
-      if (Array.isArray(formData[key])) {
-        if (key === "desiredJobType") {
-          formData[key].forEach((item, index) => {
-            data.append(`${key}[${index}]`, item);
-          });
-        } else {
-          formData[key].forEach((item, index) => {
-            for (const subKey in item) {
-              if (Array.isArray(item[subKey])) {
-                item[subKey].forEach((subItem, subIndex) => {
-                  for (const subSubKey in subItem) {
-                    data.append(
-                      `${key}[${index}][${subKey}][${subIndex}][${subSubKey}]`,
-                      subItem[subSubKey]
-                    );
-                  }
-                });
-              } else {
-                data.append(`${key}[${index}][${subKey}]`, item[subKey]);
-              }
-            }
-          });
-        }
-      } else {
-        data.append(key, formData[key]);
-      }
-    }
-
-    fetch(`${API}/controllers/createResume.php`, {
+    const response = await fetch(`${API}/job-seeker/create-resume`, {
       method: "POST",
-      body: data,
-      credentials: "include",
-    })
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        return response.json();
-      })
-      .then((data) => {
-        console.log(data);
-        if (data.success) {
-          toast.success(data.message);
-          navigate("/job-seeker-dashboard/manage-resumes");
-        } else {
-          toast.error(data.message);
-        }
-      })
-      .catch((error) => {
-        console.error(error);
-        toast.error("An error occurred: " + error.message);
-      });
+      headers: {
+        "Content-Type": "application/json",
+        "x-auth-token": userDetails.token,
+      },
+      body: JSON.stringify(formData),
+    });
+
+    const data = await response.json();
+
+    if (response.ok) {
+      toast.success(data.message);
+      navigate("/job-seeker-dashboard");
+    } else {
+      toast.error(data.message);
+    }
   };
 
   return (

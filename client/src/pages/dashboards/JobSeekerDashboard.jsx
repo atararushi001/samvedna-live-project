@@ -2,73 +2,73 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
+import UserStore from "../../stores/UserStore";
+
 const API = import.meta.env.VITE_API_URL;
 
 const JobSeekerDashboard = () => {
+  const { loginState, userDetails } = UserStore();
   const [jobSeeker, setJobSeeker] = useState({});
 
   const [countries, setCountries] = useState([]);
   const [states, setStates] = useState([]);
   const [cities, setCities] = useState([]);
+  const [qualification, setQualification] = useState([]);
+  const [educationSpecialization, setEducationSpecialization] = useState([]);
 
   const navigate = useNavigate();
 
   useEffect(() => {
-    const isLoggedIn = sessionStorage.getItem("isLoggedIn");
-    const jobSeekerId = sessionStorage.getItem("job_seekers_id");
-    const recruiterId = sessionStorage.getItem("recruiters_id");
-
-    if (isLoggedIn) {
-      if (jobSeekerId) {
-        // navigate("/job-seeker-dashboard");
-      } else if (recruiterId) {
+    if (loginState) {
+      if (userDetails.type === "Recruiter") {
         navigate("/recruiter-dashboard");
       }
     } else {
       navigate("/job-seeker-login");
     }
-  }, [navigate]);
+  }, [navigate, userDetails, loginState]);
 
   useEffect(() => {
-    fetch(`${API}/controllers/renderJobSeekerData.php`, {
-      method: "GET",
-      credentials: "include",
-    })
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        return response.json();
-      })
-      .then((data) => {
-        if (data.success) {
-          setJobSeeker(data.jobSeeker[0]);
-        } else {
-          console.log(data.message);
-        }
-      })
-      .catch((error) => {
-        console.error(error);
+    const fetchData = async () => {
+      const response = await fetch(`${API}/job-seeker/by-id`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          "x-auth-token": userDetails.token,
+        },
       });
-  }, []);
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const responseData = await response.json();
+
+      if (response.status === 200) {
+        setJobSeeker(responseData.jobSeeker);
+      } else {
+        toast.error(responseData.message);
+      }
+    };
+
+    fetchData();
+  }, [userDetails]);
 
   useEffect(() => {
-    fetch(`${API}/controllers/getCountry.php`)
-      .then((response) => response.text())
+    fetch(`${API}/utils/countries`)
+      .then((response) => response.json())
       .then((data) => {
-        const options = parseOptions(data);
-        setCountries(options);
+        setCountries(data.results);
       })
       .catch((error) => console.error(error));
   }, []);
 
   useEffect(() => {
     if (jobSeeker && jobSeeker.country) {
-      fetch(`${API}/controllers/getState.php?country_id=${jobSeeker.country}`)
-        .then((response) => response.text())
+      fetch(`${API}/utils/states/${jobSeeker.country}`)
+        .then((response) => response.json())
         .then((data) => {
-          const options = parseOptions(data);
-          setStates(options);
+          setStates(data.results);
         })
         .catch((error) => console.error(error));
     }
@@ -76,11 +76,30 @@ const JobSeekerDashboard = () => {
 
   useEffect(() => {
     if (jobSeeker && jobSeeker.state) {
-      fetch(`${API}/controllers/getCity.php?state_id=${jobSeeker.state}`)
-        .then((response) => response.text())
+      fetch(`${API}/utils/cities/${jobSeeker.state}`)
+        .then((response) => response.json())
         .then((data) => {
-          const options = parseOptions(data);
-          setCities(options);
+          setCities(data.results);
+        })
+        .catch((error) => console.error(error));
+    }
+  }, [jobSeeker]);
+
+  useEffect(() => {
+    fetch(`${API}/utils/qualifications`)
+      .then((response) => response.json())
+      .then((data) => {
+        setQualification(data.results);
+      })
+      .catch((error) => console.error(error));
+  }, []);
+
+  useEffect(() => {
+    if (jobSeeker && jobSeeker.qualification) {
+      fetch(`${API}/utils/education-specialization/${jobSeeker.qualification}`)
+        .then((response) => response.json())
+        .then((data) => {
+          setEducationSpecialization(data.results);
         })
         .catch((error) => console.error(error));
     }
@@ -96,49 +115,32 @@ const JobSeekerDashboard = () => {
     });
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
 
     console.log(jobSeeker);
 
-    const data = new FormData();
-    for (const key in jobSeeker) {
-      data.append(key, jobSeeker[key]);
+    const response = await fetch(`${API}/job-seeker/update`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        "x-auth-token": userDetails.token,
+      },
+      body: JSON.stringify(jobSeeker),
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
     }
 
-    fetch(`${API}/controllers/editJobSeekerData.php`, {
-      method: "POST",
-      credentials: "include",
-      body: data,
-    })
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        return response.json();
-      })
-      .then((data) => {
-        console.log(data);
-        if (data.success) {
-          toast.success(data.message);
-          navigate("/job-seeker-dashboard");
-        } else {
-          toast.error(data.message);
-          console.log(data.message);
-        }
-      })
-      .catch((error) => {
-        console.error(error);
-      });
-  };
+    const responseData = await response.json();
 
-  const parseOptions = (htmlString) => {
-    const parser = new DOMParser();
-    const htmlDoc = parser.parseFromString(htmlString, "text/html");
-    return Array.from(htmlDoc.querySelectorAll("option")).map((opt) => ({
-      value: opt.value,
-      label: opt.textContent,
-    }));
+    if (response.status === 200) {
+      toast.success(responseData.message);
+      navigate("/job-seeker-dashboard");
+    } else {
+      toast.error(responseData.message);
+    }
   };
 
   return (
@@ -213,7 +215,13 @@ const JobSeekerDashboard = () => {
                   id="dob"
                   name="dob"
                   placeholder="Date of birth"
-                  value={jobSeeker && jobSeeker.dob}
+                  value={
+                    jobSeeker &&
+                    jobSeeker.dob &&
+                    !isNaN(new Date(jobSeeker.dob))
+                      ? new Date(jobSeeker.dob).toISOString().split("T")[0]
+                      : ""
+                  }
                   onChange={handleInputChange}
                   required
                 />
@@ -269,11 +277,8 @@ const JobSeekerDashboard = () => {
                   onChange={handleInputChange}
                 >
                   {countries.map((country, index) => (
-                    <option
-                      key={`${country.value}-${index}`}
-                      value={country.value}
-                    >
-                      {country.label}
+                    <option key={`${country.name}-${index}`} value={country.id}>
+                      {country.name}
                     </option>
                   ))}
                 </select>
@@ -283,8 +288,8 @@ const JobSeekerDashboard = () => {
                   onChange={handleInputChange}
                 >
                   {states.map((state, index) => (
-                    <option key={`${state.value}-${index}`} value={state.value}>
-                      {state.label}
+                    <option key={`${state.name}-${index}`} value={state.id}>
+                      {state.name}
                     </option>
                   ))}
                 </select>
@@ -294,8 +299,8 @@ const JobSeekerDashboard = () => {
                   onChange={handleInputChange}
                 >
                   {cities.map((city, index) => (
-                    <option key={`${city.value}-${index}`} value={city.value}>
-                      {city.label}
+                    <option key={`${city.name}-${index}`} value={city.id}>
+                      {city.name}
                     </option>
                   ))}
                 </select>
@@ -375,24 +380,20 @@ const JobSeekerDashboard = () => {
                   id="qualification"
                   name="qualification"
                   onChange={handleInputChange}
+                  value={jobSeeker && jobSeeker.qualification}
                   required
                 >
                   <option value="" disabled>
                     Select Your Qualification
                   </option>
-                  <option value="Below SSC">Below SSC</option>
-                  <option value="SSLC X">SSLC / X</option>
-                  <option value="HSC XII">HSC / XII</option>
-                  <option value="Under Graduate">Under Graduate</option>
-                  <option value="Company Secretary">
-                    Company Secretary (ACS)
-                  </option>
-                  <option value="Aviation">Aviation</option>
-                  <option value="BA">B.A</option>
-                  <option value="B.Arch">B. Arch</option>
-                  <option value="B.Com">B.Com</option>
-                  <option value="BE B.Tech">B.E/B.Tech</option>
-                  <option value="B.Ed">B.Ed</option>
+                  {qualification.map((qual, index) => (
+                    <option
+                      key={`${qual.qualification_name}-${index}`}
+                      value={qual.qualification_id}
+                    >
+                      {qual.qualification_name}
+                    </option>
+                  ))}
                 </select>
               </fieldset>
 
@@ -405,29 +406,20 @@ const JobSeekerDashboard = () => {
                   id="educationSpecialization"
                   name="educationSpecialization"
                   onChange={handleInputChange}
+                  value={jobSeeker && jobSeeker.educationSpecialization}
                   required
                 >
                   <option value="" disabled>
                     Select Your Specialization
                   </option>
-                  <optgroup label="Below X">
-                    <option value="Below X">Below X</option>
-                  </optgroup>
-                  <optgroup label="SSLC / X">
-                    <option value="SSLC X">SSLC / X</option>
-                  </optgroup>
-                  <optgroup label="HSC / XII">
-                    <option value="HSC/XII">HSC / XII</option>
-                    <option value="Science">Science</option>
-                    <option value="Commerce">Commerce</option>
-                    <option value="Arts">Arts</option>
-                  </optgroup>
-                  <optgroup label="Under Graduate">
-                    <option value="Under_Graduate">Under Graduate</option>
-                    <option value="FY">F.Y</option>
-                    <option value="SY">S.Y</option>
-                    <option value="TY">T.Y</option>
-                  </optgroup>
+                  {educationSpecialization.map((eduSpec, index) => (
+                    <option
+                      key={`${eduSpec.education_specialization_name}-${index}`}
+                      value={eduSpec.education_specialization_id}
+                    >
+                      {eduSpec.education_specialization_name}
+                    </option>
+                  ))}
                 </select>
               </fieldset>
 
@@ -493,7 +485,13 @@ const JobSeekerDashboard = () => {
                     <label htmlFor="car">Car</label>
                   </div>
                 )}
-                <select name="percentage" onChange={handleInputChange} required>
+                <select
+                  name="disabilityPercentage"
+                  id="disabilityPercentage"
+                  onChange={handleInputChange}
+                  value={jobSeeker && jobSeeker.disabilityPercentage}
+                  required
+                >
                   <option value="" disabled>
                     Select Percentage of Disability
                   </option>

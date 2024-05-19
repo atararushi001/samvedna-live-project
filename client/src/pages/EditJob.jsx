@@ -2,64 +2,66 @@ import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 
+import UserStore from "../stores/UserStore";
+
 const API = import.meta.env.VITE_API_URL;
 
 const EditJob = () => {
   const { id } = useParams();
-  const recruiterId = sessionStorage.getItem("recruiters_id");
   const navigate = useNavigate();
+
+  const { loginState, userDetails } = UserStore();
+
   const [formData, setFormData] = useState({});
   const [countries, setCountries] = useState([]);
   const [states, setStates] = useState([]);
   const [cities, setCities] = useState([]);
 
   useEffect(() => {
-    const isLoggedIn = sessionStorage.getItem("isLoggedIn");
-    const jobSeekerId = sessionStorage.getItem("job_seekers_id");
-    const recruiterId = sessionStorage.getItem("recruiters_id");
-
-    if (isLoggedIn) {
-      if (jobSeekerId) {
+    if (loginState) {
+      if (userDetails.type === "Job Seeker") {
         navigate("/job-seeker-dashboard");
-      } else if (recruiterId) {
-        fetch(`${API}/controllers/getJob.php?job_id=${id}`)
-          .then((response) => response.json())
-          .then((data) => {
-            if (data.success) {
-              setFormData(data.job[0]);
-            } else {
-              toast.error(data.message);
-              navigate("/recruiter-dashboard/view-jobs");
-            }
-          })
-          .catch((error) => {
-            console.error(error);
-            toast.error("Something went wrong");
-            navigate("/recruiter-dashboard/view-jobs");
-          });
       }
     } else {
       navigate("/recruiter-login");
     }
-  }, [navigate, id]);
+
+    const fetchJob = async () => {
+      const response = await fetch(`${API}/recruiter/job/${id}`, {
+        method: "GET",
+        headers: {
+          "x-auth-token": userDetails.token,
+        },
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setFormData(data[0]);
+      } else {
+        toast.error(data.message);
+        navigate("/recruiter-dashboard/view-jobs");
+      }
+    };
+
+    fetchJob();
+  }, [navigate, id, loginState, userDetails]);
 
   useEffect(() => {
-    fetch(`${API}/controllers/getCountry.php`)
-      .then((response) => response.text())
+    fetch(`${API}/utils/countries`)
+      .then((response) => response.json())
       .then((data) => {
-        const options = parseOptions(data);
-        setCountries(options);
+        setCountries(data.results);
       })
       .catch((error) => console.error(error));
   }, []);
 
   useEffect(() => {
     if (formData.country) {
-      fetch(`${API}/controllers/getState.php?country_id=${formData.country}`)
-        .then((response) => response.text())
+      fetch(`${API}/utils/states/${formData.country}`)
+        .then((response) => response.json())
         .then((data) => {
-          const options = parseOptions(data);
-          setStates(options);
+          setStates(data.results);
         })
         .catch((error) => console.error(error));
     }
@@ -67,24 +69,14 @@ const EditJob = () => {
 
   useEffect(() => {
     if (formData.state) {
-      fetch(`${API}/controllers/getCity.php?state_id=${formData.state}`)
-        .then((response) => response.text())
+      fetch(`${API}/utils/cities/${formData.state}`)
+        .then((response) => response.json())
         .then((data) => {
-          const options = parseOptions(data);
-          setCities(options);
+          setCities(data.results);
         })
         .catch((error) => console.error(error));
     }
   }, [formData.state]);
-
-  const parseOptions = (htmlString) => {
-    const parser = new DOMParser();
-    const htmlDoc = parser.parseFromString(htmlString, "text/html");
-    return Array.from(htmlDoc.querySelectorAll("option")).map((opt) => ({
-      value: opt.value,
-      label: opt.textContent,
-    }));
-  };
 
   const handleInputChange = (event) => {
     const { name, value, type, checked } = event.target;
@@ -130,7 +122,7 @@ const EditJob = () => {
     return result;
   }
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
 
     if (formData.workingHoursFrom > formData.workingHoursTo) {
@@ -180,34 +172,21 @@ const EditJob = () => {
 
     const flattenedData = flattenData(formData);
 
-    const data = new FormData();
-    data.append("recruiter_id", recruiterId);
+    const response = await fetch(`${API}/recruiter/update-job/${id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        "x-auth-token": userDetails.token,
+      },
+      body: JSON.stringify(flattenedData),
+    });
 
-    for (const key in flattenedData) {
-      data.append(key, flattenedData[key]);
+    if (response.ok) {
+      toast.success("Job updated successfully");
+      navigate("/recruiter-dashboard/view-jobs");
+    } else {
+      toast.error("Something went wrong");
     }
-
-    fetch(`${API}/controllers/editJob.php`, {
-      method: "POST",
-      body: data,
-      credentials: "include",
-    })
-      .then((res) => {
-        return res.json();
-      })
-      .then((data) => {
-        console.log(data);
-        if (data.success) {
-          toast.success(data.message);
-          navigate("/recruiter-dashboard/view-jobs");
-        } else {
-          toast.error(data.message);
-        }
-      })
-      .catch((err) => {
-        console.log(err);
-        toast.error("Something went wrong");
-      });
   };
 
   const handleJobDeactivation = async (e, status) => {
@@ -221,31 +200,18 @@ const EditJob = () => {
       return;
     }
 
-    const newFormData = new FormData();
-    newFormData.append("job_id", id);
+    const response = await fetch(`${API}/recruiter/change-status/${id}`, {
+      method: "PUT",
+      headers: {
+        "x-auth-token": userDetails.token,
+      },
+    });
 
-    try {
-      const response = await fetch(`${API}/controllers/getJobStatus.php`, {
-        method: "POST",
-        body: newFormData,
-        credentials: "include",
-      });
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      const data = await response.json();
-      console.log(data);
-
-      if (data.success) {
-        toast.success("Job status updated successfully!");
-        navigate("/recruiter-dashboard/view-jobs");
-      } else {
-        console.log(data.message);
-      }
-    } catch (error) {
-      console.error(error);
+    if (response.ok) {
+      toast.success(`Job ${status}d successfully`);
+      navigate("/recruiter-dashboard/view-jobs");
+    } else {
+      toast.error("Something went wrong");
     }
   };
 
@@ -297,11 +263,8 @@ const EditJob = () => {
                   Select Country
                 </option>
                 {countries.map((country, index) => (
-                  <option
-                    key={`${country.value}-${index}`}
-                    value={country.value}
-                  >
-                    {country.label}
+                  <option key={`${country.name}-${index}`} value={country.id}>
+                    {country.name}
                   </option>
                 ))}
               </select>
@@ -317,8 +280,8 @@ const EditJob = () => {
                   Select State
                 </option>
                 {states.map((state, index) => (
-                  <option key={`${state.value}-${index}`} value={state.value}>
-                    {state.label}
+                  <option key={`${state.name}-${index}`} value={state.id}>
+                    {state.name}
                   </option>
                 ))}
               </select>
@@ -334,8 +297,8 @@ const EditJob = () => {
                   Select City
                 </option>
                 {cities.map((city, index) => (
-                  <option key={`${city.value}-${index}`} value={city.value}>
-                    {city.label}
+                  <option key={`${city.name}-${index}`} value={city.id}>
+                    {city.name}
                   </option>
                 ))}
               </select>

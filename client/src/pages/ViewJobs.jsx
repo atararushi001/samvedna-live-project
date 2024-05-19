@@ -2,83 +2,67 @@ import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
+import UserStore from "../stores/UserStore";
+
 const API = import.meta.env.VITE_API_URL;
 
 const ViewJobs = () => {
   const [jobs, setJobs] = useState([]);
+  const { loginState, userDetails } = UserStore();
 
   const navigate = useNavigate();
 
   useEffect(() => {
-    const isLoggedIn = sessionStorage.getItem("isLoggedIn");
-    const jobSeekerId = sessionStorage.getItem("job_seekers_id");
-    const recruiterId = sessionStorage.getItem("recruiters_id");
-
-    if (isLoggedIn) {
-      if (jobSeekerId) {
+    if (loginState) {
+      if (userDetails.type === "Job Seeker") {
         navigate("/job-seeker-dashboard");
-      } else if (recruiterId) {
-        // navigate("/recruiter-dashboard");
       }
     } else {
       navigate("/job-seeker-login");
     }
-  }, [navigate]);
+  }, [navigate, loginState, userDetails]);
 
   useEffect(() => {
-    fetch(`${API}/controllers/renderJobs.php`, {
-      method: "GET",
-      credentials: "include",
-    })
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        return response.json();
-      })
-      .then((data) => {
-        if (data.success) {
-          setJobs(data.jobs);
-        } else {
-          console.log(data.message);
-        }
-      })
-      .catch((error) => {
-        console.error(error);
+    const fetchJobs = async () => {
+      const response = await fetch(`${API}/recruiter/jobs`, {
+        method: "GET",
+        headers: {
+          "x-auth-token": userDetails.token,
+        },
       });
-  }, []);
 
-  const deleteJob = (e) => (jobId) => {
+      const data = await response.json();
+
+      if (response.ok) {
+        setJobs(data);
+      } else {
+        console.error(data.message);
+      }
+    };
+
+    fetchJobs();
+  }, [userDetails]);
+
+  const deleteJob = (e) => async (jobId) => {
     e.preventDefault();
 
-    const formData = new FormData();
-    formData.append("job_id", jobId);
+    const response = await fetch(`${API}/recruiter/delete-job/${jobId}`, {
+      method: "DELETE",
+      headers: {
+        "x-auth-token": userDetails.token,
+      },
+    });
 
-    fetch(`${API}/controllers/deleteJob.php`, {
-      method: "POST",
-      credentials: "include",
-      body: formData,
-    })
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        return response.json();
-      })
-      .then((data) => {
-        if (data.success) {
-          toast.success(data.message);
-          setJobs((prevJobs) => {
-            return prevJobs.filter((job) => job.job_id !== jobId);
-          });
-          navigate("/recruiter-dashboard/view-jobs");
-        } else {
-          console.log(data.message);
-        }
-      })
-      .catch((error) => {
-        console.error(error);
-      });
+    const data = await response.json();
+
+    console.log(data);
+
+    if (response.ok) {
+      toast.success(data.message);
+      setJobs(jobs.filter((job) => job.job_id !== jobId));
+    } else {
+      toast.error(data.message);
+    }
   };
 
   return (
@@ -116,7 +100,9 @@ const ViewJobs = () => {
                         <td>{job.jobType}</td>
                         <td>{job.placeOfWork}</td>
                         <td>{job.disabilityInfoPercentage}</td>
-                        <td>{job.payAndAllowances}</td>
+                        <td>
+                          {job.salaryMin} - {job.salaryMax}
+                        </td>
                         <td>{job.dutyDescription}</td>
                         <td className="controls">
                           <Link

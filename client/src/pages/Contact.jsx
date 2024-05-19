@@ -1,6 +1,3 @@
-import Default from "../assets/images/Team/default.png";
-import Tarulatta from "../assets/images/Team/Core/Tarulata Patel.jpg";
-
 import { useState, useEffect, useRef } from "react";
 import { toast } from "react-toastify";
 
@@ -133,56 +130,35 @@ const Contact = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const data = new FormData();
-
-    for (let key in formData) {
-      data.append(key, formData[key]);
-    }
-
-    fetch(`${API}/controllers/contactForm.php`, {
+    const response = await fetch(`${API}/utils/contact-us`, {
       method: "POST",
-      body: data,
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.success) {
-          toast.success(data.message);
-          setFormData({
-            name: "",
-            email: "",
-            contact: "",
-            address: "",
-            message: "",
-          });
-        }
-      })
-      .catch((err) => console.log(err));
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(formData),
+    });
+
+    const data = await response.json();
+
+    if (response.ok) {
+      toast.success(data.message);
+      setFormData({
+        name: "",
+        email: "",
+        contact: "",
+        address: "",
+        message: "",
+      });
+    } else {
+      toast.error(data.message);
+    }
   };
 
   return (
     <div className="container">
-      <section className="contact to-animate" ref={sectionRef1}>
-        <img src={Tarulatta} alt="Late Tarulatta Patel" />
-        <h2>Late Tarulatta Patel</h2>
-        <h4>(Ex Founder, Managing Trustee & President)</h4>
-        <h2>Honoring the Legacy of Our Beloved Managing Trustee</h2>
-        <p>
-          We deeply mourn the passing of our beloved Managing Trustee, who was
-          the driving force behind the inception and success of our NGO. Her
-          visionary leadership, unwavering dedication, and invaluable
-          contributions have left an indelible mark on our organization and the
-          lives of countless individuals with disabilities. Her passion for
-          empowering PWDs through employment initiatives has been instrumental
-          in shaping our mission and guiding our efforts. We honor her legacy by
-          continuing to uphold the values and principles she instilled in us,
-          and we remain committed to fulfilling her vision of creating a more
-          inclusive and equitable society.
-        </p>
-      </section>
-
       <section className="address-information to-animate" ref={sectionRef2}>
         <h1>Office Address</h1>
         <div>
@@ -204,49 +180,6 @@ const Contact = () => {
               samvedna2010@yahoo.in
             </a>
           </p>
-        </div>
-      </section>
-
-      <section className="contact-persons">
-        <h1>Contact Persons</h1>
-        <div className="persons">
-          <div className="person to-animate" ref={listItemRef1}>
-            <img src={Default} alt="Mayank Patel" />
-            <h3>
-              MAYANK PATEL
-              <span className="person-title">
-                (Managing Trustee & President)
-              </span>
-            </h3>
-          </div>
-          <div className="person to-animate" ref={listItemRef2}>
-            <img src={Default} alt="Sagar Patel" />
-            <h3>
-              SAGAR PATEL
-              <span className="person-title">(Trustee & Secretary)</span>
-            </h3>
-          </div>
-          <div className="person to-animate" ref={listItemRef3}>
-            <img src={Default} alt="Sagar Patel" />
-            <h3>
-              RASHESH SHASTRI
-              <span className="person-title">(Trustee & Treasurer)</span>
-            </h3>
-          </div>
-          <div className="person to-animate" ref={listItemRef4}>
-            <img src={Default} alt="Sagar Patel" />
-            <h3>
-              SARITA SINHA
-              <span className="person-title">(Trustee & Joint Secretary)</span>
-            </h3>
-          </div>
-          <div className="person to-animate" ref={listItemRef5}>
-            <img src={Default} alt="Sagar Patel" />
-            <h3>
-              AMIT PATEL
-              <span className="person-title">(Trustee & Joint Secretary)</span>
-            </h3>
-          </div>
         </div>
       </section>
 

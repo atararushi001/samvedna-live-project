@@ -2,10 +2,14 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
+import UserStore from "../../stores/UserStore";
+
 const API = import.meta.env.VITE_API_URL;
 
 const JobSeekerRegister = () => {
   const navigate = useNavigate();
+  const { loginState, userDetails } = UserStore();
+
   const [formData, setFormData] = useState({
     email: "",
     username: "",
@@ -53,36 +57,31 @@ const JobSeekerRegister = () => {
   };
 
   useEffect(() => {
-    const isLoggedIn = sessionStorage.getItem("isLoggedIn");
-    const jobSeekerId = sessionStorage.getItem("job_seekers_id");
-    const recruiterId = sessionStorage.getItem("recruiters_id");
-
-    if (isLoggedIn) {
-      if (jobSeekerId) {
+    if (loginState) {
+      if (userDetails.type === "Job Seeker") {
         navigate("/job-seeker-dashboard");
-      } else if (recruiterId) {
+      } else if (userDetails.type === "Recruiter") {
         navigate("/recruiter-dashboard");
       }
     }
-  }, [navigate]);
+  }, [navigate, loginState, userDetails]);
 
   useEffect(() => {
-    fetch(`${API}/controllers/getCountry.php`)
-      .then((response) => response.text())
+    fetch(`${API}/utils/countries`)
+      .then((response) => response.json())
       .then((data) => {
-        const options = parseOptions(data);
-        setCountries(options);
+        setCountries(data.results);
       })
       .catch((error) => console.error(error));
   }, []);
 
   useEffect(() => {
+    console.log(formData.country);
     if (formData.country) {
-      fetch(`${API}/controllers/getState.php?country_id=${formData.country}`)
-        .then((response) => response.text())
+      fetch(`${API}/utils/states/${formData.country}`)
+        .then((response) => response.json())
         .then((data) => {
-          const options = parseOptions(data);
-          setStates(options);
+          setStates(data.results);
         })
         .catch((error) => console.error(error));
     }
@@ -90,33 +89,30 @@ const JobSeekerRegister = () => {
 
   useEffect(() => {
     if (formData.state) {
-      fetch(`${API}/controllers/getCity.php?state_id=${formData.state}`)
-        .then((response) => response.text())
+      fetch(`${API}/utils/cities/${formData.state}`)
+        .then((response) => response.json())
         .then((data) => {
-          const options = parseOptions(data);
-          setCities(options);
+          setCities(data.results);
         })
         .catch((error) => console.error(error));
     }
   }, [formData.state]);
 
   useEffect(() => {
-    fetch(`${API}/controllers/getQualificationLevels.php`)
-      .then((response) => response.text())
+    fetch(`${API}/utils/qualifications`)
+      .then((response) => response.json())
       .then((data) => {
-        const options = parseOptions(data);
-        setQualifications(options);
+        setQualifications(data.results);
       })
       .catch((error) => console.error(error));
   }, []);
 
   useEffect(() => {
     if (formData.qualification) {
-      fetch(`${API}/controllers/getEducationSpecialization.php?qualification_id=${formData.qualification}`)
-        .then((response) => response.text())
+      fetch(`${API}/utils/education-specialization/${formData.qualification}`)
+        .then((response) => response.json())
         .then((data) => {
-          const options = parseOptions(data);
-          setSpecializations(options);
+          setSpecializations(data.results);
         })
         .catch((error) => console.error(error));
     }
@@ -135,49 +131,32 @@ const JobSeekerRegister = () => {
       return;
     }
 
-    if (!formData.twoWheeler && !formData.threeWheeler && !formData.car) {
+    if (
+      formData.yesNoQuestion === "yes" &&
+      !formData.twoWheeler &&
+      !formData.threeWheeler &&
+      !formData.car
+    ) {
       toast.error("Please select at least one vehicle type");
       return;
     }
 
-    const data = new FormData();
-    for (const key in formData) {
-      data.append(key, formData[key]);
-    }
-
-    fetch(`${API}/controllers/jobSeekerRegister.php`, {
+    const response = await fetch(`${API}/job-seeker/register`, {
       method: "POST",
-      body: data,
-      credentials: "include",
-    })
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        return response.json();
-      })
-      .then((data) => {
-        console.log(data);
-        if (data.success) {
-          toast.success(data.message);
-          navigate("/job-seeker-login");
-        } else {
-          toast.error(data.message);
-        }
-      })
-      .catch((error) => {
-        console.error(error);
-        toast.error("An error occurred: " + error.message);
-      });
-  };
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(formData),
+    });
 
-  const parseOptions = (htmlString) => {
-    const parser = new DOMParser();
-    const htmlDoc = parser.parseFromString(htmlString, "text/html");
-    return Array.from(htmlDoc.querySelectorAll("option")).map((opt) => ({
-      value: opt.value,
-      label: opt.textContent,
-    }));
+    const data = await response.json();
+
+    if (response.ok) {
+      toast.success(data.message);
+      navigate("/job-seeker-login");
+    } else {
+      toast.error(data.message);
+    }
   };
 
   return (
@@ -312,14 +291,13 @@ const JobSeekerRegister = () => {
               name="country"
               value={formData.country}
               onChange={handleInputChange}
-              defaultValue=""
             >
               <option value="" disabled>
                 Select Country
               </option>
               {countries.map((country, index) => (
-                <option key={`${country.value}-${index}`} value={country.value}>
-                  {country.label}
+                <option key={`${country.name}-${index}`} value={country.id}>
+                  {country.name}
                 </option>
               ))}
             </select>
@@ -327,14 +305,13 @@ const JobSeekerRegister = () => {
               name="state"
               value={formData.state}
               onChange={handleInputChange}
-              defaultValue=""
             >
               <option value="" disabled>
                 Select State
               </option>
               {states.map((state, index) => (
-                <option key={`${state.value}-${index}`} value={state.value}>
-                  {state.label}
+                <option key={`${state.name}-${index}`} value={state.id}>
+                  {state.name}
                 </option>
               ))}
             </select>
@@ -342,14 +319,13 @@ const JobSeekerRegister = () => {
               name="city"
               value={formData.city}
               onChange={handleInputChange}
-              defaultValue=""
             >
               <option value="" disabled>
                 Select City
               </option>
               {cities.map((city, index) => (
-                <option key={`${city.value}-${index}`} value={city.value}>
-                  {city.label}
+                <option key={`${city.name}-${index}`} value={city.id}>
+                  {city.name}
                 </option>
               ))}
             </select>
@@ -434,13 +410,14 @@ const JobSeekerRegister = () => {
               <option value="" disabled>
                 Select Qualification Level
               </option>
-              {
-                qualifications.map((qualification, index) => (
-                  <option key={`${qualification.value}-${index}`} value={qualification.value}>
-                    {qualification.label}
-                  </option>
-                ))
-              }
+              {qualifications.map((qualification, index) => (
+                <option
+                  key={`${qualification.qualification_name}-${index}`}
+                  value={qualification.qualification_id}
+                >
+                  {qualification.qualification_name}
+                </option>
+              ))}
             </select>
           </fieldset>
 
@@ -459,13 +436,14 @@ const JobSeekerRegister = () => {
               <option value="" disabled>
                 Select Education Specialization
               </option>
-              {
-                specializations.map((specialization, index) => (
-                  <option key={`${specialization.value}-${index}`} value={specialization.value}>
-                    {specialization.label}
-                  </option>
-                ))
-              }
+              {specializations.map((specialization, index) => (
+                <option
+                  key={`${specialization.education_specialization_name}-${index}`}
+                  value={specialization.education_specialization_id}
+                >
+                  {specialization.education_specialization_name}
+                </option>
+              ))}
             </select>
           </fieldset>
 
@@ -527,7 +505,11 @@ const JobSeekerRegister = () => {
                 <label htmlFor="car">Car</label>
               </div>
             )}
-            <select name="disabilityPercentage" onChange={handleInputChange} required>
+            <select
+              name="disabilityPercentage"
+              onChange={handleInputChange}
+              required
+            >
               <option value="" disabled selected>
                 Select Percentage of Disability
               </option>

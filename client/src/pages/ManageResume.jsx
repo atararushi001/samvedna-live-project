@@ -2,54 +2,51 @@ import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
+import UserStore from "../stores/UserStore";
+
 import Resume from "./components/Resume";
 
 const API = import.meta.env.VITE_API_URL;
 
 const ManageResume = () => {
   const navigate = useNavigate();
-  const jobSeekerId = sessionStorage.getItem("job_seekers_id");
+  const { loginState, userDetails } = UserStore();
 
   useEffect(() => {
-    const isLoggedIn = sessionStorage.getItem("isLoggedIn");
-    const recruiterId = sessionStorage.getItem("recruiters_id");
-
-    if (isLoggedIn) {
-      if (recruiterId) {
+    if (loginState) {
+      if (userDetails.userType === "Recruiter") {
         navigate("/recruiter-dashboard");
       }
     } else {
       navigate("/job-seeker-login");
     }
-  }, [navigate]);
+  }, [navigate, loginState, userDetails]);
 
   const [publicResumes, setPublicResumes] = useState([]);
   const [privateResumes, setPrivateResumes] = useState([]);
 
   useEffect(() => {
-    fetch(`${API}/controllers/getResumes.php?jobSeekerId=${jobSeekerId}`, {
-      method: "GET",
-      credentials: "include",
-    })
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        return response.json();
-      })
-      .then((data) => {
-        if (data.success) {
-          setPublicResumes(data.publicResumes);
-          setPrivateResumes(data.privateResumes);
-        } else {
-          toast.error(data.message);
-        }
-      })
-      .catch((error) => {
-        console.error(error);
-        toast.error("An error occurred: " + error.message);
+    const fetchResumes = async () => {
+      const response = await fetch(`${API}/job-seeker/get-resumes`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          "x-auth-token": userDetails.token,
+        },
       });
-  }, [navigate, jobSeekerId]);
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setPublicResumes(data.publicResumes);
+        setPrivateResumes(data.privateResumes);
+      } else {
+        toast.error(data.message);
+      }
+    };
+
+    fetchResumes();
+  }, [navigate, userDetails]);
 
   return (
     <div className="container">

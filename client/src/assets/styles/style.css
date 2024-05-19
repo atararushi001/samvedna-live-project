@@ -409,6 +409,11 @@ footer .footer-header ul {
 }
 
 footer .footer-bottom {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
   background: var(--text);
   color: var(--background);
   width: 100%;
@@ -420,6 +425,12 @@ footer .footer-bottom p {
   letter-spacing: 0.5px;
   font-weight: 300;
   text-align: center;
+}
+
+footer .footer-bottom p a {
+  color: var(--background);
+  text-decoration: underline;
+  font-weight: 500;
 }
 
 /* Components > Application */
@@ -948,6 +959,7 @@ footer .footer-bottom p {
   align-items: center;
   gap: 1rem;
   background: var(--primary);
+  color: var(--background);
   padding: 0.5rem;
   border-radius: 1rem;
   width: calc(100% - 2rem);
@@ -1113,6 +1125,7 @@ footer .footer-bottom p {
   align-items: center;
   gap: 1rem;
   background: var(--primary);
+  color: var(--background);
   padding: 1rem;
   border-radius: 1rem;
   width: calc(100% - 2rem);

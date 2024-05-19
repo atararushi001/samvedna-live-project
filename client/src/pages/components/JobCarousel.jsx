@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
-const API = import.meta.env.VITE_API_URL;
+const API = import.meta.env.VITE_STATIC_FILES_URL;
 
 const JobCarousel = ({ jobData }) => {
   const [slidesToShow, setSlidesToShow] = useState(3);
@@ -92,7 +92,6 @@ JobCarousel.propTypes = {
       job_id: PropTypes.number.isRequired,
       jobDesignation: PropTypes.string.isRequired,
       jobType: PropTypes.string.isRequired,
-      placeOfWork: PropTypes.string.isRequired,
       disabilityInfoPercentage: PropTypes.string.isRequired,
       dutyDescription: PropTypes.string.isRequired,
       profilePicture: PropTypes.string.isRequired,

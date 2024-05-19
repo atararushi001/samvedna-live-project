@@ -2,6 +2,8 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
+import UserStore from "../stores/UserStore";
+
 const API = import.meta.env.VITE_API_URL;
 
 const Search = () => {
@@ -14,77 +16,65 @@ const Search = () => {
     state: "",
   });
 
+  const { loginState, userDetails } = UserStore();
+
   const [countries, setCountries] = useState([]);
   const [states, setStates] = useState([]);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (loginState) {
+      if (userDetails.type === "Recruiter") {
+        navigate("/recruiter-dashboard");
+      }
+    } else {
+      navigate("/job-seeker-login");
+    }
+  }, [navigate, loginState, userDetails]);
 
   const handleChange = (event) => {
     setFormData({ ...formData, [event.target.id]: event.target.value });
   };
 
-  const parseOptions = (htmlString) => {
-    const parser = new DOMParser();
-    const htmlDoc = parser.parseFromString(htmlString, "text/html");
-    return Array.from(htmlDoc.querySelectorAll("option")).map((opt) => ({
-      value: opt.value,
-      label: opt.textContent,
-    }));
-  };
   useEffect(() => {
-    fetch(`${API}/controllers/getCountry.php`)
-      .then((response) => response.text())
+    fetch(`${API}/utils/countries`)
+      .then((response) => response.json())
       .then((data) => {
-        const options = parseOptions(data);
-        setCountries(options);
+        setCountries(data.results);
       })
       .catch((error) => console.error(error));
   }, []);
+
   useEffect(() => {
     if (formData.country) {
-      fetch(`${API}/controllers/getState.php?country_id=${formData.country}`)
-        .then((response) => response.text())
+      fetch(`${API}/utils/states/${formData.country}`)
+        .then((response) => response.json())
         .then((data) => {
-          const options = parseOptions(data);
-          setStates(options);
+          setStates(data.results);
         })
         .catch((error) => console.error(error));
     }
   }, [formData.country]);
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
 
-    const data = new FormData();
-    for (const key in formData) {
-      data.append(key, formData[key]);
-    }
-
-    fetch(`${API}/controllers/searchJobs.php`, {
+    const response = await fetch(`${API}/job-seeker/searcj-jobs`, {
       method: "POST",
-      body: data,
-      credentials: "include",
-    })
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        return response.json();
-      })
-      .then((data) => {
-        if (data.success) {
-          console.log(data);
-          toast.success(data.message);
-          navigate("/job-seeker-dashboard/search-results", {
-            state: { results: data.jobs },
-          });
-        } else {
-          toast.error(data.message);
-        }
-      })
-      .catch((error) => {
-        console.error(error);
-        toast.error("An error occurred: " + error.message);
-      });
+      headers: {
+        "Content-Type": "application/json",
+        "x-auth-token": userDetails.token,
+      },
+      body: JSON.stringify(formData),
+    });
+
+    const data = await response.json();
+
+    if (response.ok) {
+      navigate("/search-results", { state: { results: data.results } });
+    } else {
+      toast.error(data.message);
+    }
   };
 
   return (
@@ -153,8 +143,8 @@ const Search = () => {
                 Select country
               </option>
               {countries.map((country, index) => (
-                <option key={`${country.value}-${index}`} value={country.value}>
-                  {country.label}
+                <option key={`${country.name}-${index}`} value={country.id}>
+                  {country.name}
                 </option>
               ))}
             </select>
@@ -170,8 +160,8 @@ const Search = () => {
                 Select State
               </option>
               {states.map((state, index) => (
-                <option key={`${state.value}-${index}`} value={state.value}>
-                  {state.label}
+                <option key={`${state.name}-${index}`} value={state.id}>
+                  {state.name}
                 </option>
               ))}
             </select>
