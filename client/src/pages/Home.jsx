@@ -176,7 +176,7 @@ const Home = () => {
               togetherness, where every heart finds its true match.
             </p>
 
-            <Link to="/matrimony-registration">
+            <Link to="/matrimony-register">
               <button className="btn">Register Here</button>
             </Link>
           </div>

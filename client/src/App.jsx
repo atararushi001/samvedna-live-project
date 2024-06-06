@@ -15,16 +15,19 @@ import Contact from "./pages/Contact";
 import Login from "./pages/Login";
 import RecruiterLogin from "./pages/logins/RecruiterLogin";
 import JobSeekerLogin from "./pages/logins/JobSeekerLogin";
+import MatrimonyLogin from "./pages/logins/MatrimonyLogin";
 
 import Register from "./pages/Register";
 import RecruiterRegister from "./pages/registers/RecruiterRegister";
 import JobSeekerRegister from "./pages/registers/JobSeekerRegister";
 import SelfEmploymentRegister from "./pages/registers/SelfEmploymentRegister";
 import Volunteer from "./pages/Volunteer";
+import MatrimonyRegister from "./pages/registers/MatrimonyRegister";
 
 import RecruiterDashboard from "./pages/dashboards/RecruiterDashboard";
 import JobSeekerDashboard from "./pages/dashboards/JobSeekerDashboard";
 import SelfEmployedDashboard from "./pages/dashboards/SelfEmployedDashboard";
+import MatrimonyDashboard from "./pages/dashboards/MatrimonyDashboard";
 
 import ViewJobs from "./pages/ViewJobs";
 import ViewJob from "./pages/ViewJob";
@@ -62,6 +65,7 @@ const App = () => {
           <Route path="/login" element={<Login />} />
           <Route path="/recruiter-login" element={<RecruiterLogin />} />
           <Route path="/job-seeker-login" element={<JobSeekerLogin />} />
+          <Route path="/matrimony-login" element={<MatrimonyLogin />} />
 
           <Route path="/register" element={<Register />} />
           <Route path="/recruiter-register" element={<RecruiterRegister />} />
@@ -71,6 +75,7 @@ const App = () => {
             element={<SelfEmploymentRegister />}
           />
           <Route path="/volunteer-register" element={<Volunteer />} />
+          <Route path="/matrimony-register" element={<MatrimonyRegister />} />
         </Route>
 
         <Route path="recruiter-dashboard" element={<Recruiter />}>
@@ -95,6 +100,10 @@ const App = () => {
 
         <Route path="self-employed-dashboard" element={<Recruiter />}>
           <Route index element={<SelfEmployedDashboard />} />
+        </Route>
+
+        <Route path="matrimony-dashboard" element={<Recruiter />}>
+          <Route index element={<MatrimonyDashboard />} />
         </Route>
 
         <Route path="*" element={<NotFound />} />
