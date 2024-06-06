@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Main from "./layouts/Main";
 import Recruiter from "./layouts/Recruiter";
 import JobSeeker from "./layouts/JobSeeker";
+import Matrimony from "./layouts/Matrimony";
 
 import Home from "./pages/Home";
 import Donate from "./pages/Donate";
@@ -102,7 +103,7 @@ const App = () => {
           <Route index element={<SelfEmployedDashboard />} />
         </Route>
 
-        <Route path="matrimony-dashboard" element={<Recruiter />}>
+        <Route path="matrimony-dashboard" element={<Matrimony />}>
           <Route index element={<MatrimonyDashboard />} />
         </Route>
 
