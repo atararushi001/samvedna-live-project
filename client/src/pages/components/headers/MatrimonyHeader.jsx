@@ -99,7 +99,7 @@ const MatrimonyHeader = () => {
           <li>
             <Link
               className="nav-link"
-              to="/matrimony-dashboard/resume-bank"
+              to="/matrimony-dashboard/search-profiles"
               onClick={handleLinkNavigation}
             >
               Search Profiles
