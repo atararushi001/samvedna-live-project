@@ -81,8 +81,8 @@ const RecruiterLogin = () => {
             <button className="btn btn-full" name="recruiterLoginButton">
               Login
             </button>
-            <Link to="/recruiter/forgot-password" className="forgot-password">
-              Forgot Password?
+            <Link to="/recruiter-register" className="forgot-password">
+              Don&apos;t have an account? Register here
             </Link>
           </form>
         </section>
