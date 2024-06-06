@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 
 const API = import.meta.env.VITE_API_URL;
 
@@ -266,9 +267,11 @@ const SearchProfiles = () => {
               Show Advance Search
             </button>
           )}
-          <button type="submit" className="btn btn-primary">
-            Search
-          </button>
+          <Link to="/matrimony-dashboard/profile-results">
+            <button type="submit" className="btn btn-full">
+              Search
+            </button>
+          </Link>
         </form>
       </section>
     </div>

@@ -52,6 +52,7 @@ import ViewResumeRecruiter from "./pages/ViewResumeRecruiter";
 import Proposals from "./pages/Proposals";
 import SearchProfiles from "./pages/SearchProfiles";
 import MatrimonyProfile from "./pages/MatrimonyProfile";
+import SearchProfileResults from "./pages/SearchProfileResults";
 
 const App = () => {
   return (
@@ -112,6 +113,7 @@ const App = () => {
           <Route path="proposals" element={<Proposals />} />
           <Route path="search-profiles" element={<SearchProfiles />} />
           <Route path="profile" element={<MatrimonyProfile />} />
+          <Route path="profile-results" element={<SearchProfileResults />} />
         </Route>
 
         <Route path="*" element={<NotFound />} />
