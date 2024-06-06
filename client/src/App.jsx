@@ -49,6 +49,10 @@ import CompanyDirectory from "./pages/CompanyDirectory";
 import ResumeBank from "./pages/ResumeBank";
 import ViewResumeRecruiter from "./pages/ViewResumeRecruiter";
 
+import Proposals from "./pages/Proposals";
+import SearchProfiles from "./pages/SearchProfiles";
+import MatrimonyProfile from "./pages/MatrimonyProfile";
+
 const App = () => {
   return (
     <Router>
@@ -105,6 +109,9 @@ const App = () => {
 
         <Route path="matrimony-dashboard" element={<Matrimony />}>
           <Route index element={<MatrimonyDashboard />} />
+          <Route path="proposals" element={<Proposals />} />
+          <Route path="search-profiles" element={<SearchProfiles />} />
+          <Route path="profile" element={<MatrimonyProfile />} />
         </Route>
 
         <Route path="*" element={<NotFound />} />
