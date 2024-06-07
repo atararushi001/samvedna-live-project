@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
+import { Link } from "react-router-dom";
 import { Helmet } from "react-helmet";
 
-import CustomCarousel from "./components/CustomCarousel";
 import JobCarousel from "./components/JobCarousel";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -122,9 +122,68 @@ const Home = () => {
           content="samvedna,disABLED,disability job portal"
         />
       </Helmet>
-      <CustomCarousel />
+
+      <section className="register-type-container slider-1">
+        <div className="register-type">
+          <h1>Are you Recruiter?</h1>
+          <Link to="/recruiter-register">
+            <button className="btn">Recruiter Register</button>
+          </Link>
+        </div>
+        <div className="divider"></div>
+        <div className="register-type">
+          <h1>Are you a Job Seeker?</h1>
+          <Link to="/job-seeker-register">
+            <button className="btn btn-outline">Job Seeker Register</button>
+          </Link>
+        </div>
+      </section>
 
       <div className="container ">
+        <section className="self-employed-header">
+          <div className="header-text">
+            <h1>Are you Self Employed?</h1>
+            <p>
+              Fill out the form to register as a self-employed individual and we
+              will help you find the right opportunities.
+            </p>
+            <Link to="/self-employment-register">
+              <button className="btn">Apply Here</button>
+            </Link>
+          </div>
+          <div className="header-image-container">
+            <div className="header-image"></div>
+          </div>
+        </section>
+      </div>
+
+      <section className="matrimony">
+        <div className="container">
+          <h1>
+            Matrimony <span className="highlight-text">Services</span>
+          </h1>
+          <div className="matrimony-content">
+            <p>
+              At <strong>&ldquo;SAMVEDNA&rdquo;</strong>, we believe that{" "}
+              <strong>love knows no boundaries</strong>. Our Matrimony Services
+              are designed to help individuals with disabilities find their
+              perfect match, regardless of their physical challenges. Our
+              dedicated team works tirelessly to connect like-minded
+              individuals, fostering meaningful relationships that stand the
+              test of time. Whether you&apos;re looking for companionship,
+              friendship, or love, we&apos;re here to help you find your
+              soulmate. Join us in celebrating the beauty of love and
+              togetherness, where every heart finds its true match.
+            </p>
+
+            <Link to="/matrimony-register">
+              <button className="btn">Register Here</button>
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      <div className="container">
         <section
           className="main-slogan to-animate"
           ref={(el) => elementsRef.current.push(el)}

@@ -67,6 +67,33 @@
   .view-resume .resume {
     grid-template-columns: repeat(1, 1fr) !important;
   }
+
+  .self-employed-header {
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 5rem;
+    width: 100%;
+  }
+
+  .self-employed-header .header-text,
+  .self-employed-header .header-image-container {
+    text-align: center !important;
+    align-items: center;
+    width: 100%;
+  }
+
+  .self-employed-header h1 {
+    font-size: 2.5rem;
+  }
+
+  .self-employed-header h1::after {
+    margin-inline: auto !important;
+  }
+
+  .self-employed-header p {
+    font-size: 1.2rem !important;
+  }
 }
 
 @media screen and (max-width: 768px) {

@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Main from "./layouts/Main";
 import Recruiter from "./layouts/Recruiter";
 import JobSeeker from "./layouts/JobSeeker";
+import Matrimony from "./layouts/Matrimony";
 
 import Home from "./pages/Home";
 import Donate from "./pages/Donate";
@@ -15,16 +16,19 @@ import Contact from "./pages/Contact";
 import Login from "./pages/Login";
 import RecruiterLogin from "./pages/logins/RecruiterLogin";
 import JobSeekerLogin from "./pages/logins/JobSeekerLogin";
+import MatrimonyLogin from "./pages/logins/MatrimonyLogin";
 
 import Register from "./pages/Register";
 import RecruiterRegister from "./pages/registers/RecruiterRegister";
 import JobSeekerRegister from "./pages/registers/JobSeekerRegister";
 import SelfEmploymentRegister from "./pages/registers/SelfEmploymentRegister";
 import Volunteer from "./pages/Volunteer";
+import MatrimonyRegister from "./pages/registers/MatrimonyRegister";
 
 import RecruiterDashboard from "./pages/dashboards/RecruiterDashboard";
 import JobSeekerDashboard from "./pages/dashboards/JobSeekerDashboard";
 import SelfEmployedDashboard from "./pages/dashboards/SelfEmployedDashboard";
+import MatrimonyDashboard from "./pages/dashboards/MatrimonyDashboard";
 
 import ViewJobs from "./pages/ViewJobs";
 import ViewJob from "./pages/ViewJob";
@@ -45,6 +49,11 @@ import CompanyDirectory from "./pages/CompanyDirectory";
 import ResumeBank from "./pages/ResumeBank";
 import ViewResumeRecruiter from "./pages/ViewResumeRecruiter";
 
+import Proposals from "./pages/Proposals";
+import SearchProfiles from "./pages/SearchProfiles";
+import MatrimonyProfile from "./pages/MatrimonyProfile";
+import SearchProfileResults from "./pages/SearchProfileResults";
+
 const App = () => {
   return (
     <Router>
@@ -62,6 +71,7 @@ const App = () => {
           <Route path="/login" element={<Login />} />
           <Route path="/recruiter-login" element={<RecruiterLogin />} />
           <Route path="/job-seeker-login" element={<JobSeekerLogin />} />
+          <Route path="/matrimony-login" element={<MatrimonyLogin />} />
 
           <Route path="/register" element={<Register />} />
           <Route path="/recruiter-register" element={<RecruiterRegister />} />
@@ -71,6 +81,7 @@ const App = () => {
             element={<SelfEmploymentRegister />}
           />
           <Route path="/volunteer-register" element={<Volunteer />} />
+          <Route path="/matrimony-register" element={<MatrimonyRegister />} />
         </Route>
 
         <Route path="recruiter-dashboard" element={<Recruiter />}>
@@ -95,6 +106,14 @@ const App = () => {
 
         <Route path="self-employed-dashboard" element={<Recruiter />}>
           <Route index element={<SelfEmployedDashboard />} />
+        </Route>
+
+        <Route path="matrimony-dashboard" element={<Matrimony />}>
+          <Route index element={<MatrimonyDashboard />} />
+          <Route path="proposals" element={<Proposals />} />
+          <Route path="search-profiles" element={<SearchProfiles />} />
+          <Route path="profile" element={<MatrimonyProfile />} />
+          <Route path="profile-results" element={<SearchProfileResults />} />
         </Route>
 
         <Route path="*" element={<NotFound />} />

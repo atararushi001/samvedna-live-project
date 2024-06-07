@@ -90,8 +90,8 @@ const JobSeekerLogin = () => {
             <button className="btn btn-full" name="recruiterLoginButton">
               Login
             </button>
-            <Link to="/job-seeker/forgot-password" className="forgot-password">
-              Forgot Password?
+            <Link to="/job-seeker-register" className="forgot-password">
+              Don&apos;t have an account? Register here
             </Link>
           </form>
         </section>
