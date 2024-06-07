@@ -51,7 +51,7 @@ import ViewResumeRecruiter from "./pages/ViewResumeRecruiter";
 
 import Proposals from "./pages/Proposals";
 import SearchProfiles from "./pages/SearchProfiles";
-import MatrimonyProfile from "./pages/MatrimonyProfile";
+import Profile from "./pages/Profile";
 import SearchProfileResults from "./pages/SearchProfileResults";
 
 const App = () => {
@@ -112,7 +112,7 @@ const App = () => {
           <Route index element={<MatrimonyDashboard />} />
           <Route path="proposals" element={<Proposals />} />
           <Route path="search-profiles" element={<SearchProfiles />} />
-          <Route path="profile" element={<MatrimonyProfile />} />
+          <Route path="profile" element={<Profile />} />
           <Route path="profile-results" element={<SearchProfileResults />} />
         </Route>
 
