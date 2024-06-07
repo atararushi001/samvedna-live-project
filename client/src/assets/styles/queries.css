@@ -94,6 +94,55 @@
   .self-employed-header p {
     font-size: 1.2rem !important;
   }
+
+  .profile {
+    flex-direction: column;
+    height: auto;
+    min-height: auto;
+  }
+
+  .profile .profile-image,
+  .profile .profile-details {
+    width: 100%;
+  }
+
+  .profile .profile-details {
+    padding: 1rem;
+    align-items: center;
+  }
+
+  .profile .profile-details h2 {
+    text-align: center;
+  }
+
+  .profile .profile-details .cards-container {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .profile .profile-details .card {
+    width: 80%;
+  }
+
+  .profile .profile-details .about-info,
+  .profile .profile-details .contact-info,
+  .profile .profile-details .personal-info {
+    align-items: center;
+  }
+
+  .profile .about-info p {
+    text-align: center;
+  }
+
+  .profile .profile-details .contact-info ul,
+  .profile .profile-details .personal-info ul {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .profile .profile-details .personal-info ul {
+    grid-template-columns: 2, 1fr;
+  }
 }
 
 @media screen and (max-width: 768px) {

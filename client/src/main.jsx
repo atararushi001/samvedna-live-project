@@ -21,6 +21,12 @@ import {
   faEnvelope,
   faPhone,
   faGlobe,
+  faHouse,
+  faPerson,
+  faRulerVertical,
+  faBriefcase,
+  faMobileScreen,
+  faAngleRight,
 } from "@fortawesome/free-solid-svg-icons";
 
 library.add(
@@ -39,7 +45,13 @@ library.add(
   faPrint,
   faEnvelope,
   faPhone,
-  faGlobe
+  faGlobe,
+  faHouse,
+  faPerson,
+  faRulerVertical,
+  faBriefcase,
+  faMobileScreen,
+  faAngleRight
 );
 
 import App from "./App.jsx";
