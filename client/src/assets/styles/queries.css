@@ -282,4 +282,12 @@
   .resume-bank .resume-list {
     grid-template-columns: 1fr !important;
   }
+
+  .matrimony .matrimony-content p {
+    font-size: 1.2rem;
+  }
+
+  .self-employed-header .header-text h1 {
+    text-align: center;
+  }
 }

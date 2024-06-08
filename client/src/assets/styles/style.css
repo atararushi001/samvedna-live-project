@@ -750,6 +750,9 @@ footer .footer-bottom p a {
     ),
     url("../images/Backgrounds/DeWatermark.ai_1717655079703.jpg") no-repeat
       center center / cover;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .matrimony .container {
