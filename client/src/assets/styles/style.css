@@ -1991,12 +1991,27 @@ table td:last-child {
 
 /* Pages > Login */
 /* Pages > Register */
-.login-type-container,
 .register-type-container {
   display: grid;
   grid-template-columns: 3fr 0.3fr 3fr;
   height: calc(100dvh - 15dvh);
   place-content: center;
+}
+
+.login-type-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+  min-height: calc(100dvh - 15dvh);
+}
+
+.login-type {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+  height: inherit;
+  width: 100%;
 }
 
 .divider {
@@ -2007,7 +2022,6 @@ table td:last-child {
   justify-self: center;
 }
 
-.login-type,
 .register-type {
   display: flex;
   flex-direction: column;
@@ -3418,27 +3432,13 @@ table td:last-child {
 }
 
 .matrimony-dashboard-container {
-  width: 100%;
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1rem;
+  width: 100%;
   place-content: center;
   place-items: center;
-}
-
-.matrimony-dashboard-card {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  border: 1px solid var(--background);
-  border-radius: 10px;
-  padding: 20px;
-  margin: 10px;
-  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
-  transition: 0.3s;
-  min-height: 200px;
+  padding-block: 2rem;
 }
 
 .matrimony-dashboard-card:hover {
@@ -3475,7 +3475,7 @@ table td:last-child {
   place-items: center;
 }
 
-.proposals-section .proposals .proposal {
+.proposal {
   width: 100%;
   display: flex;
   flex-direction: column;
@@ -3490,12 +3490,12 @@ table td:last-child {
   transition: 0.3s;
 }
 
-.proposals-section .proposals .proposal:hover {
+.proposal:hover {
   box-shadow: 0 0.4rem 1rem rgba(0, 0, 0, 0.25);
   scale: 1.005;
 }
 
-.proposals-section .proposals .proposal img {
+.proposal img {
   width: 50%;
   aspect-ratio: 1 / 1;
   object-fit: cover;
@@ -3504,7 +3504,7 @@ table td:last-child {
   border-radius: 50%;
 }
 
-.proposals-section .proposals .proposal .user-details {
+.proposal .user-details {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -3513,7 +3513,7 @@ table td:last-child {
   width: 100%;
 }
 
-.proposals-section .proposals .proposal .user-details .detail {
+.proposal .user-details .detail {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -3521,11 +3521,11 @@ table td:last-child {
   width: 100%;
 }
 
-.proposals-section .proposals .proposal .user-details .detail p:first-child {
+.proposal .user-details .detail p:first-child {
   font-weight: 600;
 }
 
-.proposals-section .proposals .proposal .proposal-actions {
+.proposal .proposal-actions {
   display: flex;
   align-items: center;
   justify-content: center;

@@ -1,6 +1,24 @@
-import { Link } from "react-router-dom";
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+
+import UserStore from "../../stores/UserStore";
+
+import ProfileCard from "../components/ProfileCard";
 
 const MatrimonyDashboard = () => {
+  const navigate = useNavigate();
+  const { loginState, userDetails } = UserStore();
+
+  useEffect(() => {
+    if (loginState) {
+      if (userDetails.type === "Matrimony") {
+        navigate("/matrimony-dashboard");
+      }
+    } else {
+      navigate("/matrimony-login");
+    }
+  }, [navigate, loginState, userDetails]);
+
   return (
     <div className="container">
       <div className="matrimony-dashboard">
@@ -8,35 +26,13 @@ const MatrimonyDashboard = () => {
           <strong className="highlight-text">Matrimony</strong> Dashboard
         </h1>
         <div className="matrimony-dashboard-container">
-          <div className="matrimony-dashboard-card">
-            <h2>View Proposals</h2>
-            <p>
-              View all the proposals you have received from other users. Accept
-              or reject proposals based on your preferences. Start finding your
-              life partner today.
-            </p>
-            <Link
-              to="/matrimony-dashboard/proposals"
-              className="btn btn-primary"
-            >
-              View Proposals
-            </Link>
-          </div>
-
-          <div className="matrimony-dashboard-card">
-            <h2>Search Profiles</h2>
-            <p>
-              Search for profiles of other users based on your preferences. Find
-              your life partner by searching for profiles that match your
-              preferences.
-            </p>
-            <Link
-              to="/matrimony-dashboard/search-profiles"
-              className="btn btn-primary"
-            >
-              Search Profiles
-            </Link>
-          </div>
+          <ProfileCard />
+          <ProfileCard />
+          <ProfileCard />
+          <ProfileCard />
+          <ProfileCard />
+          <ProfileCard />
+          <ProfileCard />
         </div>
       </div>
     </div>

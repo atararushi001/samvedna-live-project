@@ -1,9 +1,26 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
+import UserStore from "../../stores/UserStore";
+
+const API = import.meta.env.VITE_API_URL;
+
 const MatrimonyLogin = () => {
   const navigate = useNavigate();
+  const { loginState, userDetails, loginData, setLoginState } = UserStore();
+
+  useEffect(() => {
+    if (loginState) {
+      if (userDetails.type === "Job Seeker") {
+        navigate("/job-seeker-dashboard");
+      } else if (userDetails.type === "Recruiter") {
+        navigate("/recruiter-dashboard");
+      } else if (userDetails.type === "Matrimony") {
+        navigate("/matrimony-dashboard");
+      }
+    }
+  }, [navigate, loginState, userDetails]);
 
   const [formData, setFormData] = useState({
     email: "",
@@ -17,7 +34,7 @@ const MatrimonyLogin = () => {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (!formData.email || !formData.password) {
@@ -28,9 +45,23 @@ const MatrimonyLogin = () => {
       return toast.error("Password must be at least 8 characters long");
     }
 
-    console.log(formData);
+    const response = await fetch(`${API}/matrimony/login`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(formData),
+    });
 
-    navigate("/matrimony-dashboard");
+    const data = await response.json();
+
+    if (response.ok) {
+      toast.success(data.message);
+      setLoginState(true);
+      loginData(data.user);
+    } else {
+      toast.error(data.message);
+    }
   };
 
   return (

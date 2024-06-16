@@ -2,10 +2,25 @@ import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
+import UserStore from "../../stores/UserStore";
+
 const API = import.meta.env.VITE_API_URL;
 
 const MatrimonyRegister = () => {
   const navigate = useNavigate();
+  const { loginState, userDetails } = UserStore();
+
+  useEffect(() => {
+    if (loginState) {
+      if (userDetails.type === "Job Seeker") {
+        navigate("/job-seeker-dashboard");
+      } else if (userDetails.type === "Recruiter") {
+        navigate("/recruiter-dashboard");
+      } else if (userDetails.type === "Matrimony") {
+        navigate("/matrimony-dashboard");
+      }
+    }
+  }, [navigate, loginState, userDetails]);
 
   const [formData, setFormData] = useState({
     profilePicture: [],
@@ -141,23 +156,31 @@ const MatrimonyRegister = () => {
   }, [formData.qualification]);
 
   const handleInputChange = (e) => {
-    const files = e.target.files;
-    if (files.length + formData.profilePicture.length > 3) {
-      toast.error("Maximum 3 profile pictures are allowed");
+    const { name, value, files } = e.target;
+
+    if (files) {
+      if (files.length + formData.profilePicture.length > 3) {
+        toast.error("Maximum 3 profile pictures are allowed");
+        setFormData({
+          ...formData,
+          profilePicture: [], // Clear the array when error occurs
+        });
+        e.target.value = ""; // Clear the input field
+        return;
+      }
       setFormData({
         ...formData,
-        profilePicture: [], // Clear the array when error occurs
+        [name]: [...formData[name], ...files],
       });
-      e.target.value = ""; // Clear the input field
-      return;
+    } else {
+      setFormData({
+        ...formData,
+        [name]: value,
+      });
     }
-    setFormData({
-      ...formData,
-      [e.target.name]: [...formData[e.target.name], ...files],
-    });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (formData.password !== formData.confirmPassword) {
@@ -175,9 +198,39 @@ const MatrimonyRegister = () => {
       return;
     }
 
-    console.log(formData);
+    const currentYear = new Date().getFullYear();
+    const birthYear = new Date(formData.dob).getFullYear();
 
-    // navigate("/matrimony-login");
+    if (currentYear - birthYear < 18) {
+      toast.error("You must be at least 18 years old to register");
+      return;
+    }
+
+    const newFormData = new FormData();
+
+    for (const key in formData) {
+      if (key === "profilePicture") {
+        for (let i = 0; i < formData.profilePicture.length; i++) {
+          newFormData.append("profilePicture", formData.profilePicture[i]);
+        }
+      } else {
+        newFormData.append(key, formData[key]);
+      }
+    }
+
+    const response = await fetch(`${API}/matrimony/register`, {
+      method: "POST",
+      body: newFormData,
+    });
+
+    const data = await response.json();
+
+    if (response.ok) {
+      toast.success(data.message);
+      navigate("/matrimony-login");
+    } else {
+      toast.error(data.message);
+    }
   };
 
   return (
