@@ -268,7 +268,6 @@ fieldset legend {
   justify-content: flex-start;
   width: 100%;
   gap: 1rem;
-  padding-inline: 0.2rem;
 }
 
 .input-group.col {
