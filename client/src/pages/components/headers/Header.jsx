@@ -135,6 +135,15 @@ const Header = () => {
                     Dashboard
                   </Link>
                 ) : null}
+                {userDetails.type === "Matrimony" ? (
+                  <Link
+                    className="nav-link"
+                    to="/matrimony-dashboard"
+                    onClick={handleLinkNavigation}
+                  >
+                    Dashboard
+                  </Link>
+                ) : null}
               </li>
             </>
           ) : (

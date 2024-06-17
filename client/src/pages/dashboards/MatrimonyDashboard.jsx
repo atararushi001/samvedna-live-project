@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 
 import UserStore from "../../stores/UserStore";
 
-import ProfileCard from "../components/ProfileCard";
+import MyProposalCard from "../components/MyProposalCard";
 
 const MatrimonyDashboard = () => {
   const navigate = useNavigate();
@@ -26,13 +26,13 @@ const MatrimonyDashboard = () => {
           <strong className="highlight-text">Matrimony</strong> Dashboard
         </h1>
         <div className="matrimony-dashboard-container">
-          <ProfileCard />
-          <ProfileCard />
-          <ProfileCard />
-          <ProfileCard />
-          <ProfileCard />
-          <ProfileCard />
-          <ProfileCard />
+          <MyProposalCard />
+          <MyProposalCard />
+          <MyProposalCard />
+          <MyProposalCard />
+          <MyProposalCard />
+          <MyProposalCard />
+          <MyProposalCard />
         </div>
       </div>
     </div>

@@ -3432,13 +3432,54 @@ table td:last-child {
 }
 
 .matrimony-dashboard-container {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
   gap: 1rem;
   width: 100%;
-  place-content: center;
-  place-items: center;
   padding-block: 2rem;
+  min-height: 100dvh;
+}
+
+.matrimony-dashboard-container a {
+  width: 100%;
+}
+
+.matrimony-dashboard-container .card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 100px;
+  width: 100%;
+  background: var(--background);
+  box-shadow: 0 0.2rem 0.8rem rgba(0, 0, 0, 0.25);
+  padding: 1rem;
+  border-radius: 0.25rem;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.matrimony-dashboard-container .card:hover {
+  box-shadow: 0 0.4rem 1rem rgba(0, 0, 0, 0.25);
+  scale: 1.005;
+}
+
+.matrimony-dashboard-container .card .card-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  height: 100%;
+}
+
+.matrimony-dashboard-container .card img {
+  height: 90%;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  border-radius: 0.25rem;
+  box-shadow: 0 0.2rem 0.8rem rgba(0, 0, 0, 0.25);
+  border-radius: 50%;
 }
 
 .matrimony-dashboard-card:hover {
