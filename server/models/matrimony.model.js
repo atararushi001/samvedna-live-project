@@ -186,9 +186,55 @@ const Matrimony = {
   },
   getById: (id, callback) => {
     return db.query(
-      `SELECT * FROM ${db_name}.matrimony WHERE id = ?`,
+      `SELECT m.*, GROUP_CONCAT(mp.profilePicture) as profilePictures
+     FROM ${db_name}.matrimony m 
+     LEFT JOIN ${db_name}.matrimony_pictures mp 
+     ON m.id = mp.matrimony_id 
+     WHERE m.id = ?
+     GROUP BY m.id`,
       [id],
       callback
+    );
+  },
+  getUsers: (id, gender, callback) => {
+    db.query(
+      `SELECT 
+          m.*, 
+          (SELECT GROUP_CONCAT(mp.profilePicture) FROM matrimony_pictures mp WHERE mp.matrimony_id = m.id) as profilePictures,
+          c.name as countryName,
+          s.name as stateName,
+          ci.name as cityName,
+          ql.qualification_name as qualificationName,
+          es.education_specialization_name as educationSpecializationName,
+          cl.name as currentLocationName,
+          ql2.qualification_name as partnerQualificationName
+          FROM 
+              matrimony m
+          INNER JOIN 
+              country c ON m.country = c.id
+          INNER JOIN 
+              states s ON m.state = s.id
+          INNER JOIN 
+              cities ci ON m.city = ci.id
+          INNER JOIN 
+              qualificationlevel ql ON m.qualification = ql.qualification_id
+          INNER JOIN 
+              educationspecialization es ON m.educationSpecialization = es.education_specialization_id
+          INNER JOIN 
+              country cl ON m.currentLocation = cl.id
+          INNER JOIN 
+              qualificationlevel ql2 ON m.partnerQualification = ql2.qualification_id
+          WHERE 
+              m.id!=? AND m.gender!=?
+          GROUP BY 
+              m.id;`,
+      [id, gender],
+      (error, results) => {
+        if (error) {
+          callback(error);
+        }
+        callback(null, results);
+      }
     );
   },
 };

@@ -37,6 +37,73 @@ const matrimonyController = {
       res.status(200).send(results);
     });
   },
+  getById: (req, res) => {
+    const id = req.user.id;
+
+    matrimony.getById(id, (err, results) => {
+      if (err) {
+        console.log(err);
+        return res.status(500).send("Internal Server Error");
+      }
+
+      if (results.length === 0) {
+        return res.status(404).send("User not found");
+      }
+
+      results[0].profilePictures = results[0].profilePictures.split(",");
+
+      res.status(200).send(results[0]);
+    });
+  },
+  getFullUser: (req, res) => {
+    const id = req.params.id;
+
+    matrimony.getById(id, (err, results) => {
+      if (err) {
+        console.log(err);
+        return res.status(500).json({ message: "Internal Server Error" });
+      }
+
+      if (results.length === 0) {
+        return res.status(404).json({ message: "User not found" });
+      }
+
+      results[0].profilePictures = results[0].profilePictures.split(",");
+      results[0].password = undefined;
+
+      res.status(200).json(results[0]);
+    });
+  },
+  getUsers: (req, res) => {
+    const id = req.user.id;
+
+    matrimony.getById(id, (err, results) => {
+      if (err) {
+        console.log(err);
+        return res.status(500).json({ message: "Internal Server Error" });
+      }
+
+      if (results.length === 0) {
+        return res.status(404).json({ message: "User not found" });
+      }
+
+      matrimony.getUsers(id, results[0].gender, (err, results) => {
+        if (err) {
+          console.log(err);
+          return res.status(500).json({ message: "Internal Server Error" });
+        }
+
+        results.forEach((result) => {
+          result.profilePictures = result.profilePictures.split(",");
+          result.password = undefined;
+        });
+
+        res.status(200).json({
+          users: results,
+        });
+      });
+    });
+  },
   register: [
     upload.array("profilePicture", 3),
     (req, res) => {
