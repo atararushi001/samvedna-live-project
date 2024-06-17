@@ -4,6 +4,12 @@ import PropTypes from "prop-types";
 const API = import.meta.env.VITE_STATIC_FILES_URL;
 
 const ProfileCard = ({ user }) => {
+  const calculateAge = (dob) => {
+    const diff = Date.now() - new Date(dob).getTime();
+    const ageDate = new Date(diff);
+    return Math.abs(ageDate.getUTCFullYear() - 1970);
+  };
+
   return (
     <Link to="/matrimony-dashboard/profile" state={{ id: user.id }}>
       <div className="proposal">
@@ -18,7 +24,7 @@ const ProfileCard = ({ user }) => {
         <div className="user-details">
           <div className="detail">
             <p>Age:</p>
-            <p>{new Date().getFullYear() - new Date(user.dob).getFullYear()}</p>
+            <p>{calculateAge(user.dob)} Years</p>
           </div>
           <div className="detail">
             <p>Location:</p>

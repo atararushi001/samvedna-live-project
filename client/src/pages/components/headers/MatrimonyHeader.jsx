@@ -90,15 +90,6 @@ const MatrimonyHeader = () => {
           <li>
             <Link
               className="nav-link"
-              to="/matrimony-dashboard/search-profiles"
-              onClick={handleLinkNavigation}
-            >
-              <FontAwesomeIcon icon="search" className="icon" />
-            </Link>
-          </li>
-          <li>
-            <Link
-              className="nav-link"
               to="/matrimony-dashboard/proposals"
               onClick={handleLinkNavigation}
             >
@@ -121,6 +112,15 @@ const MatrimonyHeader = () => {
               onClick={handleLinkNavigation}
             >
               Edit Profile
+            </Link>
+          </li>
+          <li>
+            <Link
+              className="nav-link"
+              to="/matrimony-dashboard/search-profiles"
+              onClick={handleLinkNavigation}
+            >
+              <FontAwesomeIcon icon="search" className="icon" />
             </Link>
           </li>
           <div className="btn-container">
