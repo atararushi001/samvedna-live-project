@@ -146,8 +146,8 @@ const Profile = () => {
                 ) : null}
               </>
             ) : null}
-            {request === null && user && user.id !== userDetails.id ? (
-              <button className="btn" onClick={sendRequest}>
+            {!request && user && user.id !== userDetails.id ? (
+              <button className="btn btn-full" onClick={sendRequest}>
                 Send Request
               </button>
             ) : null}
@@ -206,7 +206,7 @@ const Profile = () => {
 
           <div className="contact-info">
             <h3>Contact Info</h3>
-            {request.status === "Accepted" ? (
+            {request && request.status === "Accepted" ? (
               <ul>
                 <div className="info">
                   <FontAwesomeIcon className="icon" icon="mobile-screen" />
@@ -392,7 +392,7 @@ const Profile = () => {
               </div>
               <div className="info">
                 <FontAwesomeIcon className="icon" icon="angle-right" />
-                {request.status === "Accepted" ? (
+                {request && request.status === "Accepted" ? (
                   <>
                     <h4>Father&apos;s Mobile:</h4>
                     <p>{user.fatherMobile}</p>
@@ -416,7 +416,7 @@ const Profile = () => {
               </div>
               <div className="info">
                 <FontAwesomeIcon className="icon" icon="angle-right" />
-                {request.status === "Accepted" ? (
+                {request && request.status === "Accepted" ? (
                   <>
                     <h4>Mother&apos;s Mobile:</h4>
                     <p>{user.motherMobile}</p>

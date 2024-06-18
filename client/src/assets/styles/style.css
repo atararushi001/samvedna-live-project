@@ -3850,6 +3850,15 @@ table td:last-child {
   text-align: left;
 }
 
+/* Pages > Search */
+.search-results {
+  min-height: 100dvh;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1rem;
+  padding-block: 3rem;
+}
+
 /* Pages > 404 */
 .page-404 {
   min-height: 100dvh;

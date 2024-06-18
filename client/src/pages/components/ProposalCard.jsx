@@ -1,15 +1,15 @@
-import { Link, useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
+import { Link } from "react-router-dom";
+// import { toast } from "react-toastify";
 import PropTypes from "prop-types";
 
-import UserStore from "../../stores/UserStore";
+// import UserStore from "../../stores/UserStore";
 
 const STATIC_URL_API = import.meta.env.VITE_STATIC_FILES_URL;
-const API = import.meta.env.VITE_API_URL;
+// const API = import.meta.env.VITE_API_URL;
 
 const ProposalCard = ({ type, user, request }) => {
-  const { userDetails } = UserStore();
-  const navigate = useNavigate();
+  // const { userDetails } = UserStore();
+  // const navigate = useNavigate();
 
   const calculateAge = (dob) => {
     const diff = Date.now() - new Date(dob).getTime();
@@ -17,27 +17,27 @@ const ProposalCard = ({ type, user, request }) => {
     return Math.abs(ageDate.getUTCFullYear() - 1970);
   };
 
-  const handleRequest = async (id, action) => {
-    try {
-      const response = await fetch(`${API}/request/${action}/${id}`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "x-auth-token": userDetails.token,
-        },
-      });
+  // const handleRequest = async (id, action) => {
+  //   try {
+  //     const response = await fetch(`${API}/request/${action}/${id}`, {
+  //       method: "POST",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //         "x-auth-token": userDetails.token,
+  //       },
+  //     });
 
-      if (!response.ok) {
-        throw new Error(response.statusText);
-      }
+  //     if (!response.ok) {
+  //       throw new Error(response.statusText);
+  //     }
 
-      const data = await response.json();
-      toast.success(data.message);
-      navigate("/matrimony-dashboard/proposals");
-    } catch (error) {
-      console.error(error);
-    }
-  };
+  //     const data = await response.json();
+  //     toast.success(data.message);
+  //     navigate("/matrimony-dashboard/proposals");
+  //   } catch (error) {
+  //     console.error(error);
+  //   }
+  // };
 
   return (
     <Link
@@ -93,7 +93,7 @@ const ProposalCard = ({ type, user, request }) => {
           </div>
         </div>
 
-        {type === "Received" && (
+        {/* {type === "Received" && (
           <div className="proposal-actions">
             <button
               className="btn"
@@ -108,7 +108,7 @@ const ProposalCard = ({ type, user, request }) => {
               Reject
             </button>
           </div>
-        )}
+        )} */}
 
         {type === "Sent" && (
           <div className="proposal-actions">

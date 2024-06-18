@@ -14,6 +14,11 @@ router.get(
   matrimonyController.getFullUser
 );
 router.get("/user", authMiddleware("Matrimony"), matrimonyController.getById);
+router.get(
+  "/search/:search",
+  authMiddleware("Matrimony"),
+  matrimonyController.search
+);
 router.get("/", matrimonyController.getAll);
 
 module.exports = router;

@@ -324,6 +324,24 @@ const matrimonyController = {
       });
     });
   },
+  search: (req, res) => {
+    const search = req.params.search;
+    const id = req.user.id;
+
+    matrimony.search(id, search, (err, results) => {
+      if (err) {
+        console.log(err);
+        return res.status(500).send("Internal Server Error");
+      }
+
+      results.forEach((result) => {
+        result.profilePictures = result.profilePictures.split(",");
+        result.password = undefined;
+      });
+
+      res.status(200).send(results);
+    });
+  },
 };
 
 module.exports = matrimonyController;

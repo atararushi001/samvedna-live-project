@@ -63,9 +63,9 @@ const ProfileCard = ({ user }) => {
           </div>
         </div>
 
-        <div className="proposal-actions">
+        {/* <div className="proposal-actions">
           <button className="btn btn-full">Send Request</button>
-        </div>
+        </div> */}
       </div>
     </Link>
   );
