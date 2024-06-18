@@ -246,7 +246,11 @@ const MatrimonyRegister = () => {
         <form onSubmit={handleSubmit}>
           <fieldset>
             <legend>Personal Details*</legend>
-            <label htmlFor="profilePicture">Profile Picture (Maximum 3)</label>
+            <label htmlFor="profilePicture">Profile Picture</label>
+            <p>
+              <strong>Note:</strong> First Photo will be your display picture,
+              upload upto 3 photos
+            </p>
             <input
               type="file"
               id="profilePicture"

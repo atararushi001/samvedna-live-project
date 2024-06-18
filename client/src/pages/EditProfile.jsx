@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
 import UserStore from "../stores/UserStore";
@@ -174,12 +174,8 @@ const EditProfile = () => {
     <div className="container">
       <section className="matrimony-register">
         <h1>
-          <strong className="highlight-text">Matrimony</strong> Registration
+          <strong className="highlight-text">Edit</strong> Profile
         </h1>
-
-        <Link to="/matrimony-login" className="forgot-password">
-          Already have an account? Login here
-        </Link>
         <form onSubmit={handleSubmit}>
           <fieldset>
             <legend>Personal Details*</legend>
