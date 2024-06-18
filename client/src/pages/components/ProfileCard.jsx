@@ -17,7 +17,9 @@ const ProfileCard = ({ user }) => {
           {user.firstName} {user.lastName}
         </h2>
         <img
-          src={`${API}/uploads/matrimonyPictures/${user.profilePictures[0]}`}
+          src={`${API}/uploads/matrimonyPictures/${
+            user && user.profilePictures && user.profilePictures[0]
+          }`}
           alt="User Image"
         />
 

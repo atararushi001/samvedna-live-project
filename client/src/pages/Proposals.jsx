@@ -77,6 +77,7 @@ const Proposals = () => {
         }
 
         const data = await response.json();
+        console.log(data);
         setUsers(data);
       } catch (error) {
         console.error(error);
@@ -168,13 +169,10 @@ const Proposals = () => {
       default:
         break;
     }
-
-    console.log(users);
   }, [navigate, loginState, userDetails, proposalTypes]);
 
   const handleFilterChange = (event) => {
     setProposalTypes(event.target.value);
-    console.log(users);
   };
 
   return (

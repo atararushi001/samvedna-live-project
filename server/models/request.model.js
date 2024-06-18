@@ -37,6 +37,48 @@ const Request = {
       callback
     );
   },
+  getAcceptedByMe: (user_id, callback) => {
+    return db.query(
+      `SELECT * FROM ${db_name}.requests WHERE receiver_id = ? AND status = "Accepted"`,
+      [user_id],
+      callback
+    );
+  },
+  getAcceptedByOthers: (user_id, callback) => {
+    return db.query(
+      `SELECT * FROM ${db_name}.requests WHERE sender_id = ? AND status = "Accepted"`,
+      [user_id],
+      callback
+    );
+  },
+  getRejectedByMe: (user_id, callback) => {
+    return db.query(
+      `SELECT * FROM ${db_name}.requests WHERE receiver_id = ? AND status = "Rejected"`,
+      [user_id],
+      callback
+    );
+  },
+  getRejectedByOthers: (user_id, callback) => {
+    return db.query(
+      `SELECT * FROM ${db_name}.requests WHERE sender_id = ? AND status = "Rejected"`,
+      [user_id],
+      callback
+    );
+  },
+  getAllAccpeted: (user_id, callback) => {
+    return db.query(
+      `SELECT * FROM ${db_name}.requests WHERE (sender_id = ? OR receiver_id = ?) AND status = "Accepted"`,
+      [user_id, user_id],
+      callback
+    );
+  },
+  delete: (id, callback) => {
+    return db.query(
+      `DELETE FROM ${db_name}.requests WHERE id = ?`,
+      [id],
+      callback
+    );
+  },
 };
 
 module.exports = Request;

@@ -57,9 +57,10 @@ const Profile = () => {
   };
 
   const handleRequest = async (id, action) => {
+    console.log(`${API}/request/${action}/${id}`);
     try {
       const response = await fetch(`${API}/request/${action}/${id}`, {
-        method: "POST",
+        method: "PUT",
         headers: {
           "Content-Type": "application/json",
           "x-auth-token": userDetails.token,
@@ -89,46 +90,68 @@ const Profile = () => {
             })`,
           }}
         >
-          {request && request.status === "Pending" ? (
-            <div className="profile-actions">
-              <button className="btn btn-full" disabled>
-                Request Sent
-              </button>
-            </div>
-          ) : null}
-
-          {request && user && request.receiver_id === userDetails.id ? (
-            <div className="profile-actions">
-              <button
-                className="btn"
-                onClick={() => handleRequest(request.id, "accept-request")}
-              >
-                Accept
-              </button>
-              <button
-                className="btn btn-delete"
-                onClick={() => handleRequest(request.id, "reject-request")}
-              >
-                Reject
-              </button>
-            </div>
-          ) : null}
-
-          {user && user.id !== userDetails.id && !request ? (
-            <div className="profile-actions">
-              <button className="btn btn-full" onClick={sendRequest}>
+          <div className="profile-actions">
+            {request && user && request.sender_id === userDetails.id ? (
+              <>
+                {request.status === "Rejected" ? (
+                  <button className="btn btn-full btn-delete" disabled>
+                    Request Rejected
+                  </button>
+                ) : null}
+                {request.status === "Accepted" ? (
+                  <button className="btn btn-full" disabled>
+                    Request Accepted
+                  </button>
+                ) : null}
+                {request.status === "Pending" ? (
+                  <button className="btn btn-full btn-secondary" disabled>
+                    Request Pending
+                  </button>
+                ) : null}
+              </>
+            ) : null}
+            {request && user && request.receiver_id === userDetails.id ? (
+              <>
+                {request.status === "Rejected" ? (
+                  <button className="btn btn-full btn-delete" disabled>
+                    Request Rejected
+                  </button>
+                ) : null}
+                {request.status === "Accepted" ? (
+                  <button className="btn btn-full" disabled>
+                    Request Accepted
+                  </button>
+                ) : null}
+                {request.status === "Pending" ? (
+                  <>
+                    <button
+                      type="button"
+                      className="btn"
+                      onClick={() =>
+                        handleRequest(request.id, "accept-request")
+                      }
+                    >
+                      Accept
+                    </button>
+                    <button
+                      type="button"
+                      className="btn btn-delete"
+                      onClick={() =>
+                        handleRequest(request.id, "reject-request")
+                      }
+                    >
+                      Reject
+                    </button>
+                  </>
+                ) : null}
+              </>
+            ) : null}
+            {request === null && user && user.id !== userDetails.id ? (
+              <button className="btn" onClick={sendRequest}>
                 Send Request
               </button>
-            </div>
-          ) : null}
-
-          {user && user.id === userDetails.id ? (
-            <div className="profile-actions">
-              <button className="btn btn-full" disabled>
-                Edit Profile
-              </button>
-            </div>
-          ) : null}
+            ) : null}
+          </div>
         </div>
         <div className="profile-details">
           <h2>
@@ -183,26 +206,32 @@ const Profile = () => {
 
           <div className="contact-info">
             <h3>Contact Info</h3>
-            <ul>
-              <div className="info">
-                <FontAwesomeIcon className="icon" icon="mobile-screen" />
-                <h4>Phone: </h4>
-                <p>{user.phone}</p>
-              </div>
-              <div className="info">
-                <FontAwesomeIcon className="icon" icon="envelope" />
-                <h4>Email: </h4>
-                <p>{user.email}</p>
-              </div>
-              <div className="info">
-                <FontAwesomeIcon className="icon" icon="location-dot" />
-                <h4>Address: </h4>
-                <p>
-                  {user.address}, {user.cityName}, {user.stateName},{" "}
-                  {user.countryName}, {user.pincode}.
-                </p>
-              </div>
-            </ul>
+            {request.status === "Accepted" ? (
+              <ul>
+                <div className="info">
+                  <FontAwesomeIcon className="icon" icon="mobile-screen" />
+                  <h4>Phone: </h4>
+                  <p>{user.phone}</p>
+                </div>
+                <div className="info">
+                  <FontAwesomeIcon className="icon" icon="envelope" />
+                  <h4>Email: </h4>
+                  <p>{user.email}</p>
+                </div>
+                <div className="info">
+                  <FontAwesomeIcon className="icon" icon="location-dot" />
+                  <h4>Address: </h4>
+                  <p>
+                    {user.address}, {user.cityName}, {user.stateName},{" "}
+                    {user.countryName}, {user.pincode}.
+                  </p>
+                </div>
+              </ul>
+            ) : (
+              <h3 className="delete-text">
+                Cannot View Contact Details without User Accepting your Request!
+              </h3>
+            )}
           </div>
 
           <div className="personal-info">
@@ -363,8 +392,17 @@ const Profile = () => {
               </div>
               <div className="info">
                 <FontAwesomeIcon className="icon" icon="angle-right" />
-                <h4>Father&apos;s Mobile:</h4>
-                <p>{user.fatherMobile}</p>
+                {request.status === "Accepted" ? (
+                  <>
+                    <h4>Father&apos;s Mobile:</h4>
+                    <p>{user.fatherMobile}</p>
+                  </>
+                ) : (
+                  <p className="delete-text">
+                    Cannot View Contact Details without User Accepting your
+                    Request!
+                  </p>
+                )}
               </div>
               <div className="info">
                 <FontAwesomeIcon className="icon" icon="angle-right" />
@@ -378,8 +416,17 @@ const Profile = () => {
               </div>
               <div className="info">
                 <FontAwesomeIcon className="icon" icon="angle-right" />
-                <h4>Mother&apos;s Mobile:</h4>
-                <p>{user.motherMobile}</p>
+                {request.status === "Accepted" ? (
+                  <>
+                    <h4>Mother&apos;s Mobile:</h4>
+                    <p>{user.motherMobile}</p>
+                  </>
+                ) : (
+                  <p className="delete-text">
+                    Cannot View Contact Details without User Accepting your
+                    Request!
+                  </p>
+                )}
               </div>
               <div className="info">
                 <FontAwesomeIcon className="icon" icon="angle-right" />

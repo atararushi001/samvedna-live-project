@@ -28,7 +28,7 @@ router.get(
 router.get(
   "/accepted",
   authMiddleware("Matrimony"),
-  requestController.getAcceptedByUser
+  requestController.getAcceptedByMe
 );
 router.get(
   "/accepted-others",
@@ -38,7 +38,7 @@ router.get(
 router.get(
   "/rejected",
   authMiddleware("Matrimony"),
-  requestController.getRejectedByUser
+  requestController.getRejectedByMe
 );
 router.get(
   "/rejected-others",
@@ -50,4 +50,10 @@ router.get(
   authMiddleware("Matrimony"),
   requestController.getAllPending
 );
+router.delete(
+  "/delete/:id",
+  authMiddleware("Matrimony"),
+  requestController.delete
+);
+router.get("/", authMiddleware("Matrimony"), requestController.getAllAccpeted);
 module.exports = router;

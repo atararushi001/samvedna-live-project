@@ -234,6 +234,10 @@ a.btn {
   color: var(--primary) !important;
 }
 
+.delete-text {
+  color: var(--error) !important;
+}
+
 .delete {
   color: var(--error);
 }
