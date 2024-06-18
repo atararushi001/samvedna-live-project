@@ -298,37 +298,51 @@ const requestController = {
         });
       }
 
-      try {
-        const updatedResults = await Promise.all(
-          results.map((result) => {
-            return new Promise((resolve, reject) => {
-              Matrimony.getById(
-                result.sender_id === user_id
-                  ? result.receiver_id
-                  : result.sender_id,
-                (err, user) => {
-                  if (err) {
-                    console.error(err);
-                    reject(err);
-                  } else {
-                    user[0].profilePictures =
-                      user[0].profilePictures.split(",");
-                    user[0].password = undefined;
-                    result.receiver = user[0];
-                    resolve(result);
+      if (results.length === 0) {
+        return res.status(200).json([]);
+      } else {
+        try {
+          const updatedResults = await Promise.all(
+            results.map((result) => {
+              return new Promise((resolve, reject) => {
+                Matrimony.getById(
+                  result.sender_id === user_id
+                    ? result.receiver_id
+                    : result.sender_id,
+                  (err, user) => {
+                    if (err) {
+                      console.error(err);
+                      reject(err);
+                    } else {
+                      if (
+                        user &&
+                        user[0] &&
+                        typeof user[0].profilePictures === "string"
+                      ) {
+                        user[0].profilePictures =
+                          user[0].profilePictures.split(",");
+                      } else if (user && user[0]) {
+                        user[0].profilePictures = [];
+                      }
+                      if (user && user[0]) {
+                        user[0].password = undefined;
+                        result.receiver = user[0];
+                      }
+                      resolve(result);
+                    }
                   }
-                }
-              );
-            });
-          })
-        );
+                );
+              });
+            })
+          );
 
-        return res.status(200).json(updatedResults);
-      } catch (err) {
-        console.error(err);
-        return res.status(500).json({
-          message: "Database connection error",
-        });
+          return res.status(200).json(updatedResults);
+        } catch (err) {
+          console.error(err);
+          return res.status(500).json({
+            message: "Database connection error",
+          });
+        }
       }
     });
   },
