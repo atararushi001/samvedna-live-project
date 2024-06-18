@@ -326,6 +326,7 @@ const matrimonyController = {
   },
   update: (req, res) => {
     const id = req.user.id;
+
     const {
       firstName,
       lastName,

@@ -40,8 +40,6 @@ const EditProfile = () => {
     };
 
     fetchData();
-
-    console.log(formData);
   }, [navigate, loginState, userDetails]);
 
   const [cities, setCities] = useState([]);
@@ -144,21 +142,13 @@ const EditProfile = () => {
       return;
     }
 
-    const newFormData = new FormData();
-
-    for (const key in formData) {
-      newFormData.append(key, formData[key]);
-    }
-
-    console.log(formData);
-
     const response = await fetch(`${API}/matrimony/update`, {
       method: "PUT",
       headers: {
-        "Content-Type": "application/json",
         "x-auth-token": userDetails.token,
+        "Content-Type": "application/json",
       },
-      body: newFormData,
+      body: JSON.stringify(formData),
     });
 
     const data = await response.json();
