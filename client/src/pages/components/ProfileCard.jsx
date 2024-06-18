@@ -11,7 +11,7 @@ const ProfileCard = ({ user }) => {
   };
 
   return (
-    <Link to="/matrimony-dashboard/profile" state={{ id: user.id }}>
+    <Link to="/matrimony-dashboard/profile" state={{ user: user }}>
       <div className="proposal">
         <h2>
           {user.firstName} {user.lastName}

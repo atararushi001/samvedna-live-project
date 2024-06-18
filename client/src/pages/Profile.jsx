@@ -1,5 +1,6 @@
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
@@ -17,44 +18,64 @@ const Profile = () => {
     navigate("/");
   }
 
-  const [user, setUser] = useState({});
-
-  const id = location.state.id;
+  const user = location.state.user;
+  const request = location.state.request;
 
   useEffect(() => {
     if (!loginState) {
       navigate("/matrimony-login");
       return;
     }
+  }, [navigate, loginState, userDetails]);
 
-    const fetchUser = async () => {
-      try {
-        const response = await fetch(`${API}/matrimony/user/${id}`, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            "x-auth-token": userDetails.token,
-          },
-        });
+  const sendRequest = async () => {
+    try {
+      const response = await fetch(`${API}/request/send-request/${user.id}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-auth-token": userDetails.token,
+        },
+      });
 
-        if (!response.ok) {
-          throw new Error(response.statusText);
-        }
-
-        const data = await response.json();
-        setUser(data);
-      } catch (error) {
-        console.error(error);
+      if (!response.ok) {
+        throw new Error(response.statusText);
       }
-    };
 
-    fetchUser();
-  }, [id, navigate, loginState, userDetails]);
+      const data = await response.json();
+      toast.success(data.message);
+    } catch (error) {
+      console.error(error);
+      toast.error("Failed to send request");
+    }
+  };
 
   const calculateAge = (dob) => {
     const diff = Date.now() - new Date(dob).getTime();
     const ageDate = new Date(diff);
     return Math.abs(ageDate.getUTCFullYear() - 1970);
+  };
+
+  const handleRequest = async (id, action) => {
+    try {
+      const response = await fetch(`${API}/request/${action}/${id}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-auth-token": userDetails.token,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(response.statusText);
+      }
+
+      const data = await response.json();
+      toast.success(data.message);
+      navigate("/matrimony-dashboard/proposals");
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   return (
@@ -68,7 +89,46 @@ const Profile = () => {
             })`,
           }}
         >
-          <button className="btn btn-full">Send Request</button>
+          {request && request.status === "Pending" ? (
+            <div className="profile-actions">
+              <button className="btn btn-full" disabled>
+                Request Sent
+              </button>
+            </div>
+          ) : null}
+
+          {request && user && request.receiver_id === userDetails.id ? (
+            <div className="profile-actions">
+              <button
+                className="btn"
+                onClick={() => handleRequest(request.id, "accept-request")}
+              >
+                Accept
+              </button>
+              <button
+                className="btn btn-delete"
+                onClick={() => handleRequest(request.id, "reject-request")}
+              >
+                Reject
+              </button>
+            </div>
+          ) : null}
+
+          {user && user.id !== userDetails.id && !request ? (
+            <div className="profile-actions">
+              <button className="btn btn-full" onClick={sendRequest}>
+                Send Request
+              </button>
+            </div>
+          ) : null}
+
+          {user && user.id === userDetails.id ? (
+            <div className="profile-actions">
+              <button className="btn btn-full" disabled>
+                Edit Profile
+              </button>
+            </div>
+          ) : null}
         </div>
         <div className="profile-details">
           <h2>

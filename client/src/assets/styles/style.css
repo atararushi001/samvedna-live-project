@@ -162,6 +162,32 @@ a.btn {
   width: 100%;
 }
 
+.btn:disabled {
+  background-color: var(--secondary);
+  color: var(--text);
+  cursor: not-allowed;
+  transition: none;
+}
+
+.btn:disabled:hover {
+  background-color: var(--secondary);
+  color: var(--text);
+  animation: noAnimation;
+}
+
+.btn-delete:disabled {
+  background-color: var(--error);
+  color: var(--text);
+  cursor: not-allowed;
+  transition: none;
+}
+
+.btn-delete:disabled:hover {
+  background-color: var(--error);
+  color: var(--text);
+  animation: noAnimation;
+}
+
 .link {
   color: var(--primary);
   font-weight: 500;
@@ -3507,6 +3533,10 @@ table td:last-child {
   gap: 2rem;
 }
 
+.proposals-section .actions {
+  width: 100%;
+}
+
 .proposals-section .proposals {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -3596,10 +3626,16 @@ table td:last-child {
   position: relative;
 }
 
-.profile .profile-image .btn {
+.profile-actions {
   position: absolute;
   bottom: 0;
   right: 0;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-block: 1rem;
+  gap: 1rem;
 }
 
 .profile .profile-details {
@@ -3848,6 +3884,15 @@ table td:last-child {
 }
 
 /* Animations */
+@keyframes noAnimation {
+  0% {
+    transform: scale(1);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
 @keyframes pulse {
   0% {
     transform: scale(1);
