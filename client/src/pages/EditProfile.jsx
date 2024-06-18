@@ -1,14 +1,16 @@
 import { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
-import UserStore from "../../stores/UserStore";
+import UserStore from "../stores/UserStore";
 
 const API = import.meta.env.VITE_API_URL;
 
-const MatrimonyRegister = () => {
+const EditProfile = () => {
   const navigate = useNavigate();
   const { loginState, userDetails } = UserStore();
+
+  const [formData, setFormData] = useState({});
 
   useEffect(() => {
     if (loginState) {
@@ -16,85 +18,29 @@ const MatrimonyRegister = () => {
         navigate("/job-seeker-dashboard");
       } else if (userDetails.type === "Recruiter") {
         navigate("/recruiter-dashboard");
-      } else if (userDetails.type === "Matrimony") {
-        navigate("/matrimony-dashboard");
       }
+    } else {
+      navigate("/login");
     }
-  }, [navigate, loginState, userDetails]);
 
-  const [formData, setFormData] = useState({
-    profilePicture: [],
-    firstName: "",
-    lastName: "",
-    email: "",
-    password: "",
-    confirmPassword: "",
-    phone: "",
-    gender: "",
-    dob: "",
-    timeOfBirth: "",
-    placeOfBirth: "",
-    community: "",
-    religion: "",
-    caste: "",
-    subCaste: "",
-    motherTongue: "",
-    country: "",
-    state: "",
-    city: "",
-    address: "",
-    pincode: "",
-    maritalStatus: "",
-    haveChildren: "",
-    noOfChildren: "",
-    height: "",
-    weight: "",
-    complexion: "",
-    bodyType: "",
-    bloodGroup: "",
-    donateBlood: "",
-    qualification: "",
-    educationSpecialization: "",
-    currentLocation: "",
-    immigrationStatus: "",
-    designation: "",
-    designationDetails: "",
-    annualIncome: "",
-    fatherName: "",
-    fatherOccupation: "",
-    fatherMobile: "",
-    motherName: "",
-    motherOccupation: "",
-    motherMobile: "",
-    grandfatherName: "",
-    grandmotherName: "",
-    nanaName: "",
-    naniName: "",
-    noOfBrothers: "",
-    noOfSisters: "",
-    believeInHoroscope: "",
-    rashi: "",
-    gotra: "",
-    varna: "",
-    mangalShani: "",
-    diet: "",
-    smoke: "",
-    drink: "",
-    hobbies: "",
-    ageGap: "",
-    partnerReligion: "",
-    partnerCaste: "",
-    partnerSubCaste: "",
-    partnerQualification: "",
-    partnerOccupation: "",
-    partnerAnnualIncome: "",
-    mangalik: "",
-    partnerMaritalStatus: "",
-    goAbroad: "",
-    disability: "",
-    disabilityPercentage: "",
-    about: "",
-  });
+    const fetchData = async () => {
+      const response = await fetch(`${API}/matrimony/user`, {
+        headers: {
+          "x-auth-token": userDetails.token,
+        },
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setFormData(data);
+      } else {
+        toast.error(data.message);
+      }
+    };
+
+    fetchData();
+  }, [navigate, loginState, userDetails]);
 
   const [cities, setCities] = useState([]);
   const [states, setStates] = useState([]);
@@ -183,16 +129,6 @@ const MatrimonyRegister = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (formData.password !== formData.confirmPassword) {
-      toast.error("Passwords do not match");
-      return;
-    }
-
-    if (formData.password.length < 8) {
-      toast.error("Password should be atleast 8 characters long");
-      return;
-    }
-
     if (formData.dob > new Date().toISOString().split("T")[0]) {
       toast.error("Date of Birth cannot be in the future");
       return;
@@ -206,51 +142,44 @@ const MatrimonyRegister = () => {
       return;
     }
 
-    const newFormData = new FormData();
-
-    for (const key in formData) {
-      if (key === "profilePicture") {
-        for (let i = 0; i < formData.profilePicture.length; i++) {
-          newFormData.append("profilePicture", formData.profilePicture[i]);
-        }
-      } else {
-        newFormData.append(key, formData[key]);
-      }
-    }
-
-    const response = await fetch(`${API}/matrimony/register`, {
-      method: "POST",
-      body: newFormData,
+    const response = await fetch(`${API}/matrimony/update`, {
+      method: "PUT",
+      headers: {
+        "x-auth-token": userDetails.token,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(formData),
     });
 
     const data = await response.json();
 
     if (response.ok) {
       toast.success(data.message);
-      navigate("/matrimony-login");
+      navigate("/matrimony-dashboard/edit-profile");
     } else {
       toast.error(data.message);
     }
   };
 
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    return `${date.getFullYear()}-${padZero(date.getMonth() + 1)}-${padZero(
+      date.getDate()
+    )}`;
+  };
+
+  const padZero = (num) => (num < 10 ? `0${num}` : num);
+
   return (
     <div className="container">
       <section className="matrimony-register">
         <h1>
-          <strong className="highlight-text">Matrimony</strong> Registration
+          <strong className="highlight-text">Edit</strong> Profile
         </h1>
-
-        <Link to="/matrimony-login" className="forgot-password">
-          Already have an account? Login here
-        </Link>
         <form onSubmit={handleSubmit}>
           <fieldset>
             <legend>Personal Details*</legend>
-            <label htmlFor="profilePicture">Profile Picture</label>
-            <p>
-              <strong>Note:</strong> First Photo will be your display picture,
-              upload upto 3 photos
-            </p>
+            {/* <label htmlFor="profilePicture">Profile Picture (Maximum 3)</label>
             <input
               type="file"
               id="profilePicture"
@@ -259,7 +188,7 @@ const MatrimonyRegister = () => {
               onChange={handleInputChange}
               accept="image/*"
               required
-            />
+            /> */}
             <div className="input-group">
               <input
                 type="text"
@@ -290,7 +219,7 @@ const MatrimonyRegister = () => {
               onChange={handleInputChange}
               required
             />
-            <div className="input-group">
+            {/* <div className="input-group">
               <input
                 type="password"
                 name="password"
@@ -310,7 +239,7 @@ const MatrimonyRegister = () => {
                 onChange={handleInputChange}
                 required
               />
-            </div>
+            </div> */}
             <input
               type="tel"
               name="phone"
@@ -340,7 +269,7 @@ const MatrimonyRegister = () => {
                   type="date"
                   name="dob"
                   id="dob"
-                  value={formData.dob}
+                  value={formatDate(formData.dob)}
                   onChange={handleInputChange}
                   required
                 />
@@ -1572,7 +1501,7 @@ const MatrimonyRegister = () => {
             </select>
           </fieldset>
           <button type="submit" className="btn">
-            Register
+            Update Details
           </button>
         </form>
       </section>
@@ -1580,4 +1509,4 @@ const MatrimonyRegister = () => {
   );
 };
 
-export default MatrimonyRegister;
+export default EditProfile;

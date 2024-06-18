@@ -1,55 +1,78 @@
 import { Link } from "react-router-dom";
+import PropTypes from "prop-types";
 
-import User from "../../assets/images/Backgrounds/allef-vinicius-oe_03B2Q5A4-unsplash.jpg";
+const API = import.meta.env.VITE_STATIC_FILES_URL;
 
-const ProfileCard = () => {
+const ProfileCard = ({ user }) => {
+  const calculateAge = (dob) => {
+    const diff = Date.now() - new Date(dob).getTime();
+    const ageDate = new Date(diff);
+    return Math.abs(ageDate.getUTCFullYear() - 1970);
+  };
+
   return (
-    <Link to="/matrimony-dashboard/profile">
+    <Link to="/matrimony-dashboard/profile" state={{ user: user }}>
       <div className="proposal">
-        <h2>User Name</h2>
-        <img src={User} alt="User Image" />
+        <h2>
+          {user.firstName} {user.lastName}
+        </h2>
+        <img
+          src={`${API}/uploads/matrimonyPictures/${
+            user && user.profilePictures && user.profilePictures[0]
+          }`}
+          alt="User Image"
+        />
 
         <div className="user-details">
           <div className="detail">
             <p>Age:</p>
-            <p>25</p>
+            <p>{calculateAge(user.dob)} Years</p>
           </div>
           <div className="detail">
             <p>Location:</p>
-            <p>City, Country</p>
+            <p>
+              {user.cityName}, {user.countryName}
+            </p>
           </div>
           <div className="detail">
             <p>Religion:</p>
-            <p>Religion</p>
+            <p>{user.religion}</p>
           </div>
           <div className="detail">
             <p>Profession:</p>
-            <p>Profession</p>
+            <p>{user.designation}</p>
           </div>
           <div className="detail">
             <p>Height:</p>
-            <p>5&apos;5&rdquo;</p>
+            <p>
+              {Math.floor(user.height)}&apos;
+              {Math.round((user.height - Math.floor(user.height)) * 12)}&rdquo;
+            </p>
           </div>
           <div className="detail">
             <p>Education:</p>
-            <p>Education</p>
+            <p>{user.qualificationName}</p>
           </div>
           <div className="detail">
             <p>Disability:</p>
-            <p>Disability Type</p>
+            <p>{user.disability}</p>
           </div>
           <div className="detail">
             <p>Disability Percentage:</p>
-            <p>50%</p>
+            <p>{user.disabilityPercentage}%</p>
           </div>
         </div>
 
-        <div className="proposal-actions">
+        {/* <div className="proposal-actions">
           <button className="btn btn-full">Send Request</button>
-        </div>
+        </div> */}
       </div>
     </Link>
   );
+};
+
+ProfileCard.propTypes = {
+  user: PropTypes.object.isRequired,
 };
 
 export default ProfileCard;

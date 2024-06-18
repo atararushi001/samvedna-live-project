@@ -1,6 +1,46 @@
-import { Link } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+
+import UserStore from "../../stores/UserStore";
+
+import MyProposalCard from "../components/MyProposalCard";
+
+const API = import.meta.env.VITE_API_URL;
 
 const MatrimonyDashboard = () => {
+  const navigate = useNavigate();
+  const { loginState, userDetails } = UserStore();
+  const [matches, setMatches] = useState([]);
+
+  useEffect(() => {
+    if (loginState) {
+      if (userDetails.type === "Matrimony") {
+        navigate("/matrimony-dashboard");
+      }
+    } else {
+      navigate("/matrimony-login");
+    }
+
+    const getAllMatches = async () => {
+      const response = await fetch(`${API}/request`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          "x-auth-token": userDetails.token,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(response.statusText);
+      }
+
+      const data = await response.json();
+      setMatches(data);
+    };
+
+    getAllMatches();
+  }, [navigate, loginState, userDetails]);
+
   return (
     <div className="container">
       <div className="matrimony-dashboard">
@@ -8,35 +48,17 @@ const MatrimonyDashboard = () => {
           <strong className="highlight-text">Matrimony</strong> Dashboard
         </h1>
         <div className="matrimony-dashboard-container">
-          <div className="matrimony-dashboard-card">
-            <h2>View Proposals</h2>
-            <p>
-              View all the proposals you have received from other users. Accept
-              or reject proposals based on your preferences. Start finding your
-              life partner today.
-            </p>
-            <Link
-              to="/matrimony-dashboard/proposals"
-              className="btn btn-primary"
-            >
-              View Proposals
-            </Link>
-          </div>
-
-          <div className="matrimony-dashboard-card">
-            <h2>Search Profiles</h2>
-            <p>
-              Search for profiles of other users based on your preferences. Find
-              your life partner by searching for profiles that match your
-              preferences.
-            </p>
-            <Link
-              to="/matrimony-dashboard/search-profiles"
-              className="btn btn-primary"
-            >
-              Search Profiles
-            </Link>
-          </div>
+          {matches && matches.length > 0 ? (
+            matches.map((match) => (
+              <MyProposalCard
+                key={match.id}
+                user={match.receiver}
+                request={match}
+              />
+            ))
+          ) : (
+            <h2>No Matches Found</h2>
+          )}
         </div>
       </div>
     </div>

@@ -19,7 +19,7 @@ const Login = () => {
   }, [navigate]);
 
   return (
-    <>
+    <div className="container">
       <section className="login-type-container">
         <div className="login-type">
           <h1>Are you Recruiter?</h1>
@@ -27,15 +27,20 @@ const Login = () => {
             <button className="btn">Recruiter Login</button>
           </Link>
         </div>
-        <div className="divider"></div>
         <div className="login-type">
           <h1>Are you a Job Seeker?</h1>
           <Link to="/job-seeker-login">
-            <button className="btn btn-outline">Job Seeker Login</button>
+            <button className="btn">Job Seeker Login</button>
+          </Link>
+        </div>
+        <div className="login-type">
+          <h1>Matrimony Services</h1>
+          <Link to="/matrimony-login">
+            <button className="btn">Matrimony Login</button>
           </Link>
         </div>
       </section>
-    </>
+    </div>
   );
 };
 

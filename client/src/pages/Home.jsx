@@ -123,7 +123,40 @@ const Home = () => {
         />
       </Helmet>
 
-      <section className="register-type-container slider-1">
+      <section className="main-showcase">
+        <div className="container">
+          <div className="showcase-content">
+            <h1>Are you Recruiter?</h1>
+            <div className="showcase-image image-1"></div>
+            <Link to="/recruiter-register">
+              <button className="btn">Recruiter Register</button>
+            </Link>
+          </div>
+          <div className="showcase-content">
+            <h1>Are you a Job Seeker?</h1>
+            <div className="showcase-image image-2"></div>
+            <Link to="/job-seeker-register">
+              <button className="btn btn-outline">Job Seeker Register</button>
+            </Link>
+          </div>
+          <div className="showcase-content">
+            <h1>Are you Self Employed?</h1>
+            <div className="showcase-image image-3"></div>
+            <Link to="/self-employment-register">
+              <button className="btn">Self Employement Register</button>
+            </Link>
+          </div>
+          <div className="showcase-content">
+            <h1>Matrimony Services</h1>
+            <div className="showcase-image image-4"></div>
+            <Link to="/matrimony-register">
+              <button className="btn btn-outline">Matrimony Register</button>
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* <section className="register-type-container slider-1">
         <div className="register-type">
           <h1>Are you Recruiter?</h1>
           <Link to="/recruiter-register">
@@ -137,9 +170,9 @@ const Home = () => {
             <button className="btn btn-outline">Job Seeker Register</button>
           </Link>
         </div>
-      </section>
+      </section> */}
 
-      <div className="container ">
+      {/* <div className="container ">
         <section className="self-employed-header">
           <div className="header-text">
             <h1>Are you Self Employed?</h1>
@@ -181,7 +214,7 @@ const Home = () => {
             </Link>
           </div>
         </div>
-      </section>
+      </section> */}
 
       <div className="container">
         <section

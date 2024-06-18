@@ -1,63 +1,100 @@
-import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { useState } from "react";
+import { toast } from "react-toastify";
+
+import UserStore from "../stores/UserStore";
+
+import ProfileCard from "./components/ProfileCard";
 
 const API = import.meta.env.VITE_API_URL;
 
 const SearchProfiles = () => {
-  const [formData, setFormData] = useState({
-    search: "",
-    country: "",
-    state: "",
-    city: "",
-    religion: "",
-    age: "",
-    height: "",
-    maritalStatus: "",
-    education: "",
-    occupation: "",
-    income: "",
-    familyStatus: "",
-    familyType: "",
-  });
+  // const [formData, setFormData] = useState({
+  //   search: "",
+  //   country: "",
+  //   state: "",
+  //   city: "",
+  //   religion: "",
+  //   age: "",
+  //   height: "",
+  //   maritalStatus: "",
+  //   education: "",
+  //   occupation: "",
+  //   income: "",
+  //   familyStatus: "",
+  //   familyType: "",
+  // });
 
-  const [countries, setCountries] = useState([]);
-  const [states, setStates] = useState([]);
-  const [cities, setCities] = useState([]);
-  const [advanceSearch, setAdvanceSearch] = useState(false);
+  // const [countries, setCountries] = useState([]);
+  // const [states, setStates] = useState([]);
+  // const [cities, setCities] = useState([]);
+  // const [advanceSearch, setAdvanceSearch] = useState(false);
 
-  useEffect(() => {
-    fetch(`${API}/utils/countries`)
-      .then((response) => response.json())
-      .then((data) => {
-        setCountries(data.results);
-      })
-      .catch((error) => console.error(error));
-  }, []);
+  // useEffect(() => {
+  //   fetch(`${API}/utils/countries`)
+  //     .then((response) => response.json())
+  //     .then((data) => {
+  //       setCountries(data.results);
+  //     })
+  //     .catch((error) => console.error(error));
+  // }, []);
 
-  useEffect(() => {
-    if (formData.country) {
-      fetch(`${API}/utils/states/${formData.country}`)
-        .then((response) => response.json())
-        .then((data) => {
-          setStates(data.results);
-        })
-        .catch((error) => console.error(error));
-    }
-  }, [formData.country]);
+  // useEffect(() => {
+  //   if (formData.country) {
+  //     fetch(`${API}/utils/states/${formData.country}`)
+  //       .then((response) => response.json())
+  //       .then((data) => {
+  //         setStates(data.results);
+  //       })
+  //       .catch((error) => console.error(error));
+  //   }
+  // }, [formData.country]);
 
-  useEffect(() => {
-    if (formData.state) {
-      fetch(`${API}/utils/cities/${formData.state}`)
-        .then((response) => response.json())
-        .then((data) => {
-          setCities(data.results);
-        })
-        .catch((error) => console.error(error));
-    }
-  }, [formData.state]);
+  // useEffect(() => {
+  //   if (formData.state) {
+  //     fetch(`${API}/utils/cities/${formData.state}`)
+  //       .then((response) => response.json())
+  //       .then((data) => {
+  //         setCities(data.results);
+  //       })
+  //       .catch((error) => console.error(error));
+  //   }
+  // }, [formData.state]);
+
+  // const handleChange = (event) => {
+  //   setFormData({ ...formData, [event.target.id]: event.target.value });
+  // };
+  const [search, setSearch] = useState("");
+  const [results, setResults] = useState([]);
+  const { userDetails } = UserStore();
 
   const handleChange = (event) => {
-    setFormData({ ...formData, [event.target.id]: event.target.value });
+    if (event.target.value === "") {
+      setResults([]);
+    }
+    setSearch(event.target.value);
+  };
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+
+    const response = await fetch(`${API}/matrimony/search/${search}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        "x-auth-token": userDetails.token,
+      },
+    });
+
+    if (!response.ok) {
+      toast.error("Error in fetching data");
+      return;
+    }
+
+    const data = await response.json();
+
+    console.log(data);
+
+    setResults(data);
   };
 
   return (
@@ -70,13 +107,13 @@ const SearchProfiles = () => {
               type="text"
               className="form-control"
               id="search"
-              placeholder="Search for a Partner"
-              value={formData.search}
+              placeholder="Search for a Partner (Using Name or ID)"
+              value={search}
               onChange={handleChange}
               required
             />
           </div>
-          {advanceSearch ? (
+          {/* {advanceSearch ? (
             <>
               <button
                 type="button"
@@ -266,13 +303,23 @@ const SearchProfiles = () => {
             >
               Show Advance Search
             </button>
-          )}
-          <Link to="/matrimony-dashboard/profile-results">
-            <button type="submit" className="btn btn-full">
-              Search
-            </button>
-          </Link>
+          )} */}
+          {/* <Link to="/matrimony-dashboard/profile-results"> */}
+          <button type="submit" className="btn btn-full" onClick={handleSubmit}>
+            Search
+          </button>
+          {/* </Link> */}
         </form>
+
+        <div className="search-resuls">
+          {results && results.length > 0 ? (
+            results.map((result) => {
+              return <ProfileCard user={result} key={result.id} />;
+            })
+          ) : (
+            <h2>No Partners Found!</h2>
+          )}
+        </div>
       </section>
     </div>
   );
