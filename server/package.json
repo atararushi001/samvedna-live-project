@@ -5,7 +5,7 @@
   "main": "app.js",
   "scripts": {
     "start": "node app.js",
-        "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodemon app.js"
   },
   "author": "Ashish Thanki",
@@ -16,6 +16,7 @@
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
     "jsonwebtoken": "^9.0.2",
+    "moment": "^2.30.1",
     "multer": "^1.4.5-lts.1",
     "mysql2": "^3.9.7"
   }
