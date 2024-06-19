@@ -191,9 +191,16 @@ const matrimonyController = {
           console.log(err);
           return res.status(500).send("Internal Server Error");
         }
+        let noOfChildrenChange;
+
         if (noOfChildren === "") {
-          noOfChildren = 0;
+          noOfChildrenChange = 0;
         }
+        else{
+          noOfChildrenChange =noOfChildren;
+        }
+
+
         const newUser = {
           profilePicture,
           firstName,
@@ -217,7 +224,7 @@ const matrimonyController = {
           pincode,
           maritalStatus,
           haveChildren,
-          noOfChildren,
+          noOfChildren: noOfChildrenChange,
           height,
           weight,
           complexion,
