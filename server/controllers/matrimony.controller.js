@@ -472,10 +472,10 @@ const matrimonyController = {
     matrimony.update(id, updateDetails, (err, results) => {
       if (err) {
         console.log(err);
-        return res.status(500).send("Internal Server Error");
+        res.status(500).send("Internal Server Error");
+      } else {
+        res.status(200).send({ message: "User updated successfully" });
       }
-
-      res.status(200).send({ message: "User updated successfully" });
     });
   },
   search: (req, res) => {
