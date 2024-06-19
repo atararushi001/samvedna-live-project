@@ -191,7 +191,9 @@ const matrimonyController = {
           console.log(err);
           return res.status(500).send("Internal Server Error");
         }
-
+        if (noOfChildren === "") {
+          noOfChildren = 0;
+        }
         const newUser = {
           profilePicture,
           firstName,
