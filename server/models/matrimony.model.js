@@ -215,7 +215,14 @@ const Matrimony = {
           WHERE 
               m.id=?
           GROUP BY 
-              m.id;`,
+              m.id,
+              c.name, 
+              s.name, 
+              ci.name, 
+              ql.qualification_name, 
+              es.education_specialization_name, 
+              cl.name, 
+              ql2.qualification_name;`,
       [id],
       callback
     );
@@ -251,7 +258,14 @@ const Matrimony = {
           WHERE 
               m.id!=? AND m.gender!=?
           GROUP BY 
-              m.id;`,
+              m.id,
+              c.name, 
+              s.name, 
+              ci.name, 
+              ql.qualification_name, 
+              es.education_specialization_name, 
+              cl.name, 
+              ql2.qualification_name;`,
       [id, gender],
       (error, results) => {
         if (error) {
