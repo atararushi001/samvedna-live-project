@@ -191,15 +191,6 @@ const matrimonyController = {
           console.log(err);
           return res.status(500).send("Internal Server Error");
         }
-        let noOfChildrenChange;
-
-        if (noOfChildren === "") {
-          noOfChildrenChange = 0;
-        }
-        else{
-          noOfChildrenChange =noOfChildren;
-        }
-
 
         const newUser = {
           profilePicture,
@@ -224,7 +215,7 @@ const matrimonyController = {
           pincode,
           maritalStatus,
           haveChildren,
-          noOfChildren: noOfChildrenChange,
+          noOfChildren,
           height,
           weight,
           complexion,
@@ -484,7 +475,7 @@ const matrimonyController = {
         return res.status(500).send("Internal Server Error");
       }
 
-      res.status(200).send({ message: "User updated successfully" });
+      return res.status(200).send({ message: "User updated successfully" });
     });
   },
   search: (req, res) => {
