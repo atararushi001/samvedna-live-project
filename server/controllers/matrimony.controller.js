@@ -3,6 +3,7 @@ const jwt = require("jsonwebtoken");
 const multer = require("multer");
 const path = require("path");
 const fs = require("fs");
+const moment = require("moment");
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -404,7 +405,7 @@ const matrimonyController = {
       email,
       phone,
       gender,
-      dob,
+      dob: moment(dob).format("YYYY-MM-DD HH:mm:ss"),
       timeOfBirth,
       placeOfBirth,
       community,
