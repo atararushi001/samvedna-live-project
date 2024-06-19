@@ -493,7 +493,7 @@ const matrimonyController = {
         result.password = undefined;
       });
 
-      res.status(200).send(results);
+      return res.status(200).send(results);
     });
   },
 };
