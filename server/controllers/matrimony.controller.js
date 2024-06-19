@@ -471,11 +471,12 @@ const matrimonyController = {
 
     matrimony.update(id, updateDetails, (err, results) => {
       if (err) {
+        res.status(500).json({ message: "Internal server error" });
         console.log(err);
-        res.status(500).send("Internal Server Error");
-      } else {
-        res.status(200).send({ message: "User updated successfully" });
+        return;
       }
+
+      res.status(200).json({ message: "Profile updated successfully" });
     });
   },
   search: (req, res) => {
