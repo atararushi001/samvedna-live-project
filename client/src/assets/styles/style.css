@@ -3859,6 +3859,36 @@ table td:last-child {
   padding-block: 3rem;
 }
 
+/* Pages > Admin Login */
+.admin-login {
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+  padding-block: 3rem;
+}
+
+.admin-login form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  width: 100%;
+}
+
+.admin-dashboard {
+  height: 100%;
+  display: flex;
+  direction: ltr;
+}
+
+.admin-dashboard .main-content {
+  padding: 16px 24px;
+}
+
 /* Pages > 404 */
 .page-404 {
   min-height: 100dvh;
