@@ -66,6 +66,8 @@ const SelfEmploymentRegister = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
 
+    toast.loading("Submitting Your Data, Please Wait...");
+
     const data = new FormData();
 
     for (const key in formData) {
@@ -86,9 +88,10 @@ const SelfEmploymentRegister = () => {
       .then((data) => {
         console.log(data);
         if (data.success) {
-          console.log(data);
+          toast.dismiss();
           toast.success(data.message);
         } else {
+          toast.dismiss();
           toast.error(data.message);
         }
       })

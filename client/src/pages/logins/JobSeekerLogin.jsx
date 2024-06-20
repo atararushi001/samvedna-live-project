@@ -34,6 +34,8 @@ const JobSeekerLogin = () => {
   const handleSubmit = async (event) => {
     event.preventDefault();
 
+    toast.loading("Submitting Your Data, Please Wait...");
+
     try {
       const response = await fetch(`${API}/job-seeker/login`, {
         method: "POST",
@@ -50,11 +52,13 @@ const JobSeekerLogin = () => {
       const responseData = await response.json();
 
       if (response.status === 200) {
+        toast.dismiss();
         toast.success(responseData.message);
         setLoginState(true);
         loginData(responseData.user);
         navigate("/job-seeker-dashboard");
       } else {
+        toast.dismiss();
         toast.error(responseData.message);
       }
     } catch (error) {

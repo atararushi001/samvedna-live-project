@@ -35,6 +35,8 @@ const RecruiterLogin = () => {
   const handleSubmit = async (event) => {
     event.preventDefault();
 
+    toast.loading("Submitting Your Data, Please Wait...");
+
     const response = await fetch(`${API}/recruiter/login`, {
       method: "POST",
       headers: {
@@ -46,10 +48,12 @@ const RecruiterLogin = () => {
     const data = await response.json();
 
     if (response.ok) {
+      toast.dismiss();
       toast.success(data.message);
       setLoginState(true);
       loginData(data.user);
     } else {
+      toast.dismiss();
       toast.error(data.message);
     }
   };
