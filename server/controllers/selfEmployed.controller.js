@@ -8,9 +8,9 @@ const selfEmployedController = {
     selfEmployed.getAll((err, results) => {
       if (err) {
         console.log(err);
-        return res.status(500).send("Internal Server Error");
+        return res.status(500).json({ message: "Internal Server Error" });
       }
-      res.status(200).send(results);
+      res.status(200).json(results);
     });
   },
   create: (req, res) => {
@@ -48,7 +48,7 @@ const selfEmployedController = {
       product.length === 0
     ) {
       console.log(req.body);
-      return res.status(400).send({ message: "All fields are required" });
+      return res.status(400).json({ message: "All fields are required" });
     }
 
     selfEmployed.create(
@@ -71,9 +71,9 @@ const selfEmployedController = {
       (err, result) => {
         if (err) {
           console.log(err);
-          return res.status(500).send({ message: "Internal Server Error" });
+          return res.status(500).json({ message: "Internal Server Error" });
         }
-        res.status(201).send({ message: "Self-employed created successfully" });
+        res.status(201).json({ message: "Self-employed created successfully" });
       }
     );
   },

@@ -33,9 +33,9 @@ const matrimonyController = {
     matrimony.getAll((err, results) => {
       if (err) {
         console.log(err);
-        return res.status(500).send("Internal Server Error");
+        return res.status(500).json({ message: "Internal Server Error" });
       }
-      res.status(200).send(results);
+      res.status(200).json(results);
     });
   },
   getById: (req, res) => {
@@ -44,16 +44,16 @@ const matrimonyController = {
     matrimony.getById(id, (err, results) => {
       if (err) {
         console.log(err);
-        return res.status(500).send("Internal Server Error");
+        return res.status(500).json({ message: "Internal Server Error" });
       }
 
       if (results.length === 0) {
-        return res.status(404).send("User not found");
+        return res.status(404).json({ message: "User not found" });
       }
 
       results[0].profilePictures = results[0].profilePictures.split(",");
 
-      res.status(200).send(results[0]);
+      res.status(200).json(results[0]);
     });
   },
   getFullUser: (req, res) => {
@@ -184,13 +184,13 @@ const matrimonyController = {
       const profilePicture = req.files.map((file) => file.filename);
 
       if (password !== confirmPassword) {
-        return res.status(400).send("Passwords do not match");
+        return res.status(400).json({ message: "Passwords do not match" });
       }
 
       bcrypt.hash(password, 10, (err, hash) => {
         if (err) {
           console.log(err);
-          return res.status(500).send("Internal Server Error");
+          return res.status(500).json({ message: "Internal Server Error" });
         }
 
         const newUser = {
@@ -269,18 +269,20 @@ const matrimonyController = {
         matrimony.getByEmail(email, (err, results) => {
           if (err) {
             console.log(err);
-            return res.status(500).send("Internal Server Error");
+            return res.status(500).json({ message: "Internal Server Error" });
           }
 
           if (results.length > 0) {
-            return res.status(400).send("User already exists");
+            return res.status(400).json({ message: "User already exists" });
           } else {
             matrimony.create(newUser, (err, results) => {
               if (err) {
                 console.log(err);
-                return res.status(500).send("Internal Server Error");
+                return res
+                  .status(500)
+                  .json({ message: "Internal Server Error" });
               }
-              res.status(200).send({ message: "User registered successfully" });
+              res.status(200).json({ message: "User registered successfully" });
             });
           }
         });
@@ -293,21 +295,21 @@ const matrimonyController = {
     matrimony.getByEmail(email, (err, results) => {
       if (err) {
         console.log(err);
-        return res.status(500).send("Internal Server Error");
+        return res.status(500).json({ message: "Internal Server Error" });
       }
 
       if (results.length === 0) {
-        return res.status(400).send("User does not exist");
+        return res.status(400).json({ message: "User does not exist" });
       }
 
       bcrypt.compare(password, results[0].password, (err, isMatch) => {
         if (err) {
           console.log(err);
-          return res.status(500).send("Internal Server Error");
+          return res.status(500).json({ message: "Internal Server Error" });
         }
 
         if (!isMatch) {
-          return res.status(400).send("Incorrect password");
+          return res.status(400).json({ message: "Incorrect password" });
         }
 
         const token = jwt.sign(
@@ -318,7 +320,7 @@ const matrimonyController = {
           }
         );
 
-        res.status(200).send({
+        res.status(200).json({
           user: { token, type: "Matrimony", id: results[0].id },
           message: "Matrimony Login Successful!",
         });
@@ -487,7 +489,7 @@ const matrimonyController = {
     matrimony.search(id, search, (err, results) => {
       if (err) {
         console.log(err);
-        return res.status(500).send("Internal Server Error");
+        return res.status(500).json({ message: "Internal Server Error" });
       }
 
       results.forEach((result) => {
@@ -495,7 +497,7 @@ const matrimonyController = {
         result.password = undefined;
       });
 
-      res.status(200).send(results);
+      res.status(200).json(results);
     });
   },
 };

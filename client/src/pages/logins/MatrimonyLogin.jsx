@@ -37,6 +37,8 @@ const MatrimonyLogin = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    toast.loading("Submitting Your Data, Please Wait...");
+
     if (!formData.email || !formData.password) {
       return toast.error("Please fill in all fields");
     }
@@ -56,10 +58,12 @@ const MatrimonyLogin = () => {
     const data = await response.json();
 
     if (response.ok) {
+      toast.dismiss();
       toast.success(data.message);
       setLoginState(true);
       loginData(data.user);
     } else {
+      toast.dismiss();
       toast.error(data.message);
     }
   };

@@ -8,9 +8,9 @@ const jobSeekerController = {
     jobSeeker.getAll((err, results) => {
       if (err) {
         console.log(err);
-        return res.status(500).send("Internal Server Error");
+        return res.status(500).json({ message: "Internal server error" });
       }
-      res.status(200).send(results);
+      res.status(200).json(results);
     });
   },
   getById: (req, res) => {
@@ -18,12 +18,12 @@ const jobSeekerController = {
     jobSeeker.getById(id, (err, results) => {
       if (err) {
         console.log(err);
-        return res.status(500).send("Internal Server Error");
+        return res.status(500).json({ message: "Internal server error" });
       }
       if (!results.length) {
-        return res.status(404).send("Job Seeker not found");
+        return res.status(404).json("Job Seeker not found");
       }
-      res.status(200).send({ jobSeeker: results[0] });
+      res.status(200).json({ jobSeeker: results[0] });
     });
   },
   register: (req, res) => {
@@ -228,9 +228,9 @@ const jobSeekerController = {
     jobSeeker.getCompanyDirectory((err, results) => {
       if (err) {
         console.log(err);
-        return res.status(500).send("Internal Server Error");
+        return res.status(500).json({ message: "Internal server error" });
       }
-      res.status(200).send(results);
+      res.status(200).json(results);
     });
   },
   getAllUserResumes: (req, res) => {
@@ -238,9 +238,9 @@ const jobSeekerController = {
     jobSeeker.getAllUserResumes(jobSeekerId, (err, results) => {
       if (err) {
         console.log(err);
-        return res.status(500).send("Internal Server Error");
+        return res.status(500).json({ message: "Internal server error" });
       }
-      res.status(200).send(results);
+      res.status(200).json(results);
     });
   },
   getFullResume: (req, res) => {
@@ -248,12 +248,12 @@ const jobSeekerController = {
     jobSeeker.getFullResume(resumeId, (err, results) => {
       if (err) {
         console.log(err);
-        return res.status(500).send("Internal Server Error");
+        return res.status(500).json({ message: "Internal server error" });
       }
       if (!results) {
-        return res.status(404).send("Resume not found");
+        return res.status(404).json("Resume not found");
       }
-      res.status(200).send(results);
+      res.status(200).json(results);
     });
   },
   createResume: (req, res) => {
@@ -319,9 +319,9 @@ const jobSeekerController = {
     jobSeeker.createResume(newResume, (err, results) => {
       if (err) {
         console.log(err);
-        return res.status(500).send("Internal Server Error");
+        return res.status(500).json({ message: "Internal server error" });
       }
-      res.status(201).send({ message: "Resume created successfully" });
+      res.status(201).json({ message: "Resume created successfully" });
     });
   },
   updateResume: (req, res) => {
@@ -330,10 +330,10 @@ const jobSeekerController = {
     jobSeeker.getResumeById(resumeId, (err, results) => {
       if (err) {
         console.log(err);
-        return res.status(500).send("Internal Server Error");
+        return res.status(500).json({ message: "Internal server error" });
       }
       if (!results.length) {
-        return res.status(404).send({ message: "Resume not found" });
+        return res.status(404).json({ message: "Resume not found" });
       }
 
       const {
@@ -395,9 +395,9 @@ const jobSeekerController = {
       jobSeeker.updateResume(resumeId, newResume, (err, results) => {
         if (err) {
           console.log(err);
-          return res.status(500).send("Internal Server Error");
+          return res.status(500).json({ message: "Internal server error" });
         }
-        res.status(200).send({ message: "Resume updated successfully" });
+        res.status(200).json({ message: "Resume updated successfully" });
       });
     });
   },
@@ -407,18 +407,18 @@ const jobSeekerController = {
     jobSeeker.getResumeById(id, (err, results) => {
       if (err) {
         console.log(err);
-        return res.status(500).send("Internal Server Error");
+        return res.status(500).json({ message: "Internal server error" });
       }
       if (!results.length) {
-        return res.status(404).send({ message: "Resume not found" });
+        return res.status(404).json({ message: "Resume not found" });
       }
 
       jobSeeker.deleteResume(id, (err, results) => {
         if (err) {
           console.log(err);
-          return res.status(500).send("Internal Server Error");
+          return res.status(500).json({ message: "Internal server error" });
         }
-        res.status(200).send({ message: "Resume deleted successfully" });
+        res.status(200).json({ message: "Resume deleted successfully" });
       });
     });
   },
@@ -444,9 +444,9 @@ const jobSeekerController = {
     jobSeeker.getJobs(searchJob, (err, results) => {
       if (err) {
         console.log(err);
-        return res.status(500).send("Internal Server Error");
+        return res.status(500).json({ message: "Internal server error" });
       }
-      res.status(200).send(results);
+      res.status(200).json(results);
     });
   },
 };

@@ -121,6 +121,8 @@ const JobSeekerRegister = () => {
   const handleSubmit = async (event) => {
     event.preventDefault();
 
+    toast.loading("Submitting Your Data, Please Wait...");
+
     if (formData.password !== formData.confirmPassword) {
       toast.error("Passwords do not match");
       return;
@@ -152,9 +154,11 @@ const JobSeekerRegister = () => {
     const data = await response.json();
 
     if (response.ok) {
+      toast.dismiss();
       toast.success(data.message);
       navigate("/job-seeker-login");
     } else {
+      toast.dismiss();
       toast.error(data.message);
     }
   };

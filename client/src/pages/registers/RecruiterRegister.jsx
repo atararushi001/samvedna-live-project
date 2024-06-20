@@ -88,6 +88,8 @@ const RecruiterRegister = () => {
   const handleSubmit = async (event) => {
     event.preventDefault();
 
+    toast.loading("Submitting Your Data, Please Wait...");
+
     if (formData.password !== formData.confirmPassword) {
       toast.error("Passwords do not match");
       return;
@@ -112,9 +114,11 @@ const RecruiterRegister = () => {
     const responseData = await response.json();
 
     if (response.ok) {
+      toast.dismiss();
       toast.success(responseData.message);
       navigate("/recruiter-login");
     } else {
+      toast.dismiss();
       toast.error(responseData.message);
     }
   };
