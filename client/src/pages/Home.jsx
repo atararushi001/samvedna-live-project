@@ -345,7 +345,7 @@ const Home = () => {
             What <span className="highlight-text">We</span> Do?
           </h1>
           <div
-            className="cards to-animate"
+            className="cards animate"
             ref={(el) => elementsRef.current.push(el)}
           >
             <div className="card">
