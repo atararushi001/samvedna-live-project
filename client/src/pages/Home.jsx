@@ -218,7 +218,7 @@ const Home = () => {
 
       <div className="container">
         <section
-          className="main-slogan to-animate"
+          className="main-slogan"
           ref={(el) => elementsRef.current.push(el)}
         >
           <h1>
@@ -256,10 +256,7 @@ const Home = () => {
       </div>
 
       <section className="what-are-we">
-        <div
-          className="container to-animate"
-          ref={(el) => elementsRef.current.push(el)}
-        >
+        <div className="container" ref={(el) => elementsRef.current.push(el)}>
           <h1>
             What <span>we</span> are as a <br />{" "}
             <span className="highlight-text">SAMVEDNA TRUST</span>
@@ -309,10 +306,7 @@ const Home = () => {
       </section>
 
       <section className="understand-disability ">
-        <div
-          className="container to-animate"
-          ref={(el) => elementsRef.current.push(el)}
-        >
+        <div className="container" ref={(el) => elementsRef.current.push(el)}>
           <h1>
             Let&apos;s Understand{" "}
             <span className="highlight-text">disABILITY</span>
@@ -344,10 +338,7 @@ const Home = () => {
           <h1>
             What <span className="highlight-text">We</span> Do?
           </h1>
-          <div
-            className="cards animate"
-            ref={(el) => elementsRef.current.push(el)}
-          >
+          <div className="cards">
             <div className="card">
               <h2 className="highlight-text">OUR INTENTION</h2>
               <h3>Unlocking the Potential of PWDs</h3>

@@ -4,6 +4,7 @@ import Main from "./layouts/Main";
 import Recruiter from "./layouts/Recruiter";
 import JobSeeker from "./layouts/JobSeeker";
 import Matrimony from "./layouts/Matrimony";
+import Admin from "./layouts/Admin";
 
 import Home from "./pages/Home";
 import Donate from "./pages/Donate";
@@ -55,6 +56,9 @@ import Profile from "./pages/Profile";
 import EditProfile from "./pages/EditProfile";
 import SearchProfileResults from "./pages/SearchProfileResults";
 import Explore from "./pages/Explore";
+
+import AdminLogin from "./pages/admin/AdminLogin";
+import AdminDashboard from "./pages/admin/AdminDashboard";
 
 const App = () => {
   return (
@@ -118,6 +122,11 @@ const App = () => {
           <Route path="profile" element={<Profile />} />
           <Route path="profile-results" element={<SearchProfileResults />} />
           <Route path="edit-profile" element={<EditProfile />} />
+        </Route>
+
+        <Route path="admin" element={<Admin />}>
+          <Route index element={<AdminLogin />} />
+          <Route path="dashboard" element={<AdminDashboard />} />
         </Route>
 
         <Route path="*" element={<NotFound />} />

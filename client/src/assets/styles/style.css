@@ -1118,10 +1118,6 @@ footer .footer-bottom p a {
   gap: 3rem;
 }
 
-.what-we-do .cards.animate {
-  animation: flip 1s ease-in-out forwards;
-}
-
 .what-we-do .cards .card {
   width: 320px;
   min-height: 350px;
@@ -1135,6 +1131,9 @@ footer .footer-bottom p a {
   box-shadow: 0 0.2rem 0.8rem rgba(0, 0, 0, 0.25);
   padding: 2rem;
   border-radius: 0.25rem;
+  animation: appear linear;
+  animation-timeline: view();
+  animation-range: entry 0% cover 40%;
 }
 
 .performance,
@@ -3859,6 +3858,36 @@ table td:last-child {
   padding-block: 3rem;
 }
 
+/* Pages > Admin Login */
+.admin-login {
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+  padding-block: 3rem;
+}
+
+.admin-login form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  width: 100%;
+}
+
+.admin-dashboard {
+  height: 100%;
+  display: flex;
+  direction: ltr;
+}
+
+.admin-dashboard .main-content {
+  padding: 16px 24px;
+}
+
 /* Pages > 404 */
 .page-404 {
   min-height: 100dvh;
@@ -3903,6 +3932,17 @@ table td:last-child {
   }
   100% {
     transform: scale(1);
+  }
+}
+
+@keyframes appear {
+  from {
+    opacity: 0;
+    transform: translateX(-100px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
   }
 }
 
