@@ -106,7 +106,12 @@ const Recruiters = () => {
   const filteredRecruiters = recruiters.filter((recruiter) => {
     return (
       recruiter.name.toLowerCase().includes(search.toLowerCase()) ||
-      recruiter.email.toLowerCase().includes(search.toLowerCase())
+      recruiter.email.toLowerCase().includes(search.toLowerCase()) ||
+      recruiter.company.toLowerCase().includes(search.toLowerCase()) ||
+      recruiter.designation.toLowerCase().includes(search.toLowerCase()) ||
+      recruiter.cityName.toLowerCase().includes(search.toLowerCase()) ||
+      recruiter.stateName.toLowerCase().includes(search.toLowerCase()) ||
+      recruiter.countryName.toLowerCase().includes(search.toLowerCase())
     );
   });
 

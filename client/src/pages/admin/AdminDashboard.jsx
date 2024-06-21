@@ -13,6 +13,7 @@ import UserStore from "../../stores/UserStore";
 
 import MainView from "../components/admin/MainView";
 import Recruiters from "../components/admin/Recruiters";
+import AddRecruiter from "../components/admin/AddRecruiter";
 
 import Logo from "../../assets/images/logo.png";
 
@@ -60,7 +61,9 @@ const AdminDashboard = () => {
             <MenuItem onClick={() => setView("viewRecruiters")}>
               View Recruiters
             </MenuItem>
-            <MenuItem>Add Recruiter</MenuItem>
+            <MenuItem onClick={() => setView("addRecruiter")}>
+              Add Recruiter
+            </MenuItem>
           </SubMenu>
           <SubMenu
             label="Job Seekers"
@@ -98,6 +101,7 @@ const AdminDashboard = () => {
       <main>
         {view === "dashboard" && <MainView />}
         {view === "viewRecruiters" && <Recruiters />}
+        {view === "addRecruiter" && <AddRecruiter setView={setView} />}
       </main>
     </div>
   );
