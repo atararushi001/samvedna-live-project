@@ -16,5 +16,10 @@ router.get(
   authMiddleware("Admin"),
   adminController.getRecruiters
 );
+router.get(
+  "/job-seekers",
+  authMiddleware("Admin"),
+  adminController.getJobSeekers
+);
 
 module.exports = router;

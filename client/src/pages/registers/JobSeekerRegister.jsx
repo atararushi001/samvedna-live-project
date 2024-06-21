@@ -76,7 +76,6 @@ const JobSeekerRegister = () => {
   }, []);
 
   useEffect(() => {
-    console.log(formData.country);
     if (formData.country) {
       fetch(`${API}/utils/states/${formData.country}`)
         .then((response) => response.json())

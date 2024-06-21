@@ -92,6 +92,16 @@ const adminController = {
       }
     });
   },
+  getJobSeekers: (req, res) => {
+    Admin.getJobSeekers((err, result) => {
+      if (err) {
+        console.log(err);
+        return res.status(500).json({ message: "An error occurred" });
+      } else {
+        return res.json(result);
+      }
+    });
+  },
 };
 
 module.exports = adminController;

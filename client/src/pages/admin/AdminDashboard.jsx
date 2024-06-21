@@ -14,13 +14,15 @@ import UserStore from "../../stores/UserStore";
 import MainView from "../components/admin/MainView";
 import Recruiters from "../components/admin/Recruiters";
 import AddRecruiter from "../components/admin/AddRecruiter";
+import JobSeekers from "../components/admin/JobSeekers";
 
 import Logo from "../../assets/images/logo.png";
 
 const AdminDashboard = () => {
-  const { loginState } = UserStore();
+  const { loginState, logout } = UserStore();
   const navigate = useNavigate();
   const [view, setView] = useState("dashboard");
+  const [toggle, setToggle] = useState(false);
 
   useEffect(() => {
     if (!loginState) {
@@ -28,6 +30,11 @@ const AdminDashboard = () => {
     }
   }, [loginState, navigate]);
 
+  const handleLogout = (e) => {
+    e.preventDefault();
+    logout();
+    navigate("/");
+  };
   return (
     <div className="dashboard-container">
       <Sidebar
@@ -38,6 +45,8 @@ const AdminDashboard = () => {
             borderRight: "1px solid #d0d7cc",
           },
         }}
+        onBackdropClick={() => setToggle(false)}
+        toggled={toggle}
       >
         <div className="sidebar-header">
           <img
@@ -69,7 +78,13 @@ const AdminDashboard = () => {
             label="Job Seekers"
             icon={<FontAwesomeIcon icon="clipboard-user" />}
           >
-            <MenuItem>View Job Seekers</MenuItem>
+            <MenuItem
+              onClick={() => {
+                setView("jobSeekers");
+              }}
+            >
+              View Job Seekers
+            </MenuItem>
             <MenuItem>Add Job Seekers</MenuItem>
           </SubMenu>
           <SubMenu
@@ -96,12 +111,27 @@ const AdminDashboard = () => {
           >
             Contact Queries
           </MenuItem>
+          <MenuItem
+            style={{
+              marginTop: "10px",
+            }}
+          >
+            <button className="btn" onClick={handleLogout}>
+              Logout
+            </button>
+          </MenuItem>
         </Menu>
       </Sidebar>
       <main>
+        <FontAwesomeIcon
+          icon="bars"
+          className="icon"
+          onClick={() => setToggle(!toggle)}
+        />
         {view === "dashboard" && <MainView />}
         {view === "viewRecruiters" && <Recruiters />}
         {view === "addRecruiter" && <AddRecruiter setView={setView} />}
+        {view === "jobSeekers" && <JobSeekers />}
       </main>
     </div>
   );

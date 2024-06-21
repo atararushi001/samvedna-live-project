@@ -47,6 +47,21 @@ const Admin = {
       callback
     );
   },
+  getJobSeekers: (callback) => {
+    db.query(
+      `
+      SELECT DISTINCT job_seekers.*, cities.name as cityName, states.name as stateName, country.name as countryName, educationspecialization.education_specialization_name as educationName, qualificationlevel.qualification_name as qualificationName
+      FROM ${db_name}.job_seekers 
+      JOIN cities ON job_seekers.city = cities.id 
+      JOIN states ON job_seekers.state = states.id 
+      JOIN country ON job_seekers.country = country.id
+      JOIN educationspecialization ON job_seekers.educationSpecialization = educationspecialization.education_specialization_id 
+      JOIN qualificationlevel ON job_seekers.qualification = qualificationlevel.qualification_id
+    `,
+      [],
+      callback
+    );
+  },
 };
 
 module.exports = Admin;

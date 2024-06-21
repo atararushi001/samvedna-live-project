@@ -4,7 +4,11 @@ const router = express.Router();
 const jobSeekerController = require("../controllers/jobSeeker.controller");
 const authMiddleware = require("../middlewares/auth.middleware");
 
-router.post("/register", jobSeekerController.register);
+// router.post("/register", jobSeekerController.register);
+router.post("/register", (req, res) => {
+  console.log("Register route called");
+  jobSeekerController.register(req, res);
+});
 router.post("/login", jobSeekerController.login);
 router.put("/update", authMiddleware("Job Seeker"), jobSeekerController.update);
 router.get(
