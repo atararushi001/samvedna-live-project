@@ -42,8 +42,13 @@ const JobSeekers = () => {
       sortable: true,
     },
     {
-      name: "Name",
-      selector: (row) => row.name + " " + row.lastName,
+      name: "First Name",
+      selector: (row) => row.name,
+      sortable: true,
+    },
+    {
+      name: "Last Name",
+      selector: (row) => row.lastName,
       sortable: true,
     },
     {
@@ -176,11 +181,20 @@ const JobSeekers = () => {
     return (
       jobSeeker.name.toLowerCase().includes(search.toLowerCase()) ||
       jobSeeker.email.toLowerCase().includes(search.toLowerCase()) ||
-      jobSeeker.company.toLowerCase().includes(search.toLowerCase()) ||
-      jobSeeker.designation.toLowerCase().includes(search.toLowerCase()) ||
       jobSeeker.cityName.toLowerCase().includes(search.toLowerCase()) ||
       jobSeeker.stateName.toLowerCase().includes(search.toLowerCase()) ||
-      jobSeeker.countryName.toLowerCase().includes(search.toLowerCase())
+      jobSeeker.countryName.toLowerCase().includes(search.toLowerCase()) ||
+      jobSeeker.qualificationName
+        .toLowerCase()
+        .includes(search.toLowerCase()) ||
+      jobSeeker.educationName.toLowerCase().includes(search.toLowerCase()) ||
+      jobSeeker.experienceAndAppliance
+        .toLowerCase()
+        .includes(search.toLowerCase()) ||
+      jobSeeker.disabilityPercentage.toString().includes(search) ||
+      jobSeeker.specializationInDisability
+        .toLowerCase()
+        .includes(search.toLowerCase())
     );
   });
 
