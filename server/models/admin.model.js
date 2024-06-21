@@ -18,6 +18,35 @@ const Admin = {
       callback
     );
   },
+  getUsersCount: (callback) => {
+    db.query(
+      `SELECT 
+      (SELECT COUNT(*) FROM recruiters) as recruiters, 
+      (SELECT COUNT(*) FROM job_seekers) as jobSeekers, 
+      (SELECT COUNT(*) FROM selfemployment) as selfEmployed, 
+      (SELECT COUNT(*) FROM matrimony) as matrimonyUsers`,
+      [],
+      (error, results) => {
+        if (error) {
+          callback(error);
+        }
+        callback(null, results[0]);
+      }
+    );
+  },
+  getRecruiters: (callback) => {
+    db.query(
+      `
+      SELECT DISTINCT recruiters.*, cities.name as cityName, states.name as stateName, country.name as countryName 
+      FROM ${db_name}.recruiters 
+      JOIN cities ON recruiters.city = cities.id 
+      JOIN states ON recruiters.state = states.id 
+      JOIN country ON recruiters.country = country.id
+    `,
+      [],
+      callback
+    );
+  },
 };
 
 module.exports = Admin;

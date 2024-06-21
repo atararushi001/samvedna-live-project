@@ -72,6 +72,26 @@ const adminController = {
       });
     });
   },
+  getUsersCount: (req, res) => {
+    Admin.getUsersCount((err, result) => {
+      if (err) {
+        console.log(err);
+        return res.status(500).json({ message: "An error occurred" });
+      } else {
+        return res.json(result);
+      }
+    });
+  },
+  getRecruiters: (req, res) => {
+    Admin.getRecruiters((err, result) => {
+      if (err) {
+        console.log(err);
+        return res.status(500).json({ message: "An error occurred" });
+      } else {
+        return res.json(result);
+      }
+    });
+  },
 };
 
 module.exports = adminController;

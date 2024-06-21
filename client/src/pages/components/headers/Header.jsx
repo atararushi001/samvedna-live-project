@@ -114,7 +114,7 @@ const Header = () => {
               Contact
             </Link>
           </li>
-          {loginState ? (
+          {loginState && userDetails.type !== "Admin" ? (
             <>
               <li>
                 {userDetails.type === "Recruiter" ? (

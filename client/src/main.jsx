@@ -27,6 +27,12 @@ import {
   faBriefcase,
   faMobileScreen,
   faAngleRight,
+  faUserTie,
+  faClipboardUser,
+  faUserPlus,
+  faUserGroup,
+  faNewspaper,
+  faFileContract,
 } from "@fortawesome/free-solid-svg-icons";
 
 library.add(
@@ -51,7 +57,13 @@ library.add(
   faRulerVertical,
   faBriefcase,
   faMobileScreen,
-  faAngleRight
+  faAngleRight,
+  faUserTie,
+  faClipboardUser,
+  faUserPlus,
+  faUserGroup,
+  faNewspaper,
+  faFileContract
 );
 
 import App from "./App.jsx";

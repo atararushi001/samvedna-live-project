@@ -3878,15 +3878,71 @@ table td:last-child {
   width: 100%;
 }
 
-.admin-dashboard {
-  height: 100%;
+/* Pages > Admin Dashboard */
+.dashboard-container {
   display: flex;
-  direction: ltr;
+  min-height: 100dvh;
 }
 
-.admin-dashboard .main-content {
-  padding: 16px 24px;
+.dashboard-container main {
+  width: 80%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  padding: 1rem;
 }
+
+.dashboard-container main .main-view-container {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.main-view-container .cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1rem;
+  width: 100%;
+  place-content: center;
+  place-items: center;
+  margin-top: 2rem;
+}
+
+.main-view-container .cards .card {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  padding: 1rem;
+  border-radius: 0.25rem;
+  background: var(--background);
+  border: 1px solid var(--secondary);
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+/* Pages > Admin Dashboard > Views > Recruiters */
+.view-recruiters {
+  min-height: 100dvh;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 2rem;
+  padding-block: 3rem;
+}
+
+.view-recruiters 
 
 /* Pages > 404 */
 .page-404 {
