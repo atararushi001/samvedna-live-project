@@ -12,10 +12,18 @@ const router = require("./routes");
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+const allowedOrigins = process.env.FRONTEND_URL.split(',');
+
 app.use(
   cors({
-    origin: process.env.FRONTEND_URL,
-    credentials: true,
+    origin: function (origin, callback) {
+      if (allowedOrigins.indexOf(origin) !== -1 || !origin) {
+        callback(null, true);
+      } else {
+        callback(new Error('Not allowed by CORS'));
+      }
+    },
+    credentials:true,
   })
 );
 
