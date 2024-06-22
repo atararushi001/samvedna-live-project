@@ -134,52 +134,54 @@ const adminController = {
           return res.status(400).json({ message: "CSV file is empty" });
         }
 
-        JobSeeker.getByEmail(csvData[0].email, (err, result) => {
-          if (err) {
-            console.log(err);
-            return res.status(500).json({ message: "An error occurred" });
-          }
+        // Use Promise.all to handle multiple rows
+        const operations = csvData.map(
+          (row) =>
+            new Promise((resolve, reject) => {
+              JobSeeker.getByEmail(row.email, async (err, result) => {
+                if (err) {
+                  console.log(err);
+                  return reject("An error occurred");
+                }
 
-          if (result.length) {
+                if (result.length) {
+                  // If job seeker exists, resolve without creating a new one
+                  resolve(`Job Seeker with email ${row.email} already exists`);
+                } else {
+                  try {
+                    // Hash password and create a new job seeker
+                    const hashedPassword = await bcrypt.hash(row.password, 10);
+                    row.password = hashedPassword;
+                    JobSeeker.create(row, (err, result) => {
+                      if (err) {
+                        console.log("Database error", err);
+                        return reject("Internal server error");
+                      } else {
+                        resolve("Job Seeker created successfully");
+                      }
+                    });
+                  } catch (error) {
+                    reject("Error hashing password");
+                  }
+                }
+              });
+            })
+        );
+
+        // Wait for all operations to complete
+        Promise.all(operations)
+          .then((results) => {
             fs.unlink(csvFilePath, (err) => {
               if (err) {
                 console.error("Error deleting the CSV file:", err);
-                return;
+                // Even if there's an error deleting the file, respond with the operation results
               }
+              res.status(201).json({ messages: results });
             });
-            return res.status(400).json({
-              message: `Job Seeker with email ${csvData[0].email} already exists`,
-            });
-          } else {
-            bcrypt.hash(csvData[0].password, 10, (err, hash) => {
-              if (err) {
-                res.status(500).json({ message: "Internal server error" });
-                return;
-              }
-
-              csvData[0].password = hash;
-
-              JobSeeker.create(csvData[0], (err, result) => {
-                if (err) {
-                  res.status(500).json({ message: "Internal server error" });
-                  console.log("Database error", err);
-                  return;
-                } else {
-                  fs.unlink(csvFilePath, (err) => {
-                    if (err) {
-                      console.error("Error deleting the CSV file:", err);
-                      return;
-                    }
-                  });
-
-                  return res
-                    .status(201)
-                    .json({ message: "Job Seeker created successfully" });
-                }
-              });
-            });
-          }
-        });
+          })
+          .catch((error) => {
+            res.status(500).json({ message: error });
+          });
       } catch (err) {
         console.error(err);
         res.status(500).json({ error: "Error parsing CSV data" });
