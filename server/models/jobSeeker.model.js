@@ -6,7 +6,6 @@ const JobSeeker = {
     db.query(`SELECT * FROM ${db_name}.job_seekers`, callback);
   },
   create: (newJobSeeker, callback) => {
-    console.log(newJobSeeker);
     const {
       email,
       username,

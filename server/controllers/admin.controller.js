@@ -2,11 +2,26 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const csv = require("csvtojson");
 const multer = require("multer");
+const path = require("path");
+const fs = require("fs");
 
 const Admin = require("../models/admin.model");
 const JobSeeker = require("../models/jobSeeker.model");
 
-const upload = multer({ dest: "./public/uploads/" });
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, "./public/uploads/");
+  },
+  filename: function (req, file, cb) {
+    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
+    cb(
+      null,
+      file.fieldname + "-" + uniqueSuffix + path.extname(file.originalname)
+    );
+  },
+});
+
+const upload = multer({ storage: storage });
 
 const adminController = {
   register: (req, res) => {
@@ -115,25 +130,55 @@ const adminController = {
       try {
         const csvData = await csv().fromFile(csvFilePath);
 
-        bcrypt.hash(csvData[0].password, 10, (err, hash) => {
+        if (!csvData.length) {
+          return res.status(400).json({ message: "CSV file is empty" });
+        }
+
+        JobSeeker.getByEmail(csvData[0].email, (err, result) => {
           if (err) {
-            res.status(500).json({ message: "Internal server error" });
-            return;
+            console.log(err);
+            return res.status(500).json({ message: "An error occurred" });
           }
 
-          csvData[0].password = hash;
+          if (result.length) {
+            fs.unlink(csvFilePath, (err) => {
+              if (err) {
+                console.error("Error deleting the CSV file:", err);
+                return;
+              }
+            });
+            return res.status(400).json({
+              message: `Job Seeker with email ${csvData[0].email} already exists`,
+            });
+          } else {
+            bcrypt.hash(csvData[0].password, 10, (err, hash) => {
+              if (err) {
+                res.status(500).json({ message: "Internal server error" });
+                return;
+              }
 
-          JobSeeker.create(csvData[0], (err, result) => {
-            if (err) {
-              res.status(500).json({ message: "Internal server error" });
-              console.log("Database error", err);
-              return;
-            } else {
-              return res
-                .status(201)
-                .json({ message: "Job Seeker created successfully" });
-            }
-          });
+              csvData[0].password = hash;
+
+              JobSeeker.create(csvData[0], (err, result) => {
+                if (err) {
+                  res.status(500).json({ message: "Internal server error" });
+                  console.log("Database error", err);
+                  return;
+                } else {
+                  fs.unlink(csvFilePath, (err) => {
+                    if (err) {
+                      console.error("Error deleting the CSV file:", err);
+                      return;
+                    }
+                  });
+
+                  return res
+                    .status(201)
+                    .json({ message: "Job Seeker created successfully" });
+                }
+              });
+            });
+          }
         });
       } catch (err) {
         console.error(err);
