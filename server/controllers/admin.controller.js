@@ -1,7 +1,12 @@
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const csv = require("csvtojson");
+const multer = require("multer");
 
 const Admin = require("../models/admin.model");
+const JobSeeker = require("../models/jobSeeker.model");
+
+const upload = multer({ dest: "./public/uploads/" });
 
 const adminController = {
   register: (req, res) => {
@@ -102,6 +107,40 @@ const adminController = {
       }
     });
   },
+  addFromCSV: [
+    upload.single("csv"),
+    async (req, res) => {
+      const csvFilePath = req.file.path;
+
+      try {
+        const csvData = await csv().fromFile(csvFilePath);
+
+        bcrypt.hash(csvData[0].password, 10, (err, hash) => {
+          if (err) {
+            res.status(500).json({ message: "Internal server error" });
+            return;
+          }
+
+          csvData[0].password = hash;
+
+          JobSeeker.create(csvData[0], (err, result) => {
+            if (err) {
+              res.status(500).json({ message: "Internal server error" });
+              console.log("Database error", err);
+              return;
+            } else {
+              return res
+                .status(201)
+                .json({ message: "Job Seeker created successfully" });
+            }
+          });
+        });
+      } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: "Error parsing CSV data" });
+      }
+    },
+  ],
 };
 
 module.exports = adminController;
