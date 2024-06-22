@@ -157,7 +157,7 @@ const AdminDashboard = () => {
         {view === "jobSeekers" && <JobSeekers />}
         {view === "addJobSeekers" && <AddJobSeeker setView={setView} />}
         {view === "addFromCSV" && <AddFromCSV setView={setView} />}
-        {view === "getCSVData" && <GetCSVData />}
+        {view === "getCSVData" && <GetCSVData setView={setView} />}
       </main>
     </div>
   );

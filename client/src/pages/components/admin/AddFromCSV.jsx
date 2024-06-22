@@ -1,22 +1,40 @@
 import { useState } from "react";
 import { toast } from "react-toastify";
+import PropTypes from "prop-types";
 
 const API = import.meta.env.VITE_API_URL;
 
-const AddFromCSV = () => {
-  const [formData, setFormData] = useState({
-    csv: "",
-  });
-
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
-  };
+const AddFromCSV = ({ setView }) => {
+  const [file, setFile] = useState(null);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const data = new FormData();
+    const formData = new FormData();
+    formData.append("csv", file);
+
+    try {
+      const response = await fetch(`${API}/admin/add-csv`, {
+        method: "POST",
+        body: formData,
+      });
+
+      const data = await response.json();
+
+      if (response.status === 201) {
+        if (Array.isArray(data.messages)) {
+          toast.success(data.messages.join(", "));
+          setFile(null);
+          setView("jobSeekers");
+        } else {
+          toast.success(data.message);
+        }
+      } else {
+        toast.error(data.message);
+      }
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   return (
@@ -25,11 +43,8 @@ const AddFromCSV = () => {
       <form onSubmit={handleSubmit}>
         <input
           type="file"
-          name="csv"
-          id="csv"
           accept=".csv"
-          value={formData.csv}
-          onChange={handleInputChange}
+          onChange={(e) => setFile(e.target.files[0])}
           required
         />
         <button className="btn btn-full" type="submit">
@@ -38,6 +53,10 @@ const AddFromCSV = () => {
       </form>
     </div>
   );
+};
+
+AddFromCSV.propTypes = {
+  setView: PropTypes.func.isRequired,
 };
 
 export default AddFromCSV;
