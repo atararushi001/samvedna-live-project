@@ -15,6 +15,9 @@ import MainView from "../components/admin/MainView";
 import Recruiters from "../components/admin/Recruiters";
 import AddRecruiter from "../components/admin/AddRecruiter";
 import JobSeekers from "../components/admin/JobSeekers";
+import AddJobSeeker from "../components/admin/AddJobSeeker";
+import AddFromCSV from "../components/admin/AddFromCSV";
+import GetCSVData from "../components/admin/GetCSVData";
 
 import Logo from "../../assets/images/logo.png";
 
@@ -85,7 +88,20 @@ const AdminDashboard = () => {
             >
               View Job Seekers
             </MenuItem>
-            <MenuItem>Add Job Seekers</MenuItem>
+            <MenuItem
+              onClick={() => {
+                setView("addJobSeekers");
+              }}
+            >
+              Add Job Seekers
+            </MenuItem>
+            <MenuItem
+              onClick={() => {
+                setView("addFromCSV");
+              }}
+            >
+              Add From CSV
+            </MenuItem>
           </SubMenu>
           <SubMenu
             label="Self Employees"
@@ -112,11 +128,18 @@ const AdminDashboard = () => {
             Contact Queries
           </MenuItem>
           <MenuItem
+            label="Get CSV Data"
+            icon={<FontAwesomeIcon icon="file-csv" />}
+            onClick={() => setView("getCSVData")}
+          >
+            Get CSV Data
+          </MenuItem>
+          <MenuItem
             style={{
               marginTop: "10px",
             }}
           >
-            <button className="btn" onClick={handleLogout}>
+            <button className="btn btn-full" onClick={handleLogout}>
               Logout
             </button>
           </MenuItem>
@@ -132,6 +155,9 @@ const AdminDashboard = () => {
         {view === "viewRecruiters" && <Recruiters />}
         {view === "addRecruiter" && <AddRecruiter setView={setView} />}
         {view === "jobSeekers" && <JobSeekers />}
+        {view === "addJobSeekers" && <AddJobSeeker setView={setView} />}
+        {view === "addFromCSV" && <AddFromCSV setView={setView} />}
+        {view === "getCSVData" && <GetCSVData />}
       </main>
     </div>
   );
