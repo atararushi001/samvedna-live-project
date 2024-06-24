@@ -2,10 +2,13 @@ import { useState } from "react";
 import { toast } from "react-toastify";
 import PropTypes from "prop-types";
 
+import UserStore from "../../../stores/UserStore";
+
 const API = import.meta.env.VITE_API_URL;
 
 const AddFromCSV = ({ setView }) => {
   const [file, setFile] = useState(null);
+  const { userDetails } = UserStore();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -16,6 +19,9 @@ const AddFromCSV = ({ setView }) => {
     try {
       const response = await fetch(`${API}/admin/add-csv`, {
         method: "POST",
+        headers: {
+          "x-auth-token": userDetails.token,
+        },
         body: formData,
       });
 

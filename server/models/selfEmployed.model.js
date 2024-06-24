@@ -20,7 +20,7 @@ const selfEmployed = {
       description,
       experience,
       assistanceNedeed,
-      product,
+      productDetails,
     } = selfEmployed;
 
     db.query(
@@ -47,7 +47,7 @@ const selfEmployed = {
         } else {
           let lastId = result.insertId;
           let count = 0;
-          product.forEach((element) => {
+          productDetails.forEach((element) => {
             db.query(
               `INSERT INTO ${db_name}.product_selfemployment (self_employment_id, ps_details) VALUES (?, ?)`,
               [lastId, element],
@@ -57,7 +57,7 @@ const selfEmployed = {
                   return callback(err, null);
                 } else {
                   count++;
-                  if (count == product.length) {
+                  if (count == productDetails.length) {
                     return callback(null, result);
                   }
                 }

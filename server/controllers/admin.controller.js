@@ -188,6 +188,26 @@ const adminController = {
       }
     },
   ],
+  getContactQueries: (req, res) => {
+    Admin.getContactQueries((err, result) => {
+      if (err) {
+        console.log(err);
+        return res.status(500).json({ message: "An error occurred" });
+      } else {
+        return res.json(result);
+      }
+    });
+  },
+  getSelfEmployees: (req, res) => {
+    Admin.getSelfEmployees((err, result) => {
+      if (err) {
+        console.log(err);
+        return res.status(500).json({ message: "An error occurred" });
+      } else {
+        return res.json(result);
+      }
+    })
+  }
 };
 
 module.exports = adminController;

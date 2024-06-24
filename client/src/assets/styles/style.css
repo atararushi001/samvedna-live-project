@@ -3950,7 +3950,8 @@ table td:last-child {
 
 /* Pages > Admin Dashboard > Views > Recruiters & Job Seekers */
 .view-recruiters,
-.view-job-seekers {
+.view-job-seekers,
+.view-self-employees {
   min-height: 100dvh;
   width: 100%;
   display: flex;
@@ -3965,7 +3966,8 @@ table td:last-child {
 .add-recruiter,
 .add-job-seeker,
 .add-from-csv,
-.get-csv-data {
+.get-csv-data,
+.queries {
   min-height: 100dvh;
   width: 100%;
   display: flex;
