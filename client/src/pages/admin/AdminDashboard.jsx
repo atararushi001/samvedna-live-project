@@ -19,8 +19,9 @@ import AddJobSeeker from "../components/admin/AddJobSeeker";
 import AddFromCSV from "../components/admin/AddFromCSV";
 import GetCSVData from "../components/admin/GetCSVData";
 import SelfEmployees from "../components/admin/SelfEmployees";
+import AddSelfEmployee from "../components/admin/AddSelfEmployee";
 
-import Logo from "../../assets/images/logo.png";
+import Logo from "../../assets/images/Logo.png";
 
 const AdminDashboard = () => {
   const { loginState, logout } = UserStore();
@@ -111,7 +112,9 @@ const AdminDashboard = () => {
             <MenuItem onClick={() => setView("selfEmployees")}>
               View Self Employees
             </MenuItem>
-            <MenuItem>Add Self Employees</MenuItem>
+            <MenuItem onClick={() => setView("addSelfEmployee")}>
+              Add Self Employees
+            </MenuItem>
           </SubMenu>
           <SubMenu
             label="Matrimony Users"
@@ -156,6 +159,7 @@ const AdminDashboard = () => {
         {view === "addFromCSV" && <AddFromCSV setView={setView} />}
         {view === "getCSVData" && <GetCSVData setView={setView} />}
         {view === "selfEmployees" && <SelfEmployees />}
+        {view === "addSelfEmployee" && <AddSelfEmployee setView={setView} />}
       </main>
     </div>
   );

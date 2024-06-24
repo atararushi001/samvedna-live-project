@@ -3967,7 +3967,8 @@ table td:last-child {
 .add-job-seeker,
 .add-from-csv,
 .get-csv-data,
-.queries {
+.queries,
+.add-self-employee {
   min-height: 100dvh;
   width: 100%;
   display: flex;
@@ -3982,7 +3983,8 @@ table td:last-child {
 .add-job-seeker form,
 .add-from-csv form,
 .get-csv-data form,
-.get-csv-data .show-results {
+.get-csv-data .show-results,
+.add-self-employee form {
   display: flex;
   flex-direction: column;
   gap: 1rem;

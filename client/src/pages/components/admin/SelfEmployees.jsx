@@ -147,7 +147,7 @@ const SelfEmployees = () => {
 
   return (
     <div className="view-self-employees">
-      <h1>Job Seekers</h1>
+      <h1>Self Employees</h1>
       <input
         type="search"
         name="search"
