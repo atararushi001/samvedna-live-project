@@ -62,6 +62,34 @@ const Admin = {
       callback
     );
   },
+  getContactQueries: (callback) => {
+    db.query(
+      `SELECT * FROM contact_query`,
+      [],
+      callback
+    )
+  },
+  getSelfEmployees: (callback) => {
+    db.query(
+      `SELECT 
+            selfemployment.*, 
+            IFNULL(GROUP_CONCAT(product_selfemployment.ps_details), '-') AS products,
+            professions.profession_name AS professionTypeName
+        FROM 
+            selfemployment
+        JOIN 
+            product_selfemployment 
+            ON selfemployment.self_employement_id = product_selfemployment.self_employment_id
+        JOIN 
+            professions 
+            ON selfemployment.professionType = professions.id
+        GROUP BY 
+            selfemployment.self_employement_id, 
+            professions.profession_name;`,
+      [],
+      callback
+    )
+  }
 };
 
 module.exports = Admin;

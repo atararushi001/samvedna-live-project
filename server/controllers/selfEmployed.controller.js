@@ -28,7 +28,7 @@ const selfEmployedController = {
       description,
       experience,
       assistanceNedeed,
-      product,
+      productDetails,
     } = req.body;
 
     if (
@@ -45,7 +45,7 @@ const selfEmployedController = {
       !description ||
       !experience ||
       !assistanceNedeed ||
-      product.length === 0
+      productDetails.length === 0
     ) {
       console.log(req.body);
       return res.status(400).json({ message: "All fields are required" });
@@ -66,7 +66,7 @@ const selfEmployedController = {
         description,
         experience,
         assistanceNedeed,
-        product,
+        productDetails,
       },
       (err, result) => {
         if (err) {

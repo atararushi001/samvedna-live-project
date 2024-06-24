@@ -18,6 +18,7 @@ import JobSeekers from "../components/admin/JobSeekers";
 import AddJobSeeker from "../components/admin/AddJobSeeker";
 import AddFromCSV from "../components/admin/AddFromCSV";
 import GetCSVData from "../components/admin/GetCSVData";
+import SelfEmployees from "../components/admin/SelfEmployees";
 
 import Logo from "../../assets/images/logo.png";
 
@@ -107,7 +108,9 @@ const AdminDashboard = () => {
             label="Self Employees"
             icon={<FontAwesomeIcon icon="user-plus" />}
           >
-            <MenuItem>View Self Employees</MenuItem>
+            <MenuItem onClick={() => setView("selfEmployees")}>
+              View Self Employees
+            </MenuItem>
             <MenuItem>Add Self Employees</MenuItem>
           </SubMenu>
           <SubMenu
@@ -121,12 +124,6 @@ const AdminDashboard = () => {
             <MenuItem>View Blogs</MenuItem>
             <MenuItem>Add Blogs</MenuItem>
           </SubMenu>
-          <MenuItem
-            label="Contact Queries"
-            icon={<FontAwesomeIcon icon="file-contract" />}
-          >
-            Contact Queries
-          </MenuItem>
           <MenuItem
             label="Get CSV Data"
             icon={<FontAwesomeIcon icon="file-csv" />}
@@ -158,6 +155,7 @@ const AdminDashboard = () => {
         {view === "addJobSeekers" && <AddJobSeeker setView={setView} />}
         {view === "addFromCSV" && <AddFromCSV setView={setView} />}
         {view === "getCSVData" && <GetCSVData setView={setView} />}
+        {view === "selfEmployees" && <SelfEmployees />}
       </main>
     </div>
   );

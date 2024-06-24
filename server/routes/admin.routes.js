@@ -21,6 +21,8 @@ router.get(
   authMiddleware("Admin"),
   adminController.getJobSeekers
 );
-router.post("/add-csv", adminController.addFromCSV);
+router.post("/add-csv", authMiddleware("Admin"), adminController.addFromCSV);
+router.get("/contact-queries", authMiddleware("Admin"), adminController.getContactQueries);
+router.get("/self-employees", authMiddleware("Admin"), adminController.getSelfEmployees)
 
 module.exports = router;

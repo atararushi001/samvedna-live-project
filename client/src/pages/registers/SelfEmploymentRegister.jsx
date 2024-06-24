@@ -24,11 +24,10 @@ const SelfEmploymentRegister = () => {
   const [professions, setProfessions] = useState([]);
 
   useEffect(() => {
-    fetch(`${API}/controllers/getProfessions.php`)
-      .then((response) => response.text())
+    fetch(`${API}/utils/professions`)
+      .then((response) => response.json())
       .then((data) => {
-        const options = parseOptions(data);
-        setProfessions(options);
+        setProfessions(data.results);
       })
       .catch((error) => console.error(error));
   }, []);
@@ -63,51 +62,31 @@ const SelfEmploymentRegister = () => {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     toast.loading("Submitting Your Data, Please Wait...");
 
-    const data = new FormData();
-
-    for (const key in formData) {
-      if (key === "productDetails") {
-        formData[key].forEach((detail, index) => {
-          data.append(`product${index}`, detail);
-        });
-      } else {
-        data.append(key, formData[key]);
-      }
-    }
-
-    fetch(`${API}/controllers/selfEmploymentRegister.php`, {
+    const response = await fetch(`${API}/self-employed/register`, {
       method: "POST",
-      body: data,
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        console.log(data);
-        if (data.success) {
-          toast.dismiss();
-          toast.success(data.message);
-        } else {
-          toast.dismiss();
-          toast.error(data.message);
-        }
-      })
-      .catch((error) => {
-        console.error(error);
-      });
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(formData),
+    });
+
+    const data = await response.json();
+
+    if (response.ok) {
+      toast.dismiss();
+      toast.success(data.message);
+      window.location.reload();
+    } else {
+      toast.dismiss();
+      toast.error(data.message);
+    }
   };
 
-  const parseOptions = (htmlString) => {
-    const parser = new DOMParser();
-    const htmlDoc = parser.parseFromString(htmlString, "text/html");
-    return Array.from(htmlDoc.querySelectorAll("option")).map((opt) => ({
-      value: opt.value,
-      label: opt.textContent,
-    }));
-  };
   return (
     <>
       <section id="quotes">
@@ -361,8 +340,11 @@ const SelfEmploymentRegister = () => {
                 Select Your Profession
               </option>
               {professions.map((profession, index) => (
-                <option key={index} value={profession.value}>
-                  {profession.label}
+                <option
+                  key={`${profession.profession_name}-${index}`}
+                  value={profession.id}
+                >
+                  {profession.profession_name}
                 </option>
               ))}
             </select>
