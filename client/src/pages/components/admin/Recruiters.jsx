@@ -8,7 +8,7 @@ import UserStore from "../../../stores/UserStore";
 
 const API = import.meta.env.VITE_API_URL;
 
-const Recruiters = ({ onEditRecruiter, setView }) => {
+const Recruiters = ({ onEditRecruiter }) => {
   const [recruiters, setRecruiters] = useState([]);
   const [search, setSearch] = useState("");
 
@@ -35,7 +35,9 @@ const Recruiters = ({ onEditRecruiter, setView }) => {
 
     if (response.ok) {
       toast.success(data.message);
-      setView("recruiters");
+      setRecruiters(
+        recruiters.filter((recruiter) => recruiter.recruiters_id !== id)
+      );
     } else {
       toast.error(data.message);
     }
@@ -168,7 +170,6 @@ const Recruiters = ({ onEditRecruiter, setView }) => {
 
 Recruiters.propTypes = {
   onEditRecruiter: PropTypes.func,
-  setView: PropTypes.func,
 };
 
 export default Recruiters;

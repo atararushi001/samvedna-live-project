@@ -70,7 +70,7 @@ const blogController = {
     (req, res) => {
       const id = req.params.id;
       const { title, content, author } = req.body;
-      const cover = req.file ? req.file.filename : null;
+      let cover;
 
       blog.getById(id, (err, result) => {
         if (err) {
@@ -83,16 +83,24 @@ const blogController = {
         }
 
         const oldCover = result[0].cover;
-        blog.update(id, { title, content, cover, author }, (err, result) => {
+        const updateData = { title, content, author };
+
+        if (req.file) {
+          cover = req.file.filename;
+          updateData.cover = cover;
+          if (oldCover) {
+            fs.unlinkSync(path.join(__dirname, `../public/uploads/covers/${oldCover}`));
+          }
+        } else {
+          cover = oldCover;
+          updateData.cover = cover;
+        }
+
+        blog.update(id, updateData, (err, result) => {
           if (err) {
             res.status(500).json({ message: "Internal server error" });
             console.log(err);
             return;
-          }
-          if (cover && oldCover) {
-            fs.unlinkSync(
-              path.join(__dirname, `../public/uploads/covers/${oldCover}`)
-            );
           }
           res.status(200).json({ message: "Blog updated successfully" });
         });

@@ -1,16 +1,47 @@
 import { useEffect, useState } from "react";
 import DataTable from "react-data-table-component";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import PropTypes from "prop-types";
+import { toast } from "react-toastify";
 
 import UserStore from "../../../stores/UserStore";
 
 const API = import.meta.env.VITE_API_URL;
 
-const MatrimonyUsers = () => {
+const MatrimonyUsers = ({ onEditMatrimonyUser }) => {
   const [matrimonyUsers, setMatrimonyUsers] = useState([]);
   const [search, setSearch] = useState("");
 
   const { userDetails } = UserStore();
+
+  const handleEdit = (matrimonyUser) => {
+    onEditMatrimonyUser(matrimonyUser);
+  };
+
+  const handleDelete = async (id) => {
+    if (!window.confirm("Are you sure you want to delete this User?")) {
+      return;
+    }
+
+    const response = await fetch(`${API}/admin/delete-matrimony-user/${id}`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        "x-auth-token": userDetails.token,
+      },
+    });
+
+    const data = await response.json();
+
+    if (response.ok) {
+      toast.success(data.message);
+      setMatrimonyUsers(
+        matrimonyUsers.filter((matrimonyUser) => matrimonyUser.id !== id)
+      );
+    } else {
+      toast.error(data.message);
+    }
+  };
 
   useEffect(() => {
     const fetchRecruiters = async () => {
@@ -333,7 +364,7 @@ const MatrimonyUsers = () => {
     },
     {
       name: "Actions",
-      cell: () => (
+      cell: (row) => (
         <div>
           <FontAwesomeIcon
             icon="pen"
@@ -342,6 +373,7 @@ const MatrimonyUsers = () => {
               cursor: "pointer",
               color: "green",
             }}
+            onClick={() => handleEdit(row)}
           />
           <FontAwesomeIcon
             icon="trash"
@@ -349,6 +381,7 @@ const MatrimonyUsers = () => {
               cursor: "pointer",
               color: "red",
             }}
+            onClick={() => handleDelete(row.id)}
           />
         </div>
       ),
@@ -442,6 +475,10 @@ const MatrimonyUsers = () => {
       <DataTable columns={columns} data={filteredMatrimonyUsers} pagination />
     </div>
   );
+};
+
+MatrimonyUsers.propTypes = {
+  onEditMatrimonyUser: PropTypes.func.isRequired,
 };
 
 export default MatrimonyUsers;

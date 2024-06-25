@@ -8,7 +8,7 @@ import UserStore from "../../../stores/UserStore";
 
 const API = import.meta.env.VITE_API_URL;
 
-const SelfEmployees = () => {
+const SelfEmployees = ({ setView }) => {
   const [selfEmployees, setSelfEmployees] = useState([]);
   const [search, setSearch] = useState("");
 
@@ -56,7 +56,7 @@ const SelfEmployees = () => {
 
     if (response.ok) {
       toast.success(data.message);
-      setView("selfEmployees");
+      setView("dashboard");
       setSelfEmployees(
         selfEmployees.filter(
           (selfEmployee) => selfEmployee.self_employement_id !== id
@@ -192,6 +192,10 @@ const SelfEmployees = () => {
       <DataTable columns={columns} data={filteredSelfEmployees} pagination />
     </div>
   );
+};
+
+SelfEmployees.propTypes = {
+  setView: PropTypes.func.isRequired,
 };
 
 export default SelfEmployees;

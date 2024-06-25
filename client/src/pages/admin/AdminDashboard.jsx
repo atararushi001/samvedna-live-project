@@ -24,6 +24,11 @@ import SelfEmployees from "../components/admin/SelfEmployees";
 import AddSelfEmployee from "../components/admin/AddSelfEmployee";
 import MatrimonyUsers from "../components/admin/MatrimonyUsers";
 import AddMatrimonyUser from "../components/admin/AddMatrimonyUser";
+import EditMatrimonyUser from "../components/admin/EditMatrimonyUser";
+import Blogs from "../components/admin/Blogs";
+import AddBlog from "../components/admin/AddBlog";
+import EditBlog from "../components/admin/EditBlog";
+import AddAdmin from "../components/admin/AddAdmin";
 
 import Logo from "../../assets/images/Logo.png";
 
@@ -35,6 +40,8 @@ const AdminDashboard = () => {
   const [toggle, setToggle] = useState(false);
   const [selectedRecruiter, setSelectedRecruiter] = useState(null);
   const [selectedJobSeeker, setSelectedJobSeeker] = useState(null);
+  const [selectedMatrimonyUser, setSelectedMatrimonyUser] = useState(null);
+  const [selectedBlog, setSelectedBlog] = useState(null);
 
   const handleEditRecruiter = (recruiter) => {
     setSelectedRecruiter(recruiter);
@@ -44,6 +51,16 @@ const AdminDashboard = () => {
   const handleEditJobSeeker = (jobSeeker) => {
     setSelectedJobSeeker(jobSeeker);
     setView("editJobSeeker");
+  };
+
+  const handleEditMatrimonyUser = (matrimonyUser) => {
+    setSelectedMatrimonyUser(matrimonyUser);
+    setView("editMatrimonyUser");
+  };
+
+  const handleEditBlog = (blog) => {
+    setSelectedBlog(blog);
+    setView("editBlogs");
   };
 
   useEffect(() => {
@@ -149,8 +166,8 @@ const AdminDashboard = () => {
             </MenuItem>
           </SubMenu>
           <SubMenu label="Blogs" icon={<FontAwesomeIcon icon="newspaper" />}>
-            <MenuItem>View Blogs</MenuItem>
-            <MenuItem>Add Blogs</MenuItem>
+            <MenuItem onClick={() => setView("blogs")}>View Blogs</MenuItem>
+            <MenuItem onClick={() => setView("addBlogs")}>Add Blogs</MenuItem>
           </SubMenu>
           <MenuItem
             label="Get CSV Data"
@@ -158,6 +175,13 @@ const AdminDashboard = () => {
             onClick={() => setView("getCSVData")}
           >
             Get CSV Data
+          </MenuItem>
+          <MenuItem
+            label="Add Admin User"
+            icon={<FontAwesomeIcon icon="plus" />}
+            onClick={() => setView("addAdmin")}
+          >
+            Add Admin User
           </MenuItem>
           <MenuItem
             style={{
@@ -195,8 +219,22 @@ const AdminDashboard = () => {
         {view === "getCSVData" && <GetCSVData setView={setView} />}
         {view === "selfEmployees" && <SelfEmployees />}
         {view === "addSelfEmployee" && <AddSelfEmployee setView={setView} />}
-        {view === "matrimonyUsers" && <MatrimonyUsers />}
+        {view === "matrimonyUsers" && (
+          <MatrimonyUsers onEditMatrimonyUser={handleEditMatrimonyUser} />
+        )}
         {view === "addMatrimonyUser" && <AddMatrimonyUser setView={setView} />}
+        {view === "editMatrimonyUser" && (
+          <EditMatrimonyUser
+            setView={setView}
+            matrimonyUser={selectedMatrimonyUser}
+          />
+        )}
+        {view === "blogs" && <Blogs onEditBlog={handleEditBlog} />}
+        {view === "addBlogs" && <AddBlog setView={setView} />}
+        {view === "editBlogs" && (
+          <EditBlog setView={setView} blog={selectedBlog} />
+        )}
+        {view === "addAdmin" && <AddAdmin setView={setView} />}
       </main>
     </div>
   );

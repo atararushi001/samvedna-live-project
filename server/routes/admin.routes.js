@@ -62,6 +62,7 @@ router.delete(
   authMiddleware("Admin"),
   adminController.deleteMatrimonyUser
 );
+router.put("/update-matrimony-user/:id", authMiddleware("Admin"), adminController.updateMatrimonyUser);
 router.delete(
   "/delete-self-employee/:id",
   authMiddleware("Admin"),
