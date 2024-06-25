@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import DataTable from "react-data-table-component";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import PropTypes from "prop-types";
+import { toast } from "react-toastify";
 
 import UserStore from "../../../stores/UserStore";
 
@@ -34,6 +36,36 @@ const SelfEmployees = () => {
 
     fetchSelfEmployees();
   }, [userDetails.token]);
+
+  const handleDelete = async (id) => {
+    if (
+      !window.confirm("Are you sure you want to delete this Self Employee?")
+    ) {
+      return;
+    }
+
+    const response = await fetch(`${API}/admin/delete-self-employee/${id}`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        "x-auth-token": userDetails.token,
+      },
+    });
+
+    const data = await response.json();
+
+    if (response.ok) {
+      toast.success(data.message);
+      setView("selfEmployees");
+      setSelfEmployees(
+        selfEmployees.filter(
+          (selfEmployee) => selfEmployee.self_employement_id !== id
+        )
+      );
+    } else {
+      toast.error(data.message);
+    }
+  };
 
   const columns = [
     {
@@ -109,7 +141,7 @@ const SelfEmployees = () => {
     },
     {
       name: "Actions",
-      cell: () => (
+      cell: (row) => (
         <div>
           <FontAwesomeIcon
             icon="trash"
@@ -117,6 +149,7 @@ const SelfEmployees = () => {
               cursor: "pointer",
               color: "red",
             }}
+            onClick={() => handleDelete(row.self_employement_id)}
           />
         </div>
       ),
