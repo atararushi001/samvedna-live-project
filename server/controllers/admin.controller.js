@@ -4,6 +4,7 @@ const csv = require("csvtojson");
 const multer = require("multer");
 const path = require("path");
 const fs = require("fs");
+const moment = require("moment");
 
 const Admin = require("../models/admin.model");
 const JobSeeker = require("../models/jobSeeker.model");
@@ -277,6 +278,127 @@ const adminController = {
 
       res.json({ message: "Matrimony User deleted" });
     });
+  },
+  updateJobSeeker: (req, res) => {
+    const {
+      email,
+      username,
+      password,
+      name,
+      lastName,
+      dob,
+      gender,
+      permanentAddress,
+      currentAddress,
+      city,
+      state,
+      postalCode,
+      country,
+      contactNumber,
+      whatsappNumber,
+      jobAlerts,
+      homePhone,
+      addHomePhone,
+      qualification,
+      educationSpecialization,
+      experienceAndAppliance,
+      yesNoQuestion,
+      twoWheeler,
+      threeWheeler,
+      car,
+      disabilityPercentage,
+      specializationInDisability,
+    } = req.body;
+
+    if (password) {
+      bcrypt.hash(password, 10, (err, hash) => {
+        if (err) {
+          res.status(500).json({ message: "Internal server error" });
+          return;
+        }
+
+        const newJobSeeker = {
+          email,
+          username,
+          password: hash,
+          name,
+          lastName,
+          dob: moment(dob).format("YYYY-MM-DD HH:mm:ss"),
+          gender,
+          permanentAddress,
+          currentAddress,
+          city,
+          state,
+          postalCode,
+          country,
+          contactNumber,
+          whatsappNumber,
+          jobAlerts,
+          homePhone,
+          addHomePhone,
+          qualification,
+          educationSpecialization,
+          experienceAndAppliance,
+          yesNoQuestion,
+          twoWheeler,
+          threeWheeler,
+          car,
+          disabilityPercentage,
+          specializationInDisability,
+        };
+
+        Admin.updateJobSeeker(req.params.id, newJobSeeker, (err, result) => {
+          if (err) {
+            res.status(500).json({ message: "Internal server error" });
+            console.log(err);
+            return;
+          }
+
+          res.status(200).json({ message: "Job Seeker updated successfully" });
+        });
+      });
+    } else {
+      const newJobSeeker = {
+        email,
+        username,
+        name,
+        lastName,
+        dob: moment(dob).format("YYYY-MM-DD HH:mm:ss"),
+        gender,
+        permanentAddress,
+        currentAddress,
+        city,
+        state,
+        postalCode,
+        country,
+        contactNumber,
+        whatsappNumber,
+        jobAlerts,
+        homePhone,
+        addHomePhone,
+        qualification,
+        educationSpecialization,
+        experienceAndAppliance,
+        yesNoQuestion,
+        twoWheeler,
+        threeWheeler,
+        car,
+        disabilityPercentage,
+        specializationInDisability,
+      };
+
+      console.log(req.body);
+
+      Admin.updateJobSeeker(req.params.id, newJobSeeker, (err, result) => {
+        if (err) {
+          res.status(500).json({ message: "Internal server error" });
+          console.log(err);
+          return;
+        }
+
+        res.status(200).json({ message: "Job Seeker updated successfully" });
+      });
+    }
   },
 };
 

@@ -135,7 +135,11 @@ const Admin = {
     );
   },
   deleteJobSeeker: (id, callback) => {
-    db.query(`DELETE FROM ${db_name}.job_seekers WHERE id = ?`, [id], callback);
+    db.query(
+      `DELETE FROM ${db_name}.job_seekers WHERE job_seeker_id = ?`,
+      [id],
+      callback
+    );
   },
   deleteSelfEmployed: (id, callback) => {
     db.query(
@@ -153,6 +157,122 @@ const Admin = {
       [id],
       callback
     );
+  },
+  updateJobSeeker: (id, newJobSeeker, callback) => {
+    const {
+      email,
+      username,
+      password,
+      name,
+      lastName,
+      dob,
+      gender,
+      permanentAddress,
+      currentAddress,
+      city,
+      state,
+      postalCode,
+      country,
+      contactNumber,
+      whatsappNumber,
+      jobAlerts,
+      homePhone,
+      addHomePhone,
+      qualification,
+      educationSpecialization,
+      experienceAndAppliance,
+      yesNoQuestion,
+      twoWheeler,
+      threeWheeler,
+      car,
+      disabilityPercentage,
+      specializationInDisability,
+    } = newJobSeeker;
+
+    console.log(newJobSeeker);
+
+    let query = "";
+    let columns = [];
+
+    if (password) {
+      query = `UPDATE ${db_name}.job_seekers SET email = ?, username = ?, password = ?, name = ?, lastName = ?, dob = ?, gender = ?, permanentAddress = ?, currentAddress = ?, city = ?, state = ?, postalCode = ?, country = ?, contactNumber = ?, whatsappNumber = ?, jobAlerts = ?, homePhone = ?, addHomePhone = ?, qualification = ?, educationSpecialization = ?, experienceAndAppliance = ?, yesNoQuestion = ?, twoWheeler = ?, threeWheeler = ?, car = ?, disabilityPercentage = ?, specializationInDisability = ? WHERE job_seeker_id = ?`;
+      columns = [
+        email,
+        username,
+        password,
+        name,
+        lastName,
+        dob,
+        gender,
+        permanentAddress,
+        currentAddress,
+        city,
+        state,
+        postalCode,
+        country,
+        contactNumber,
+        whatsappNumber,
+        jobAlerts,
+        homePhone,
+        addHomePhone,
+        qualification,
+        educationSpecialization,
+        experienceAndAppliance,
+        yesNoQuestion,
+        twoWheeler,
+        threeWheeler,
+        car,
+        disabilityPercentage,
+        specializationInDisability,
+        id,
+      ];
+    } else {
+      query = `UPDATE ${db_name}.job_seekers SET email = ?, username = ?, name = ?, lastName = ?, dob = ?, gender = ?, permanentAddress = ?, currentAddress = ?, city = ?, state = ?, postalCode = ?, country = ?, contactNumber = ?, whatsappNumber = ?, jobAlerts = ?, homePhone = ?, addHomePhone = ?, qualification = ?, educationSpecialization = ?, experienceAndAppliance = ?, yesNoQuestion = ?, twoWheeler = ?, threeWheeler = ?, car = ?, disabilityPercentage = ?, specializationInDisability = ? WHERE job_seeker_id = ?`;
+      columns = [
+        email,
+        username,
+        name,
+        lastName,
+        dob,
+        gender,
+        permanentAddress,
+        currentAddress,
+        city,
+        state,
+        postalCode,
+        country,
+        contactNumber,
+        whatsappNumber,
+        jobAlerts,
+        homePhone,
+        addHomePhone,
+        qualification,
+        educationSpecialization,
+        experienceAndAppliance,
+        yesNoQuestion,
+        twoWheeler,
+        threeWheeler,
+        car,
+        disabilityPercentage,
+        specializationInDisability,
+        id,
+      ];
+    }
+
+    db.query(query, columns, (err, result) => {
+      if (err) {
+        callback(err, null); // Pass the error to the callback
+        return;
+      }
+
+      if (result.affectedRows === 0) {
+        // Handle case where no rows were updated (e.g., jobSeeker not found)
+        callback(new Error("No job seeker updated"), null);
+        return;
+      }
+
+      callback(null, result); // Pass successful update
+    });
   },
 };
 

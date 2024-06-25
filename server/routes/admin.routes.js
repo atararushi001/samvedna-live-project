@@ -37,6 +37,11 @@ router.get(
   authMiddleware("Admin"),
   adminController.getMatrimonyUsers
 );
+router.put(
+  "/update-job-seeker/:id",
+  authMiddleware("Admin"),
+  adminController.updateJobSeeker
+);
 router.delete(
   "/delete-recruiter/:id",
   authMiddleware("Admin"),

@@ -17,6 +17,7 @@ import AddRecruiter from "../components/admin/AddRecruiter";
 import EditRecruiter from "../components/admin/EditRecruiter";
 import JobSeekers from "../components/admin/JobSeekers";
 import AddJobSeeker from "../components/admin/AddJobSeeker";
+import EditJobSeeker from "../components/admin/EditJobSeeker";
 import AddFromCSV from "../components/admin/AddFromCSV";
 import GetCSVData from "../components/admin/GetCSVData";
 import SelfEmployees from "../components/admin/SelfEmployees";
@@ -33,10 +34,16 @@ const AdminDashboard = () => {
   const [view, setView] = useState("dashboard");
   const [toggle, setToggle] = useState(false);
   const [selectedRecruiter, setSelectedRecruiter] = useState(null);
+  const [selectedJobSeeker, setSelectedJobSeeker] = useState(null);
 
   const handleEditRecruiter = (recruiter) => {
     setSelectedRecruiter(recruiter);
     setView("editRecruiter");
+  };
+
+  const handleEditJobSeeker = (jobSeeker) => {
+    setSelectedJobSeeker(jobSeeker);
+    setView("editJobSeeker");
   };
 
   useEffect(() => {
@@ -177,8 +184,13 @@ const AdminDashboard = () => {
         {view === "editRecruiter" && (
           <EditRecruiter recruiter={selectedRecruiter} setView={setView} />
         )}
-        {view === "jobSeekers" && <JobSeekers />}
+        {view === "jobSeekers" && (
+          <JobSeekers onEditJobSeeker={handleEditJobSeeker} />
+        )}
         {view === "addJobSeekers" && <AddJobSeeker setView={setView} />}
+        {view === "editJobSeeker" && (
+          <EditJobSeeker setView={setView} jobSeeker={selectedJobSeeker} />
+        )}
         {view === "addFromCSV" && <AddFromCSV setView={setView} />}
         {view === "getCSVData" && <GetCSVData setView={setView} />}
         {view === "selfEmployees" && <SelfEmployees />}
