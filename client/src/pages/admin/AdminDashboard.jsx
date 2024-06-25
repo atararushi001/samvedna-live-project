@@ -25,6 +25,9 @@ import AddSelfEmployee from "../components/admin/AddSelfEmployee";
 import MatrimonyUsers from "../components/admin/MatrimonyUsers";
 import AddMatrimonyUser from "../components/admin/AddMatrimonyUser";
 import EditMatrimonyUser from "../components/admin/EditMatrimonyUser";
+import Blogs from "../components/admin/Blogs";
+import AddBlog from "../components/admin/AddBlog";
+import EditBlog from "../components/admin/EditBlog";
 
 import Logo from "../../assets/images/Logo.png";
 
@@ -37,6 +40,7 @@ const AdminDashboard = () => {
   const [selectedRecruiter, setSelectedRecruiter] = useState(null);
   const [selectedJobSeeker, setSelectedJobSeeker] = useState(null);
   const [selectedMatrimonyUser, setSelectedMatrimonyUser] = useState(null);
+  const [selectedBlog, setSelectedBlog] = useState(null);
 
   const handleEditRecruiter = (recruiter) => {
     setSelectedRecruiter(recruiter);
@@ -51,6 +55,11 @@ const AdminDashboard = () => {
   const handleEditMatrimonyUser = (matrimonyUser) => {
     setSelectedMatrimonyUser(matrimonyUser);
     setView("editMatrimonyUser");
+  };
+
+  const handleEditBlog = (blog) => {
+    setSelectedBlog(blog);
+    setView("editBlogs");
   };
 
   useEffect(() => {
@@ -156,8 +165,8 @@ const AdminDashboard = () => {
             </MenuItem>
           </SubMenu>
           <SubMenu label="Blogs" icon={<FontAwesomeIcon icon="newspaper" />}>
-            <MenuItem>View Blogs</MenuItem>
-            <MenuItem>Add Blogs</MenuItem>
+            <MenuItem onClick={() => setView("blogs")}>View Blogs</MenuItem>
+            <MenuItem onClick={() => setView("addBlogs")}>Add Blogs</MenuItem>
           </SubMenu>
           <MenuItem
             label="Get CSV Data"
@@ -211,6 +220,11 @@ const AdminDashboard = () => {
             setView={setView}
             matrimonyUser={selectedMatrimonyUser}
           />
+        )}
+        {view === "blogs" && <Blogs onEditBlog={handleEditBlog} />}
+        {view === "addBlogs" && <AddBlog setView={setView} />}
+        {view === "editBlogs" && (
+          <EditBlog setView={setView} blog={selectedBlog} />
         )}
       </main>
     </div>

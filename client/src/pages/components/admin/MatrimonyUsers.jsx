@@ -8,7 +8,7 @@ import UserStore from "../../../stores/UserStore";
 
 const API = import.meta.env.VITE_API_URL;
 
-const MatrimonyUsers = ({ onEditMatrimonyUser, setView }) => {
+const MatrimonyUsers = ({ onEditMatrimonyUser }) => {
   const [matrimonyUsers, setMatrimonyUsers] = useState([]);
   const [search, setSearch] = useState("");
 
@@ -35,7 +35,9 @@ const MatrimonyUsers = ({ onEditMatrimonyUser, setView }) => {
 
     if (response.ok) {
       toast.success(data.message);
-      setView("dashboard");
+      setMatrimonyUsers(
+        matrimonyUsers.filter((matrimonyUser) => matrimonyUser.id !== id)
+      );
     } else {
       toast.error(data.message);
     }
@@ -477,7 +479,6 @@ const MatrimonyUsers = ({ onEditMatrimonyUser, setView }) => {
 
 MatrimonyUsers.propTypes = {
   onEditMatrimonyUser: PropTypes.func.isRequired,
-  setView: PropTypes.func.isRequired,
 };
 
 export default MatrimonyUsers;
