@@ -3972,7 +3972,8 @@ table td:last-child {
 .get-csv-data,
 .queries,
 .add-self-employee,
-.add-matrimony-user {
+.add-matrimony-user,
+.edit-matrimony-user {
   min-height: 100dvh;
   width: 100%;
   display: flex;
@@ -3991,7 +3992,8 @@ table td:last-child {
 .get-csv-data form,
 .get-csv-data .show-results,
 .add-self-employee form,
-.add-matrimony-user form {
+.add-matrimony-user form,
+.edit-matrimony-user form {
   display: flex;
   flex-direction: column;
   gap: 1rem;

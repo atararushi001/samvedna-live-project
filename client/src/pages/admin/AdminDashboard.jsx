@@ -24,6 +24,7 @@ import SelfEmployees from "../components/admin/SelfEmployees";
 import AddSelfEmployee from "../components/admin/AddSelfEmployee";
 import MatrimonyUsers from "../components/admin/MatrimonyUsers";
 import AddMatrimonyUser from "../components/admin/AddMatrimonyUser";
+import EditMatrimonyUser from "../components/admin/EditMatrimonyUser";
 
 import Logo from "../../assets/images/Logo.png";
 
@@ -35,6 +36,7 @@ const AdminDashboard = () => {
   const [toggle, setToggle] = useState(false);
   const [selectedRecruiter, setSelectedRecruiter] = useState(null);
   const [selectedJobSeeker, setSelectedJobSeeker] = useState(null);
+  const [selectedMatrimonyUser, setSelectedMatrimonyUser] = useState(null);
 
   const handleEditRecruiter = (recruiter) => {
     setSelectedRecruiter(recruiter);
@@ -44,6 +46,11 @@ const AdminDashboard = () => {
   const handleEditJobSeeker = (jobSeeker) => {
     setSelectedJobSeeker(jobSeeker);
     setView("editJobSeeker");
+  };
+
+  const handleEditMatrimonyUser = (matrimonyUser) => {
+    setSelectedMatrimonyUser(matrimonyUser);
+    setView("editMatrimonyUser");
   };
 
   useEffect(() => {
@@ -195,8 +202,16 @@ const AdminDashboard = () => {
         {view === "getCSVData" && <GetCSVData setView={setView} />}
         {view === "selfEmployees" && <SelfEmployees />}
         {view === "addSelfEmployee" && <AddSelfEmployee setView={setView} />}
-        {view === "matrimonyUsers" && <MatrimonyUsers />}
+        {view === "matrimonyUsers" && (
+          <MatrimonyUsers onEditMatrimonyUser={handleEditMatrimonyUser} />
+        )}
         {view === "addMatrimonyUser" && <AddMatrimonyUser setView={setView} />}
+        {view === "editMatrimonyUser" && (
+          <EditMatrimonyUser
+            setView={setView}
+            matrimonyUser={selectedMatrimonyUser}
+          />
+        )}
       </main>
     </div>
   );

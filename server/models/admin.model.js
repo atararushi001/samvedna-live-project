@@ -274,6 +274,130 @@ const Admin = {
       callback(null, result); // Pass successful update
     });
   },
+  updateMatrimonyUser: (id, matrimonyUser, callback) => {
+    const {
+      firstName,
+      lastName,
+      email,
+      password,
+      phone,
+      gender,
+      dob,
+      timeOfBirth,
+      placeOfBirth,
+      community,
+      religion,
+      caste,
+      subCaste,
+      motherTongue,
+      country,
+      state,
+      city,
+      address,
+      pincode,
+      maritalStatus,
+      haveChildren,
+      noOfChildren,
+      height,
+      weight,
+      complexion,
+      bodyType,
+      bloodGroup,
+      donateBlood,
+      qualification,
+      educationSpecialization,
+      currentLocation,
+      immigrationStatus,
+      designation,
+      designationDetails,
+      annualIncome,
+      fatherName,
+      fatherOccupation,
+      fatherMobile,
+      motherName,
+      motherOccupation,
+      motherMobile,
+      grandfatherName,
+      grandmotherName,
+      nanaName,
+      naniName,
+      noOfBrothers,
+      noOfSisters,
+      believeInHoroscope,
+      rashi,
+      gotra,
+      varna,
+      mangalShani,
+      diet,
+      smoke,
+      drink,
+      hobbies,
+      ageGap,
+      partnerReligion,
+      partnerCaste,
+      partnerSubCaste,
+      partnerQualification,
+      partnerOccupation,
+      partnerAnnualIncome,
+      mangalik,
+      partnerMaritalStatus,
+      goAbroad,
+      disability,
+      disabilityPercentage,
+      about,
+    } = matrimonyUser;
+
+    let query = "";
+    let columns = [];
+
+    if (password) {
+      query = `UPDATE matrimony SET 
+                  firstName = ?, lastName = ?, email = ?, password = ?, phone = ?, gender = ?,
+                  dob = ?, timeOfBirth = ?, placeOfBirth = ?, community = ?, religion = ?,
+                  caste = ?, subCaste = ?, motherTongue = ?, country = ?, state = ?,
+                  city = ?, address = ?, pincode = ?, maritalStatus = ?, haveChildren = ?,
+                  noOfChildren = ?, height = ?, weight = ?, complexion = ?, bodyType = ?,
+                  bloodGroup = ?, donateBlood = ?, qualification = ?, educationSpecialization = ?, currentLocation = ?,
+                  immigrationStatus = ?, designation = ?, designationDetails = ?, annualIncome = ?, fatherName = ?,
+                  fatherOccupation = ?, fatherMobile = ?, motherName = ?, motherOccupation = ?, motherMobile = ?,
+                  grandfatherName = ?, grandmotherName = ?, nanaName = ?, naniName = ?, noOfBrothers = ?,
+                  noOfSisters = ?, believeInHoroscope = ?, rashi = ?, gotra = ?, varna = ?,
+                  mangalShani = ?, diet = ?, smoke = ?, drink = ?, hobbies = ?,
+                  ageGap = ?, partnerReligion = ?, partnerCaste = ?, partnerSubCaste = ?, partnerQualification = ?, 
+                  partnerOccupation = ?, partnerAnnualIncome = ?, mangalik = ?, partnerMaritalStatus = ?, goAbroad = ?,
+                  disability = ?, disabilityPercentage = ?, about = ? WHERE id = ?`;
+      columns = [firstName, lastName, email, password, phone, gender, dob, timeOfBirth, placeOfBirth, community, religion, caste, subCaste, motherTongue, country, state, city, address, pincode, maritalStatus, haveChildren, noOfChildren, height, weight, complexion, bodyType, bloodGroup, donateBlood, qualification, educationSpecialization, currentLocation, immigrationStatus, designation, designationDetails, annualIncome, fatherName, fatherOccupation, fatherMobile, motherName, motherOccupation, motherMobile, grandfatherName, grandmotherName, nanaName, naniName, noOfBrothers, noOfSisters, believeInHoroscope, rashi, gotra, varna, mangalShani, diet, smoke, drink, hobbies, ageGap, partnerReligion, partnerCaste, partnerSubCaste, partnerQualification, partnerOccupation, partnerAnnualIncome, mangalik, partnerMaritalStatus, goAbroad, disability, disabilityPercentage, about, id];
+    } else {
+      query = `UPDATE matrimony SET 
+                  firstName = ?, lastName = ?, email = ?, phone = ?, gender = ?,
+                  dob = ?, timeOfBirth = ?, placeOfBirth = ?, community = ?, religion = ?,
+                  caste = ?, subCaste = ?, motherTongue = ?, country = ?, state = ?,
+                  city = ?, address = ?, pincode = ?, maritalStatus = ?, haveChildren = ?,
+                  noOfChildren = ?, height = ?, weight = ?, complexion = ?, bodyType = ?,
+                  bloodGroup = ?, donateBlood = ?, qualification = ?, educationSpecialization = ?, currentLocation = ?,
+                  immigrationStatus = ?, designation = ?, designationDetails = ?, annualIncome = ?, fatherName = ?,
+                  fatherOccupation = ?, fatherMobile = ?, motherName = ?, motherOccupation = ?, motherMobile = ?,
+                  grandfatherName = ?, grandmotherName = ?, nanaName = ?, naniName = ?, noOfBrothers = ?,
+                  noOfSisters = ?, believeInHoroscope = ?, rashi = ?, gotra = ?, varna = ?,
+                  mangalShani = ?, diet = ?, smoke = ?, drink = ?, hobbies = ?,
+                  ageGap = ?, partnerReligion = ?, partnerCaste = ?, partnerSubCaste = ?, partnerQualification = ?, 
+                  partnerOccupation = ?, partnerAnnualIncome = ?, mangalik = ?, partnerMaritalStatus = ?, goAbroad = ?,
+                  disability = ?, disabilityPercentage = ?, about = ? WHERE id = ?`;
+      columns = [firstName, lastName, email, phone, gender, dob, timeOfBirth, placeOfBirth, community, religion, caste, subCaste, motherTongue, country, state, city, address, pincode, maritalStatus, haveChildren, noOfChildren, height, weight, complexion, bodyType, bloodGroup, donateBlood, qualification, educationSpecialization, currentLocation, immigrationStatus, designation, designationDetails, annualIncome, fatherName, fatherOccupation, fatherMobile, motherName, motherOccupation, motherMobile, grandfatherName, grandmotherName, nanaName, naniName, noOfBrothers, noOfSisters, believeInHoroscope, rashi, gotra, varna, mangalShani, diet, smoke, drink, hobbies, ageGap, partnerReligion, partnerCaste, partnerSubCaste, partnerQualification, partnerOccupation, partnerAnnualIncome, mangalik, partnerMaritalStatus, goAbroad, disability, disabilityPercentage, about, id];
+    }
+
+    db.query(
+      query,
+      columns,
+      (error, results) => {
+        if (error) {
+          callback(error);
+        }
+        callback(null, results);
+      }
+    );
+
+  }
 };
 
 module.exports = Admin;
