@@ -62,6 +62,7 @@ const Recruiter = {
       name,
       email,
       company,
+      password,
       designation,
       contact,
       city,
@@ -71,10 +72,11 @@ const Recruiter = {
     } = recruiter;
 
     db.query(
-      `UPDATE ${db_name}.recruiters SET name = ?, email = ?, company = ?, designation = ?, contact = ?, city = ?, state = ?, country = ?, profilePicture = ? WHERE id = ?`,
+      `UPDATE ${db_name}.recruiters SET name = ?, email = ?, password = ?, company = ?, designation = ?, contact = ?, city = ?, state = ?, country = ?, profilePicture = ? WHERE recruiters_id = ?`,
       [
         name,
         email,
+        password,
         company,
         designation,
         contact,

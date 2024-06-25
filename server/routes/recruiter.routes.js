@@ -8,6 +8,7 @@ router.get("/", recruiterController.getAll);
 router.get("/jobs", authMiddlware("Recruiter"), recruiterController.getAllJobs);
 router.post("/register", recruiterController.register);
 router.post("/login", recruiterController.login);
+router.put("/update/:id", authMiddlware("Admin"), recruiterController.update);
 router.post(
   "/post-job",
   authMiddlware("Recruiter"),

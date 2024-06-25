@@ -14,20 +14,30 @@ import UserStore from "../../stores/UserStore";
 import MainView from "../components/admin/MainView";
 import Recruiters from "../components/admin/Recruiters";
 import AddRecruiter from "../components/admin/AddRecruiter";
+import EditRecruiter from "../components/admin/EditRecruiter";
 import JobSeekers from "../components/admin/JobSeekers";
 import AddJobSeeker from "../components/admin/AddJobSeeker";
 import AddFromCSV from "../components/admin/AddFromCSV";
 import GetCSVData from "../components/admin/GetCSVData";
 import SelfEmployees from "../components/admin/SelfEmployees";
 import AddSelfEmployee from "../components/admin/AddSelfEmployee";
+import MatrimonyUsers from "../components/admin/MatrimonyUsers";
+import AddMatrimonyUser from "../components/admin/AddMatrimonyUser";
 
 import Logo from "../../assets/images/Logo.png";
 
 const AdminDashboard = () => {
   const { loginState, logout } = UserStore();
   const navigate = useNavigate();
+
   const [view, setView] = useState("dashboard");
   const [toggle, setToggle] = useState(false);
+  const [selectedRecruiter, setSelectedRecruiter] = useState(null);
+
+  const handleEditRecruiter = (recruiter) => {
+    setSelectedRecruiter(recruiter);
+    setView("editRecruiter");
+  };
 
   useEffect(() => {
     if (!loginState) {
@@ -120,8 +130,16 @@ const AdminDashboard = () => {
             label="Matrimony Users"
             icon={<FontAwesomeIcon icon="user-group" />}
           >
-            <MenuItem>View Matrimony Users</MenuItem>
-            <MenuItem>Add Matrimony Users</MenuItem>
+            <MenuItem onClick={() => setView("matrimonyUsers")}>
+              View Matrimony Users
+            </MenuItem>
+            <MenuItem
+              onClick={() => {
+                setView("addMatrimonyUser");
+              }}
+            >
+              Add Matrimony Users
+            </MenuItem>
           </SubMenu>
           <SubMenu label="Blogs" icon={<FontAwesomeIcon icon="newspaper" />}>
             <MenuItem>View Blogs</MenuItem>
@@ -152,14 +170,21 @@ const AdminDashboard = () => {
           onClick={() => setToggle(!toggle)}
         />
         {view === "dashboard" && <MainView />}
-        {view === "viewRecruiters" && <Recruiters />}
+        {view === "viewRecruiters" && (
+          <Recruiters onEditRecruiter={handleEditRecruiter} />
+        )}
         {view === "addRecruiter" && <AddRecruiter setView={setView} />}
+        {view === "editRecruiter" && (
+          <EditRecruiter recruiter={selectedRecruiter} setView={setView} />
+        )}
         {view === "jobSeekers" && <JobSeekers />}
         {view === "addJobSeekers" && <AddJobSeeker setView={setView} />}
         {view === "addFromCSV" && <AddFromCSV setView={setView} />}
         {view === "getCSVData" && <GetCSVData setView={setView} />}
         {view === "selfEmployees" && <SelfEmployees />}
         {view === "addSelfEmployee" && <AddSelfEmployee setView={setView} />}
+        {view === "matrimonyUsers" && <MatrimonyUsers />}
+        {view === "addMatrimonyUser" && <AddMatrimonyUser setView={setView} />}
       </main>
     </div>
   );

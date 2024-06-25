@@ -63,11 +63,7 @@ const Admin = {
     );
   },
   getContactQueries: (callback) => {
-    db.query(
-      `SELECT * FROM contact_query`,
-      [],
-      callback
-    )
+    db.query(`SELECT * FROM contact_query`, [], callback);
   },
   getSelfEmployees: (callback) => {
     db.query(
@@ -88,8 +84,72 @@ const Admin = {
             professions.profession_name;`,
       [],
       callback
-    )
-  }
+    );
+  },
+  getMatrimonyUsers: (callback) => {
+    db.query(
+      `SELECT 
+        m.*, 
+        (SELECT GROUP_CONCAT(mp.profilePicture) FROM matrimony_pictures mp WHERE mp.matrimony_id = m.id) as profilePictures,
+        c.name as countryName,
+        s.name as stateName,
+        ci.name as cityName,
+        ql.qualification_name as qualificationName,
+        es.education_specialization_name as educationSpecializationName,
+        cl.name as currentLocationName,
+        ql2.qualification_name as partnerQualificationName
+        FROM 
+            matrimony m
+        INNER JOIN 
+            country c ON m.country = c.id
+        INNER JOIN 
+            states s ON m.state = s.id
+        INNER JOIN 
+            cities ci ON m.city = ci.id
+        INNER JOIN 
+            qualificationlevel ql ON m.qualification = ql.qualification_id
+        INNER JOIN 
+            educationspecialization es ON m.educationSpecialization = es.education_specialization_id
+        INNER JOIN 
+            country cl ON m.currentLocation = cl.id
+        INNER JOIN 
+            qualificationlevel ql2 ON m.partnerQualification = ql2.qualification_id
+        GROUP BY 
+            m.id,
+            c.name, 
+            s.name, 
+            ci.name, 
+            ql.qualification_name, 
+            es.education_specialization_name, 
+            cl.name, 
+            ql2.qualification_name;`,
+      [],
+      callback
+    );
+  },
+  deleteRecruiter: (id, callback) => {
+    db.query(`DELETE FROM ${db_name}.recruiters WHERE id = ?`, [id], callback);
+  },
+  deleteJobSeeker: (id, callback) => {
+    db.query(`DELETE FROM ${db_name}.job_seekers WHERE id = ?`, [id], callback);
+  },
+  deleteSelfEmployed: (id, callback) => {
+    db.query(
+      `DELETE FROM ${db_name}.selfemployment WHERE self_employement_id = ?`,
+      [id],
+      callback
+    );
+  },
+  deleteMatrimonyUser: (id, callback) => {
+    db.query(`DELETE FROM ${db_name}.matrimony WHERE id = ?`, [id], callback);
+  },
+  deleteContactQuery: (id, callback) => {
+    db.query(
+      `DELETE FROM ${db_name}.contact_query WHERE id = ?`,
+      [id],
+      callback
+    );
+  },
 };
 
 module.exports = Admin;

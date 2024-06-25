@@ -206,8 +206,78 @@ const adminController = {
       } else {
         return res.json(result);
       }
-    })
-  }
+    });
+  },
+  getMatrimonyUsers: (req, res) => {
+    Admin.getMatrimonyUsers((err, result) => {
+      if (err) {
+        console.log(err);
+        return res.status(500).json({ message: "An error occurred" });
+      } else {
+        return res.json(result);
+      }
+    });
+  },
+  deleteRecruiter: (req, res) => {
+    const { id } = req.params;
+
+    Admin.deleteRecruiter(id, (err, result) => {
+      if (err) {
+        console.log(err);
+        return res.status(500).json({ message: "An error occurred" });
+      }
+
+      res.json({ message: "Recruiter deleted" });
+    });
+  },
+  deleteJobSeeker: (req, res) => {
+    const { id } = req.params;
+
+    Admin.deleteJobSeeker(id, (err, result) => {
+      if (err) {
+        console.log(err);
+        return res.status(500).json({ message: "An error occurred" });
+      }
+
+      res.json({ message: "Job Seeker deleted" });
+    });
+  },
+  deleteContactQuery: (req, res) => {
+    const { id } = req.params;
+
+    Admin.deleteContactQuery(id, (err, result) => {
+      if (err) {
+        console.log(err);
+        return res.status(500).json({ message: "An error occurred" });
+      }
+
+      res.json({ message: "Contact Query deleted" });
+    });
+  },
+  deleteSelfEmployed: (req, res) => {
+    const { id } = req.params;
+
+    Admin.deleteSelfEmployed(id, (err, result) => {
+      if (err) {
+        console.log(err);
+        return res.status(500).json({ message: "An error occurred" });
+      }
+
+      res.json({ message: "Self Employed deleted" });
+    });
+  },
+  deleteMatrimonyUser: (req, res) => {
+    const { id } = req.params;
+
+    Admin.deleteMatrimonyUser(id, (err, result) => {
+      if (err) {
+        console.log(err);
+        return res.status(500).json({ message: "An error occurred" });
+      }
+
+      res.json({ message: "Matrimony User deleted" });
+    });
+  },
 };
 
 module.exports = adminController;

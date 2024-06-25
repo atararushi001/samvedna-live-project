@@ -1,16 +1,21 @@
 import { useEffect, useState } from "react";
 import DataTable from "react-data-table-component";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import PropTypes from "prop-types";
 
 import UserStore from "../../../stores/UserStore";
 
 const API = import.meta.env.VITE_API_URL;
 
-const Recruiters = () => {
+const Recruiters = ({ onEditRecruiter }) => {
   const [recruiters, setRecruiters] = useState([]);
   const [search, setSearch] = useState("");
 
   const { userDetails } = UserStore();
+
+  const handleEdit = (recruiter) => {
+    onEditRecruiter(recruiter);
+  };
 
   useEffect(() => {
     const fetchRecruiters = async () => {
@@ -26,7 +31,6 @@ const Recruiters = () => {
 
       if (response.ok) {
         setRecruiters(data);
-        console.log(data);
       } else {
         console.error(data.message);
       }
@@ -81,7 +85,7 @@ const Recruiters = () => {
     },
     {
       name: "Actions",
-      cell: () => (
+      cell: (row) => (
         <div>
           <FontAwesomeIcon
             icon="pen"
@@ -90,6 +94,7 @@ const Recruiters = () => {
               cursor: "pointer",
               color: "green",
             }}
+            onClick={() => handleEdit(row)}
           />
           <FontAwesomeIcon
             icon="trash"
@@ -134,6 +139,10 @@ const Recruiters = () => {
       <DataTable columns={columns} data={filteredRecruiters} pagination />
     </div>
   );
+};
+
+Recruiters.propTypes = {
+  onEditRecruiter: PropTypes.func,
 };
 
 export default Recruiters;

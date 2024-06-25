@@ -3951,7 +3951,8 @@ table td:last-child {
 /* Pages > Admin Dashboard > Views > Recruiters & Job Seekers */
 .view-recruiters,
 .view-job-seekers,
-.view-self-employees {
+.view-self-employees,
+.view-matrimony-users {
   min-height: 100dvh;
   width: 100%;
   display: flex;
@@ -3964,11 +3965,13 @@ table td:last-child {
 
 /* Pages > Admin Dashboard > View > Add Recruiter & Add Job Seeker & Add From CSV & Get CSV Data */
 .add-recruiter,
+.edit-recruiter,
 .add-job-seeker,
 .add-from-csv,
 .get-csv-data,
 .queries,
-.add-self-employee {
+.add-self-employee,
+.add-matrimony-user {
   min-height: 100dvh;
   width: 100%;
   display: flex;
@@ -3980,11 +3983,13 @@ table td:last-child {
 }
 
 .add-recruiter form,
+.edit-recruiter form,
 .add-job-seeker form,
 .add-from-csv form,
 .get-csv-data form,
 .get-csv-data .show-results,
-.add-self-employee form {
+.add-self-employee form,
+.add-matrimony-user form {
   display: flex;
   flex-direction: column;
   gap: 1rem;

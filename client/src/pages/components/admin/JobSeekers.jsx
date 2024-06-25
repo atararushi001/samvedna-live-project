@@ -26,7 +26,6 @@ const JobSeekers = () => {
 
       if (response.ok) {
         setJobSeekers(data);
-        console.log(data);
       } else {
         console.error(data.message);
       }

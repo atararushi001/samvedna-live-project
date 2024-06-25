@@ -109,6 +109,56 @@ const recruiterController = {
       });
     },
   ],
+  update: [
+    upload.single("profilePicture"),
+    (req, res) => {
+      const {
+        name,
+        email,
+        password,
+        company,
+        designation,
+        contactNumber,
+        city,
+        state,
+        country,
+      } = req.body;
+
+      const recruiterId = req.user.id;
+
+      const profilePicture = req.file ? req.file.filename : null;
+
+      bcrypt.hash(password, 10, (err, hash) => {
+        if (err) {
+          res.status(500).json({ message: "Internal server error" });
+          return;
+        }
+
+        const updatedRecruiter = {
+          name,
+          email,
+          password: hash,
+          company,
+          designation,
+          contactNumber,
+          city,
+          state,
+          country,
+          profilePicture,
+        };
+
+        recruiter.update(recruiterId, updatedRecruiter, (err, result) => {
+          if (err) {
+            res.status(500).json({ message: "Internal server error" });
+            console.log(err);
+            return;
+          }
+
+          res.status(200).json({ message: "Recruiter updated successfully" });
+        });
+      });
+    },
+  ],
   login: (req, res) => {
     const { email, password } = req.body;
 

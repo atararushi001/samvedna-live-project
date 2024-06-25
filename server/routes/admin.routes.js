@@ -22,7 +22,45 @@ router.get(
   adminController.getJobSeekers
 );
 router.post("/add-csv", authMiddleware("Admin"), adminController.addFromCSV);
-router.get("/contact-queries", authMiddleware("Admin"), adminController.getContactQueries);
-router.get("/self-employees", authMiddleware("Admin"), adminController.getSelfEmployees)
+router.get(
+  "/contact-queries",
+  authMiddleware("Admin"),
+  adminController.getContactQueries
+);
+router.get(
+  "/self-employees",
+  authMiddleware("Admin"),
+  adminController.getSelfEmployees
+);
+router.get(
+  "/matrimony-users",
+  authMiddleware("Admin"),
+  adminController.getMatrimonyUsers
+);
+router.delete(
+  "/delete-recruiter/:id",
+  authMiddleware("Admin"),
+  adminController.deleteRecruiter
+);
+router.delete(
+  "/delete-job-seeker/:id",
+  authMiddleware("Admin"),
+  adminController.deleteJobSeeker
+);
+router.delete(
+  "/delete-contact-query/:id",
+  authMiddleware("Admin"),
+  adminController.deleteContactQuery
+);
+router.delete(
+  "/delete-matrimony-user/:id",
+  authMiddleware("Admin"),
+  adminController.deleteMatrimonyUser
+);
+router.delete(
+  "/delete-self-employee/:id",
+  authMiddleware("Admin"),
+  adminController.deleteSelfEmployed
+);
 
 module.exports = router;
