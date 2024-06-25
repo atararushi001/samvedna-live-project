@@ -28,6 +28,7 @@ import EditMatrimonyUser from "../components/admin/EditMatrimonyUser";
 import Blogs from "../components/admin/Blogs";
 import AddBlog from "../components/admin/AddBlog";
 import EditBlog from "../components/admin/EditBlog";
+import AddAdmin from "../components/admin/AddAdmin";
 
 import Logo from "../../assets/images/Logo.png";
 
@@ -176,6 +177,13 @@ const AdminDashboard = () => {
             Get CSV Data
           </MenuItem>
           <MenuItem
+            label="Add Admin User"
+            icon={<FontAwesomeIcon icon="plus" />}
+            onClick={() => setView("addAdmin")}
+          >
+            Add Admin User
+          </MenuItem>
+          <MenuItem
             style={{
               marginTop: "10px",
             }}
@@ -226,6 +234,7 @@ const AdminDashboard = () => {
         {view === "editBlogs" && (
           <EditBlog setView={setView} blog={selectedBlog} />
         )}
+        {view === "addAdmin" && <AddAdmin setView={setView} />}
       </main>
     </div>
   );

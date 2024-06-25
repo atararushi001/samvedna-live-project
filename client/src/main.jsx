@@ -34,6 +34,7 @@ import {
   faNewspaper,
   faFileContract,
   faFileCsv,
+  faPlus,
 } from "@fortawesome/free-solid-svg-icons";
 
 library.add(
@@ -65,7 +66,8 @@ library.add(
   faUserGroup,
   faNewspaper,
   faFileContract,
-  faFileCsv
+  faFileCsv,
+  faPlus
 );
 
 import App from "./App.jsx";

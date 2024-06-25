@@ -3976,7 +3976,8 @@ table td:last-child {
 .add-matrimony-user,
 .edit-matrimony-user,
 .add-blog,
-.edit-blog {
+.edit-blog,
+.add-admin {
   min-height: 100dvh;
   width: 100%;
   display: flex;
@@ -3998,7 +3999,8 @@ table td:last-child {
 .add-matrimony-user form,
 .edit-matrimony-user form,
 .add-blog form,
-.edit-blog form {
+.edit-blog form,
+.add-admin form {
   display: flex;
   flex-direction: column;
   gap: 1rem;
