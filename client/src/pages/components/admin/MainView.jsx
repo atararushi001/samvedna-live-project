@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import DataTable from "react-data-table-component";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { toast } from "react-toastify";
 
 import UserStore from "../../../stores/UserStore";
 
@@ -52,6 +53,31 @@ const MainView = () => {
     fetchContactQueries();
   }, [userDetails]);
 
+  const handleDelete = async (id) => {
+    if (!window.confirm("Are you sure you want to delete this Query?")) {
+      return;
+    }
+
+    const response = await fetch(`${API}/admin/delete-contact-query/${id}`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        "x-auth-token": userDetails.token,
+      },
+    });
+
+    const data = await response.json();
+
+    if (response.ok) {
+      toast.success(data.message);
+      setContactQueries(
+        contactQueries.filter((contactQuery) => contactQuery.id !== id)
+      );
+    } else {
+      toast.error(data.message);
+    }
+  };
+
   const columns = [
     {
       name: "ID",
@@ -82,13 +108,14 @@ const MainView = () => {
     },
     {
       name: "Actions",
-      cell: () => (
+      cell: (row) => (
         <FontAwesomeIcon
           icon="trash"
           style={{
             cursor: "pointer",
             color: "red",
           }}
+          onClick={() => handleDelete(row.id)}
         />
       ),
     },
