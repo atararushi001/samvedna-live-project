@@ -8,11 +8,9 @@ const API = import.meta.env.VITE_API_URL;
 
 const EditRecruiter = ({ recruiter, setView }) => {
   const [formData, setFormData] = useState({
-    profilePicture: recruiter.profilePicture,
     name: recruiter.name,
     email: recruiter.email,
     password: "",
-    confirmPassword: "",
     company: recruiter.company,
     designation: recruiter.designation,
     contactNumber: recruiter.contact,
@@ -79,12 +77,7 @@ const EditRecruiter = ({ recruiter, setView }) => {
 
     toast.loading("Updating Your Data, Please Wait...");
 
-    if (formData.password !== formData.confirmPassword) {
-      toast.error("Passwords do not match");
-      return;
-    }
-
-    if (formData.password.length < 8) {
+    if (formData.password && formData.password.length < 8) {
       toast.error("Password must be at least 8 characters long");
       return;
     }
@@ -146,14 +139,6 @@ const EditRecruiter = ({ recruiter, setView }) => {
           id="password"
           placeholder="Enter Your New Password"
           value={formData.password}
-          onChange={handleInputChange}
-        />
-        <input
-          type="password"
-          name="confirmPassword"
-          id="confirmPassword"
-          placeholder="Confirm Your New Password"
-          value={formData.confirmPassword}
           onChange={handleInputChange}
         />
         <input
@@ -233,18 +218,6 @@ const EditRecruiter = ({ recruiter, setView }) => {
             </option>
           ))}
         </select>
-        <label htmlFor="profilePicture">Company Logo</label>
-        <input
-          type="file"
-          name="profilePicture"
-          id="profilePicture"
-          accept="image/*"
-          onChange={handleInputChange}
-        />
-        <p className="warning">
-          jpg, png & gif file format only, max size &lt; 50 MB, 300x300 pixel
-          format
-        </p>
         <button type="submit" className="btn" name="recruiterUpdateButton">
           Update
         </button>

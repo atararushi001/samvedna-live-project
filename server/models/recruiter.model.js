@@ -64,26 +64,32 @@ const Recruiter = {
       company,
       password,
       designation,
-      contact,
+      contactNumber,
       city,
       state,
       country,
-      profilePicture,
     } = recruiter;
 
+    let query = "";
+
+    if (password) {
+      query = `UPDATE ${db_name}.recruiters SET name = ?, email = ?, password = ?, company = ?, designation = ?, contact = ?, city = ?, state = ?, country = ? WHERE recruiters_id = ?`;
+    } else {
+      query = `UPDATE ${db_name}.recruiters SET name = ?, email = ?, company = ?, designation = ?, contact = ?, city = ?, state = ?, country = ? WHERE recruiters_id = ?`;
+    }
+
     db.query(
-      `UPDATE ${db_name}.recruiters SET name = ?, email = ?, password = ?, company = ?, designation = ?, contact = ?, city = ?, state = ?, country = ?, profilePicture = ? WHERE recruiters_id = ?`,
+      query,
       [
         name,
         email,
         password,
         company,
         designation,
-        contact,
+        contactNumber,
         city,
         state,
         country,
-        profilePicture,
         id,
       ],
       callback

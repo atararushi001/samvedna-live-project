@@ -109,29 +109,26 @@ const recruiterController = {
       });
     },
   ],
-  update: [
-    upload.single("profilePicture"),
-    (req, res) => {
-      const {
-        name,
-        email,
-        password,
-        company,
-        designation,
-        contactNumber,
-        city,
-        state,
-        country,
-      } = req.body;
+  update: (req, res) => {
+    const {
+      name,
+      email,
+      password,
+      company,
+      designation,
+      contactNumber,
+      city,
+      state,
+      country,
+    } = req.body;
 
-      const recruiterId = req.user.id;
+    const recruiterId = req.params.id;
 
-      const profilePicture = req.file ? req.file.filename : null;
-
+    if (password) {
       bcrypt.hash(password, 10, (err, hash) => {
         if (err) {
-          res.status(500).json({ message: "Internal server error" });
-          return;
+          console.log(err);
+          return res.status(500).json({ message: "Internal server error" });
         }
 
         const updatedRecruiter = {
@@ -144,21 +141,43 @@ const recruiterController = {
           city,
           state,
           country,
-          profilePicture,
         };
 
         recruiter.update(recruiterId, updatedRecruiter, (err, result) => {
           if (err) {
-            res.status(500).json({ message: "Internal server error" });
             console.log(err);
-            return;
+            return res.status(500).json({ message: "Internal server error" });
+          } else {
+            return res
+              .status(200)
+              .json({ message: "Recruiter updated successfully" });
           }
-
-          res.status(200).json({ message: "Recruiter updated successfully" });
         });
       });
-    },
-  ],
+    } else {
+      const updatedRecruiter = {
+        name,
+        email,
+        company,
+        designation,
+        contactNumber,
+        city,
+        state,
+        country,
+      };
+
+      recruiter.update(recruiterId, updatedRecruiter, (err, result) => {
+        if (err) {
+          console.log(err);
+          return res.status(500).json({ message: "Internal server error" });
+        }
+
+        return res
+          .status(200)
+          .json({ message: "Recruiter updated successfully" });
+      });
+    }
+  },
   login: (req, res) => {
     const { email, password } = req.body;
 
