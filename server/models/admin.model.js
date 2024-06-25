@@ -128,7 +128,11 @@ const Admin = {
     );
   },
   deleteRecruiter: (id, callback) => {
-    db.query(`DELETE FROM ${db_name}.recruiters WHERE id = ?`, [id], callback);
+    db.query(
+      `DELETE FROM ${db_name}.recruiters WHERE recruiters_id = ?`,
+      [id],
+      callback
+    );
   },
   deleteJobSeeker: (id, callback) => {
     db.query(`DELETE FROM ${db_name}.job_seekers WHERE id = ?`, [id], callback);

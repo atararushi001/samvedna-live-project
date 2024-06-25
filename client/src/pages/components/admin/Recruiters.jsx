@@ -2,12 +2,13 @@ import { useEffect, useState } from "react";
 import DataTable from "react-data-table-component";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import PropTypes from "prop-types";
+import { toast } from "react-toastify";
 
 import UserStore from "../../../stores/UserStore";
 
 const API = import.meta.env.VITE_API_URL;
 
-const Recruiters = ({ onEditRecruiter }) => {
+const Recruiters = ({ onEditRecruiter, setView }) => {
   const [recruiters, setRecruiters] = useState([]);
   const [search, setSearch] = useState("");
 
@@ -15,6 +16,29 @@ const Recruiters = ({ onEditRecruiter }) => {
 
   const handleEdit = (recruiter) => {
     onEditRecruiter(recruiter);
+  };
+
+  const handleDelete = async (id) => {
+    if (!window.confirm("Are you sure you want to delete this recruiter?")) {
+      return;
+    }
+
+    const response = await fetch(`${API}/admin/delete-recruiter/${id}`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        "x-auth-token": userDetails.token,
+      },
+    });
+
+    const data = await response.json();
+
+    if (response.ok) {
+      toast.success(data.message);
+      setView("recruiters");
+    } else {
+      toast.error(data.message);
+    }
   };
 
   useEffect(() => {
@@ -102,6 +126,7 @@ const Recruiters = ({ onEditRecruiter }) => {
               cursor: "pointer",
               color: "red",
             }}
+            onClick={() => handleDelete(row.recruiters_id)}
           />
         </div>
       ),
@@ -143,6 +168,7 @@ const Recruiters = ({ onEditRecruiter }) => {
 
 Recruiters.propTypes = {
   onEditRecruiter: PropTypes.func,
+  setView: PropTypes.func,
 };
 
 export default Recruiters;
