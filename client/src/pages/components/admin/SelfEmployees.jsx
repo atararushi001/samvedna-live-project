@@ -56,7 +56,7 @@ const SelfEmployees = ({ setView }) => {
 
     if (response.ok) {
       toast.success(data.message);
-      setView("selfEmployees");
+      setView("dashboard");
       setSelfEmployees(
         selfEmployees.filter(
           (selfEmployee) => selfEmployee.self_employement_id !== id

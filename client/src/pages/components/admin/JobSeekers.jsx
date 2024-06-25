@@ -35,7 +35,7 @@ const JobSeekers = ({ onEditJobSeeker, setView }) => {
 
     if (response.ok) {
       toast.success(data.message);
-      setView("recruiters");
+      setView("dashboard");
     } else {
       toast.error(data.message);
     }
