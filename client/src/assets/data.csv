@@ -1,0 +1,2 @@
+sr no,email,username,password,name,lastName,dob,gender,permanentAddress,currentAddress,city,state,postalCode,country,contactNumber,whatsappNumber,jobAlerts,homePhone,addHomePhone,qualification,educationSpecialization,experienceAndAppliance,yesNoQuestion,twoWheeler,threeWheeler,car,disabilityPercentage,specializationInDisability
+1,rushi@gmail.com,rushi001,rushi001,rushi,atara,2003-10-11,male,asdas,asdas,5909,42,360023,1,12345678,23456789,1,123456789,123456789,10,57,something,yes,1,0,1,40-50,Something

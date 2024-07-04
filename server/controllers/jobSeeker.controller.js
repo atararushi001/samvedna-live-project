@@ -98,9 +98,11 @@ const jobSeekerController = {
           res.status(500).json({ message: "Internal server error" });
           console.log("Database error", err);
           return;
+        } else {
+          return res
+            .status(201)
+            .json({ message: "Job Seeker created successfully" });
         }
-
-        res.status(201).json({ message: "Job Seeker created successfully" });
       });
     });
   },

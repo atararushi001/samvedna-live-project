@@ -109,6 +109,75 @@ const recruiterController = {
       });
     },
   ],
+  update: (req, res) => {
+    const {
+      name,
+      email,
+      password,
+      company,
+      designation,
+      contactNumber,
+      city,
+      state,
+      country,
+    } = req.body;
+
+    const recruiterId = req.params.id;
+
+    if (password) {
+      bcrypt.hash(password, 10, (err, hash) => {
+        if (err) {
+          console.log(err);
+          return res.status(500).json({ message: "Internal server error" });
+        }
+
+        const updatedRecruiter = {
+          name,
+          email,
+          password: hash,
+          company,
+          designation,
+          contactNumber,
+          city,
+          state,
+          country,
+        };
+
+        recruiter.update(recruiterId, updatedRecruiter, (err, result) => {
+          if (err) {
+            console.log(err);
+            return res.status(500).json({ message: "Internal server error" });
+          } else {
+            return res
+              .status(200)
+              .json({ message: "Recruiter updated successfully" });
+          }
+        });
+      });
+    } else {
+      const updatedRecruiter = {
+        name,
+        email,
+        company,
+        designation,
+        contactNumber,
+        city,
+        state,
+        country,
+      };
+
+      recruiter.update(recruiterId, updatedRecruiter, (err, result) => {
+        if (err) {
+          console.log(err);
+          return res.status(500).json({ message: "Internal server error" });
+        }
+
+        return res
+          .status(200)
+          .json({ message: "Recruiter updated successfully" });
+      });
+    }
+  },
   login: (req, res) => {
     const { email, password } = req.body;
 
