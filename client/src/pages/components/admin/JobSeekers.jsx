@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import DataTable from "react-data-table-component";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import PropTypes from "prop-types";
@@ -56,7 +56,7 @@ const JobSeekers = ({ onEditJobSeeker }) => {
       const data = await response.json();
 
       if (response.ok) {
-        console.log(data);
+        console.log("Fetched Data:", data); // Log fetched data
         setJobSeekers(data);
       } else {
         console.error(data.message);
@@ -231,6 +231,61 @@ const JobSeekers = ({ onEditJobSeeker }) => {
     );
   });
 
+  console.log("Filtered Job Seekers:", filteredJobSeekers); // Log filtered job seekers
+
+  const convertArrayOfObjectsToCSV = (array) => {
+    let result;
+
+    const columnDelimiter = ",";
+    const lineDelimiter = "\n";
+    const keys = Object.keys(array[0]);
+
+    result = "";
+    result += keys.join(columnDelimiter);
+    result += lineDelimiter;
+
+    array.forEach((item) => {
+      let ctr = 0;
+      keys.forEach((key) => {
+        if (ctr > 0) result += columnDelimiter;
+
+        result += item[key];
+
+        ctr++;
+      });
+      result += lineDelimiter;
+    });
+
+    return result;
+  };
+
+  const downloadCSV = (array) => {
+    const link = document.createElement("a");
+    let csv = convertArrayOfObjectsToCSV(array);
+    if (csv == null) return;
+
+    const filename = "job_seekers_export.csv";
+
+    if (!csv.match(/^data:text\/csv/i)) {
+      csv = `data:text/csv;charset=utf-8,${csv}`;
+    }
+
+    link.setAttribute("href", encodeURI(csv));
+    link.setAttribute("download", filename);
+    link.click();
+  };
+
+  const Export = ({ onExport }) => (
+    <button onClick={(e) => onExport(e.target.value)}>Export</button>
+  );
+  Export.propTypes = {
+    onExport: PropTypes.func.isRequired,
+  };
+  const actionsMemo = useMemo(
+    () => <Export onExport={() => downloadCSV(filteredJobSeekers)} />,
+    [filteredJobSeekers]
+  );
+
   if (!jobSeekers) {
     return <h1>Loading...</h1>;
   }
@@ -246,7 +301,12 @@ const JobSeekers = ({ onEditJobSeeker }) => {
         value={search}
         onChange={(e) => setSearch(e.target.value)}
       />
-      <DataTable columns={columns} data={filteredJobSeekers} pagination />
+      <DataTable
+        columns={columns}
+        data={filteredJobSeekers}
+        pagination
+        actions={actionsMemo}
+      />
     </div>
   );
 };

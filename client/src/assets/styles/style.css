@@ -3883,7 +3883,36 @@ table td:last-child {
   display: flex;
   height: 100dvh;
 }
-
+.kKvKNr{
+  position: static !important;
+  box-sizing: content-box !important;
+  overflow: visible !important;
+  display: block !important;
+  flex: 0 0 auto !important;
+  align-items: flex-start !important;
+  justify-content: flex-start !important;
+  width: auto !important;
+  flex-wrap: nowrap !important;
+  font-size: 16px !important; /* Assuming a smaller font size as reverse */
+  color: rgba(255, 255, 255, 1) !important; /* Assuming white color as reverse */
+  background-color: #eff4ef !important; /* Assuming black background as reverse */
+  min-height: auto !important;
+  padding-left: 8px !important;
+  padding-right: 16px !important;
+}
+.HTLyM {
+  background-color: #eff4ef;
+}
+.HTLyM button{
+  outline: 0;
+  border: 1px solid transparent;
+  padding: 0.7rem 1.2rem;
+  border-radius: 0.25rem;
+  background-color: var(--primary);
+  color: var(--background);
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+}
 .dashboard-container main {
   width: calc(100% - 250px);
   min-height: 100dvh;
