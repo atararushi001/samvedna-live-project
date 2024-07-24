@@ -3905,7 +3905,7 @@ table td:last-child {
 
 }
 .cMiPmJ{
-  overflow: scroll;
+  overflow: scroll !important;
 }
 .HTLyM button{
   outline: 0;
