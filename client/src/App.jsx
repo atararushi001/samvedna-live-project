@@ -59,6 +59,7 @@ import Explore from "./pages/Explore";
 
 import AdminLogin from "./pages/admin/AdminLogin";
 import AdminDashboard from "./pages/admin/AdminDashboard";
+import Jobseekerresumecreate from "./pages/jobseekerresumecreate";
 
 const App = () => {
   return (
@@ -82,6 +83,9 @@ const App = () => {
           <Route path="/register" element={<Register />} />
           <Route path="/recruiter-register" element={<RecruiterRegister />} />
           <Route path="/job-seeker-register" element={<JobSeekerRegister />} />
+          <Route path="/job-seeker-resume-create" element={<Jobseekerresumecreate />} />
+
+
           <Route
             path="/self-employment-register"
             element={<SelfEmploymentRegister />}

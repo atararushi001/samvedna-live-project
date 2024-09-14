@@ -2656,6 +2656,27 @@ table td:last-child {
   width: 100%;
 }
 
+.job-seeker-register .education {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  width: 100%;
+}
+
+.job-seeker-register  .degrees,
+.job-seeker-register .branches {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  width: 100%;
+  border: 1px solid var(--text);
+  padding: 1rem;
+  border-radius: 0.25rem;
+}
 .build-resume .work-history .positions,
 .build-resume .education .degrees,
 .build-resume .branches {

@@ -48,19 +48,63 @@ const Admin = {
     );
   },
   getJobSeekers: (callback) => {
-    db.query(
-      `
-      SELECT DISTINCT job_seekers.*, cities.name as cityName, states.name as stateName, country.name as countryName, educationspecialization.education_specialization_name as educationName, qualificationlevel.qualification_name as qualificationName
+    const jobSeekerQuery = `
+      SELECT DISTINCT job_seekers.*, cities.name as cityName, states.name as stateName, country.name as countryName, 
+      educationspecialization.education_specialization_name as educationName, qualificationlevel.qualification_name as qualificationName
       FROM ${db_name}.job_seekers 
       JOIN cities ON job_seekers.city = cities.id 
       JOIN states ON job_seekers.state = states.id 
       JOIN country ON job_seekers.country = country.id
       JOIN educationspecialization ON job_seekers.educationSpecialization = educationspecialization.education_specialization_id 
       JOIN qualificationlevel ON job_seekers.qualification = qualificationlevel.qualification_id
-    `,
-      [],
-      callback
-    );
+    `;
+    const educationQuery = `SELECT * FROM ${db_name}.education_job_seekers WHERE education_jobSeekerId = ?`;
+    const experienceQuery = `SELECT * FROM ${db_name}.experience_job_seekers WHERE jobSeekerId = ?`;
+    const referencesQuery = `SELECT * FROM ${db_name}.professionalreferences_job_seekers_id WHERE professionalreferencesjob_seekers_id = ?`;
+
+    db.query(jobSeekerQuery, (err, jobSeekers) => {
+      if (err) {
+        return callback(err);
+      }
+console.log(jobSeekers);
+      const jobSeekerPromises = jobSeekers.map((jobSeeker) => {
+        return new Promise((resolve, reject) => {
+          db.query(educationQuery, [jobSeeker.job_seeker_id], (err, educations) => {
+            if (err) {
+              return reject(err);
+            }
+
+            jobSeeker.education = educations;
+
+            db.query(experienceQuery, [jobSeeker.job_seeker_id], (err, experiences) => {
+              if (err) {
+                return reject(err);
+              }
+
+              jobSeeker.Experience = experiences;
+
+              db.query(referencesQuery, [jobSeeker.job_seeker_id], (err, references) => {
+                if (err) {
+                  return reject(err);
+                }
+
+                jobSeeker.professionalReferences = references;
+
+                resolve(jobSeeker);
+              });
+            });
+          });
+        });
+      });
+
+      Promise.all(jobSeekerPromises)
+        .then((jobSeekersWithDetails) => {
+          callback(null, jobSeekersWithDetails);
+        })
+        .catch((err) => {
+          callback(err);
+        });
+    });
   },
   getContactQueries: (callback) => {
     db.query(`SELECT * FROM contact_query`, [], callback);

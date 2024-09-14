@@ -15,7 +15,6 @@ const JobSeekerRegister = () => {
     username: "",
     password: "",
     confirmPassword: "",
-
     FirstName: "",
     FatherName: "",
     Surname: "",
@@ -43,7 +42,7 @@ const JobSeekerRegister = () => {
 
     Experience: [
       {
-        Jobtitle: "",
+        jobTitle: "",
         companyname: "",
         JobDescriptions: "",
         startDate: "",
@@ -79,7 +78,6 @@ const JobSeekerRegister = () => {
     photo: null, // Add this line
     resume: null,
 
-    
     dob: "",
     gender: "",
     permanentAddress: "",
@@ -325,7 +323,7 @@ const JobSeekerRegister = () => {
     event.preventDefault();
 
     toast.loading("Submitting Your Data, Please Wait...");
-
+    console.log(formData);
     if (formData.password !== formData.confirmPassword) {
       toast.error("Passwords do not match");
       return;
@@ -355,11 +353,11 @@ const JobSeekerRegister = () => {
     });
 
     const data = await response.json();
-
+console.log(data);
     if (response.ok) {
       toast.dismiss();
       toast.success(data.message);
-      navigate("/job-seeker-login");
+      // navigate("/job-seeker-login");
     } else {
       toast.dismiss();
       toast.error(data.message);
@@ -471,26 +469,28 @@ const JobSeekerRegister = () => {
                 value="female"
                 onChange={handleInputChange}
               />
-              
+
               <label htmlFor="female">Female</label>
             </div>
-            <label htmlFor="photo">Upload Your Photo (Passport Size Photo)</label>
-  <input
-    type="file"
-    id="photo"
-    name="photo"
-    accept="image/*"
-    onChange={handleFileChange}
-  />
+            <label htmlFor="photo">
+              Upload Your Photo (Passport Size Photo)
+            </label>
+            <input
+              type="file"
+              id="photo"
+              name="photo"
+              accept="image/*"
+              onChange={handleFileChange}
+            />
 
-  <label htmlFor="resume">Upload Your Resume in PDF/Word File</label>
-  <input
-    type="file"
-    id="resume"
-    name="resume"
-    accept=".pdf,.doc,.docx"
-    onChange={handleFileChange}
-  />
+            <label htmlFor="resume">Upload Your Resume in PDF/Word File</label>
+            <input
+              type="file"
+              id="resume"
+              name="resume"
+              accept=".pdf,.doc,.docx"
+              onChange={handleFileChange}
+            />
           </fieldset>
 
           <fieldset>
@@ -1052,10 +1052,10 @@ const JobSeekerRegister = () => {
                 <div className="input-group row">
                   <input
                     type="text"
-                    name="Jobtitle"
-                    id="Jobtitle"
-                    placeholder="Jobtitle"
-                    value={Experience.Jobtitle}
+                    name="jobTitle"
+                    id="jobTitle"
+                    placeholder="jobTitle"
+                    value={Experience.jobTitle}
                     onChange={(e) => handleInputChange(e, index, "Experience")}
                     required
                   />
