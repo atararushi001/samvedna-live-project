@@ -223,6 +223,51 @@ const AddJobSeeker = ({ setView }) => {
       };
     });
   };
+  // const handleSubmit = async (event) => {
+  //   event.preventDefault();
+
+  //   toast.loading("Submitting Your Data, Please Wait...");
+
+  //   if (formData.password !== formData.confirmPassword) {
+  //     toast.error("Passwords do not match");
+  //     return;
+  //   }
+
+  //   if (formData.password.length < 8) {
+  //     toast.error("Password must be at least 8 characters long");
+  //     return;
+  //   }
+
+  //   if (
+  //     formData.yesNoQuestion === "yes" &&
+  //     !formData.twoWheeler &&
+  //     !formData.threeWheeler &&
+  //     !formData.car
+  //   ) {
+  //     toast.error("Please select at least one vehicle type");
+  //     return;
+  //   }
+
+  //   const response = await fetch(`${API}/job-seeker/register`, {
+  //     method: "POST",
+  //     headers: {
+  //       "Content-Type": "application/json",
+  //     },
+  //     body: JSON.stringify(formData),
+  //   });
+
+  //   const data = await response.json();
+
+  //   if (response.ok) {
+  //     toast.dismiss();
+  //     toast.success(data.message);
+  //     setView("jobSeekers");
+  //   } else {
+  //     toast.dismiss();
+  //     toast.error(data.message);
+  //   }
+  // };
+
   const handleSubmit = async (event) => {
     event.preventDefault();
 
@@ -234,7 +279,20 @@ const AddJobSeeker = ({ setView }) => {
     }
 
     if (formData.password.length < 8) {
-      toast.error("Password must be at least 8 characters long");
+      toast.error("Password should be at least 8 characters long");
+      return;
+    }
+
+    if (formData.dob > new Date().toISOString().split("T")[0]) {
+      toast.error("Date of Birth cannot be in the future");
+      return;
+    }
+
+    const currentYear = new Date().getFullYear();
+    const birthYear = new Date(formData.dob).getFullYear();
+
+    if (currentYear - birthYear < 18) {
+      toast.error("You must be at least 18 years old to register");
       return;
     }
 
@@ -248,15 +306,31 @@ const AddJobSeeker = ({ setView }) => {
       return;
     }
 
+    const newFormData = new FormData();
+
+    for (const key in formData) {
+      if (key === "photo" || key === "resume") {
+        if (formData[key]) {
+          newFormData.append(key, formData[key]);
+        }
+      } else if (
+        key === "education" ||
+        key === "Experience" ||
+        key === "professionalReferences"
+      ) {
+        newFormData.append(key, JSON.stringify(formData[key]));
+      } else {
+        newFormData.append(key, formData[key]);
+      }
+    }
+
     const response = await fetch(`${API}/job-seeker/register`, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(formData),
+      body: newFormData,
     });
 
     const data = await response.json();
+    console.log(data);
 
     if (response.ok) {
       toast.dismiss();
