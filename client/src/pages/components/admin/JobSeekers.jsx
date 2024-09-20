@@ -234,22 +234,23 @@ const JobSeekers = ({ onEditJobSeeker }) => {
   console.log("Filtered Job Seekers:", filteredJobSeekers); // Log filtered job seekers
 
   const convertArrayOfObjectsToCSV = (array) => {
-    let result;
+    if (array.length === 0) {
+      return null;
+    }
 
     const columnDelimiter = ",";
     const lineDelimiter = "\n";
     const keys = Object.keys(array[0]);
 
-    result = "";
-    result += keys.join(columnDelimiter);
-    result += lineDelimiter;
+    let result = keys.join(columnDelimiter) + lineDelimiter;
 
     array.forEach((item) => {
       let ctr = 0;
       keys.forEach((key) => {
         if (ctr > 0) result += columnDelimiter;
 
-        result += item[key];
+        let value = item[key] ? item[key].toString().replace(/"/g, '""') : "";
+        result += `"${value}"`;
 
         ctr++;
       });
@@ -260,19 +261,19 @@ const JobSeekers = ({ onEditJobSeeker }) => {
   };
 
   const downloadCSV = (array) => {
-    const link = document.createElement("a");
-    let csv = convertArrayOfObjectsToCSV(array);
+    const csv = convertArrayOfObjectsToCSV(array);
     if (csv == null) return;
 
     const filename = "job_seekers_export.csv";
+    const link = document.createElement("a");
 
-    if (!csv.match(/^data:text\/csv/i)) {
-      csv = `data:text/csv;charset=utf-8,${csv}`;
-    }
-
-    link.setAttribute("href", encodeURI(csv));
+    link.setAttribute("href", `data:text/csv;charset=utf-8,${encodeURIComponent(csv)}`);
     link.setAttribute("download", filename);
+    link.style.display = "none";
+
+    document.body.appendChild(link);
     link.click();
+    document.body.removeChild(link);
   };
 
   const Export = ({ onExport }) => (
