@@ -10,7 +10,7 @@ const JobSeekerDashboard = () => {
   const navigate = useNavigate();
   const { id } = useParams();
   const { loginState, userDetails } = UserStore();
-
+  const [jobSeeker, setJobSeeker] = useState({});
   const [formData, setFormData] = useState({
     email: "",
     username: "",
@@ -19,95 +19,55 @@ const JobSeekerDashboard = () => {
     FirstName: "",
     FatherName: "",
     Surname: "",
-    lastName: "",
-    artSkills: "",
-    education: [
-      {
-        institutionName: "",
-        country: "",
-        state: "",
-        city: "",
-        degrees: [
-          {
-            degree: "",
-            educationCompleted: "",
-            major: "",
-            graduationDate: "",
-            additionalInfo: "",
-            grade: "",
-            outOf: "",
-          },
-        ],
-      },
-    ],
-    Experience: [
-      {
-        jobTitle: "",
-        companyname: "",
-        JobDescriptions: "",
-        startDate: "",
-        endDate: "",
-        Projects: "",
-      },
-    ],
-    employmentGapReason: "",
-    employmentGapDuration: "",
-    languageProficiency: "",
-    hobbiesOrInterests: "",
-    professionalMemberships: "",
-    careerObjective: "",
-    otherRelevantInfo: "",
-    notableAchievements: "",
-    professionalReferences: [
-      {
-        name: "",
-        email: "",
-        phoneNumber: "",
-        companyName: "",
-        relationship: "",
-      },
-    ],
-    jobCategories: "",
-    preferredLocation: "",
-    jobType: "",
-    accommodationsNeeded: "",
-    transportationNeeded: "",
-    specificNeed: "",
-    softwareRequirements: "",
-    specificEquipment: "",
-    photo: null,
-    resume: null,
-    dob: "",
-    gender: "",
-    permanentAddress: "",
-    currentAddress: "",
-    city: "",
-    state: "",
-    postalCode: "",
-    country: "",
-    contactNumber: "",
-    whatsappNumber: "",
-    AadharCardNumber: "",
-    LinkedInID: "",
-    jobAlerts: false,
-    homePhone: "",
+    accommodationsNeeded: null,
     addHomePhone: "",
-    qualification: "",
-    educationSpecialization: "",
-    typeOfDisability: "",
-    transportationMobility: "",
-    specificDisability: "",
-    levelOfDisability: "",
-    assistiveTechnology: "",
-    experienceAndAppliance: "",
-    yesNoQuestion: "",
-    twoWheeler: false,
-    threeWheeler: false,
-    car: false,
+    artSkills: null,
+    car: 0,
+    careerObjective: null,
+    city: "",
+    contactNumber: "",
+    country: "",
+    currentAddress: "",
     disabilityPercentage: "",
+    dob: "",
+    education: [],
+    educationSpecialization: "",
+    employmentGapDuration: null,
+    employmentGapReason: null,
+    experience: [],
+    experienceAndAppliance: "",
+    gender: "",
+    hobbiesOrInterests: null,
+    homePhone: "",
+    jobAlerts: 0,
+    jobCategories: null,
+    jobType: null,
+    job_seeker_id: null,
+    job_seeker_status: 1,
+    languageProficiency: null,
+    lastName: "",
+    name: "",
+    notableAchievements: null,
+    otherRelevantInfo: null,
+    permanentAddress: "",
+    photo: null,
+    postalCode: "",
+    preferredLocation: null,
+    professionalMemberships: null,
+    professionalReferences: [],
+    qualification: "",
+    resume: null,
+    softwareRequirements: null,
     specializationInDisability: "",
+    specificEquipment: null,
+    specificNeed: null,
+    state: "",
+    threeWheeler: 0,
+    transportationNeeded: null,
+    twoWheeler: 0,
+    whatsappNumber: "",
+    yesNoQuestion: "",
   });
-
   const [countries, setCountries] = useState([]);
   const [states, setStates] = useState([]);
   const [cities, setCities] = useState([]);
@@ -198,13 +158,12 @@ const JobSeekerDashboard = () => {
     });
   };
 
+
   const handleAddClick = (section, newItem) => {
-    setFormData((prevState) => {
-      return {
-        ...prevState,
-        [section]: [...prevState[section], newItem],
-      };
-    });
+    setFormData((prevState) => ({
+      ...prevState,
+      [section]: [...(prevState[section] || []), newItem],
+    }));
   };
 
   const handleRemoveClick = (index, section) => {
@@ -320,7 +279,6 @@ const JobSeekerDashboard = () => {
     });
 
     const data = await response.json();
-    console.log(data);
 
     if (response.ok) {
       toast.dismiss();
@@ -394,29 +352,40 @@ const JobSeekerDashboard = () => {
   }, [formData.qualification]);
 
   useEffect(() => {
-    const fetchResume = async () => {
-      const response = await fetch(`${API}/job-seeker/get-resume/${id}`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          "x-auth-token": userDetails.token,
-        },
-      });
-
-      const data = await response.json();
-
-      if (response.ok) {
-        setFormData(data);
-      } else {
-        toast.error(data.message);
+    const fetchData = async () => {
+      try {
+        const response = await fetch(`${API}/job-seeker/by-id`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            "x-auth-token": userDetails.token,
+          },
+        });
+  
+        const data = await response.json();
+        console.log(data.jobSeeker);
+        console.log(formData);
+  
+        if (response.ok) {
+          setFormData((prevFormData) => ({
+            ...prevFormData,
+            ...data.jobSeeker,
+            experience: data.jobSeeker.experience || [], // Ensure experience is an array
+          }));
+        } else {
+          toast.error(data.message);
+        }
+      } catch (error) {
+        console.error("Error fetching job seeker data:", error);
+        toast.error("Failed to fetch job seeker data");
       }
     };
-
+  
     if (loginState) {
-      fetchResume();
+      fetchData();
     }
   }, [id, navigate, loginState, userDetails]);
-
+  console.log(formData);
   return (
     <div className="container">
       <section className="job-seeker-register">
@@ -442,15 +411,24 @@ const JobSeekerDashboard = () => {
               onChange={handleInputChange}
               required
             />
+            <input
+              type="text"
+              id="email"
+              name="email"
+              placeholder="Enter Desired email"
+              value={formData.email}
+              onChange={handleInputChange}
+              required
+            />
 
             <input
               type="password"
               id="password"
               name="password"
               placeholder="Enter Password"
-              value={formData.password}
+              // value={formData.password}
               onChange={handleInputChange}
-              required
+              
             />
 
             <input
@@ -460,7 +438,7 @@ const JobSeekerDashboard = () => {
               placeholder="Confirm Password"
               value={formData.confirmPassword}
               onChange={handleInputChange}
-              required
+              
             />
           </fieldset>
 
@@ -566,7 +544,7 @@ const JobSeekerDashboard = () => {
               onChange={handleInputChange}
               required
             ></textarea>
-            
+
             <select
               name="country"
               value={formData.country}
@@ -636,7 +614,6 @@ const JobSeekerDashboard = () => {
               onChange={handleInputChange}
               required
             />
-
           </fieldset>
 
           <fieldset>
@@ -837,7 +814,7 @@ const JobSeekerDashboard = () => {
           </fieldset>
           <fieldset>
             <legend>Education</legend>
-            {formData.education.map((education, index) => (
+            {formData.education?.map((education, index) => (
               <div key={index} className="education">
                 <input
                   type="text"
@@ -875,7 +852,7 @@ const JobSeekerDashboard = () => {
                   onChange={(e) => handleInputChange(e, index, "education")}
                   required
                 />
-                {education.degrees.map((degree, subIndex) => (
+                {education?.degrees?.map((degree, subIndex) => (
                   <div key={subIndex} className="degrees">
                     <input
                       type="text"
@@ -1061,17 +1038,99 @@ const JobSeekerDashboard = () => {
               Add Institution
             </button>
           </fieldset>
-
           <fieldset>
+          <legend>Experience</legend>
+          {formData.experience?.map((experiences, index) => (
+            <div key={index} className="experience">
+              <input
+                type="text"
+                name="jobTitle"
+                id="jobTitle"
+                placeholder="Job Title"
+                value={experiences.jobTitle}
+                onChange={(e) => handleInputChange(e, index, "experience")}
+                required
+              />
+              <input
+                type="text"
+                name="companyname"
+                id="companyname"
+                placeholder="Company Name"
+                value={experiences.companyName}
+                onChange={(e) => handleInputChange(e, index, "experience")}
+                required
+              />
+              <input
+                type="text"
+                name="JobDescriptions"
+                id="JobDescriptions"
+                placeholder="Job Descriptions"
+                value={experiences.jobDescriptions}
+                onChange={(e) => handleInputChange(e, index, "experience")}
+                required
+              />
+              <input
+                type="date"
+                name="startDate"
+                id="startDate"
+                placeholder="Start Date"
+                value={experiences.startDate}
+                onChange={(e) => handleInputChange(e, index, "experience")}
+                required
+              />
+              <input
+                type="date"
+                name="endDate"
+                id="endDate"
+                placeholder="End Date"
+                value={experiences.endDate}
+                onChange={(e) => handleInputChange(e, index, "experience")}
+                required
+              />
+              <input
+                type="text"
+                name="Projects"
+                id="Projects"
+                placeholder="Projects or Portfolio"
+                value={experiences.projects}
+                onChange={(e) => handleInputChange(e, index, "experience")}
+              />
+              <button
+                type="button"
+                className="btn btn-delete"
+                onClick={() => handleRemoveClick(index, "experience")}
+              >
+                Remove Experience
+              </button>
+            </div>
+          ))}
+          <button
+            type="button"
+            className="btn"
+            onClick={() =>
+              handleAddClick("experience", {
+                jobTitle: "",
+                companyname: "",
+                JobDescriptions: "",
+                startDate: "",
+                endDate: "",
+                Projects: "",
+              })
+            }
+          >
+            Add Experience
+          </button>
+        </fieldset>
+          {/* <fieldset>
             <legend>Experience</legend>
-            {formData.Experience.map((experience, index) => (
+            {formData.Experience?.map((experiences, index) => (
               <div key={index} className="experience">
                 <input
                   type="text"
                   name="jobTitle"
                   id="jobTitle"
                   placeholder="Job Title"
-                  value={experience.jobTitle}
+                  value={experiences.jobTitle}
                   onChange={(e) => handleInputChange(e, index, "Experience")}
                   required
                 />
@@ -1080,7 +1139,7 @@ const JobSeekerDashboard = () => {
                   name="companyname"
                   id="companyname"
                   placeholder="Company Name"
-                  value={experience.companyname}
+                  value={experiences.companyname}
                   onChange={(e) => handleInputChange(e, index, "Experience")}
                   required
                 />
@@ -1089,7 +1148,7 @@ const JobSeekerDashboard = () => {
                   name="JobDescriptions"
                   id="JobDescriptions"
                   placeholder="Job Descriptions"
-                  value={experience.JobDescriptions}
+                  value={experiences.JobDescriptions}
                   onChange={(e) => handleInputChange(e, index, "Experience")}
                   required
                 />
@@ -1098,7 +1157,7 @@ const JobSeekerDashboard = () => {
                   name="startDate"
                   id="startDate"
                   placeholder="Start Date"
-                  value={experience.startDate}
+                  value={experiences.startDate}
                   onChange={(e) => handleInputChange(e, index, "Experience")}
                   required
                 />
@@ -1107,7 +1166,7 @@ const JobSeekerDashboard = () => {
                   name="endDate"
                   id="endDate"
                   placeholder="End Date"
-                  value={experience.endDate}
+                  value={experiences.endDate}
                   onChange={(e) => handleInputChange(e, index, "Experience")}
                   required
                 />
@@ -1116,7 +1175,7 @@ const JobSeekerDashboard = () => {
                   name="Projects"
                   id="Projects"
                   placeholder="Projects or Portfolio"
-                  value={experience.Projects}
+                  value={experiences.Projects}
                   onChange={(e) => handleInputChange(e, index, "Experience")}
                 />
                 <button
@@ -1144,261 +1203,289 @@ const JobSeekerDashboard = () => {
             >
               Add Experience
             </button>
+          </fieldset> */}
+          <fieldset>
+            <legend>Employment Gap Information (if applicable)</legend>
+            <label htmlFor="employmentGapReason">
+              Reason for Employment Gap
+            </label>
+            <select
+              id="employmentGapReason"
+              name="employmentGapReason"
+              value={formData.employmentGapReason}
+              onChange={handleInputChange}
+            >
+              <option value="" disabled>
+                Select Reason
+              </option>
+              <option value="Health Issues">Health Issues</option>
+              <option value="Caregiving">Caregiving</option>
+              <option value="Education">Education</option>
+              <option value="Other">Other</option>
+            </select>
+            <label htmlFor="employmentGapDuration">
+              Duration of Employment Gap
+            </label>
+            <input
+              type="text"
+              id="employmentGapDuration"
+              name="employmentGapDuration"
+              value={formData.employmentGapDuration}
+              onChange={handleInputChange}
+              placeholder="Enter duration (e.g., 6 months, 1 year)"
+            />
           </fieldset>
-                       <fieldset>
-                  <legend>Employment Gap Information (if applicable)</legend>
-                  <label htmlFor="employmentGapReason">Reason for Employment Gap</label>
-                  <select
-                    id="employmentGapReason"
-                    name="employmentGapReason"
-                    value={formData.employmentGapReason}
-                    onChange={handleInputChange}
-                  >
-                    <option value="" disabled>
-                      Select Reason
-                    </option>
-                    <option value="Health Issues">Health Issues</option>
-                    <option value="Caregiving">Caregiving</option>
-                    <option value="Education">Education</option>
-                    <option value="Other">Other</option>
-                  </select>
-                  <label htmlFor="employmentGapDuration">Duration of Employment Gap</label>
-                  <input
-                    type="text"
-                    id="employmentGapDuration"
-                    name="employmentGapDuration"
-                    value={formData.employmentGapDuration}
-                    onChange={handleInputChange}
-                    placeholder="Enter duration (e.g., 6 months, 1 year)"
-                  />
-                </fieldset>
-                <fieldset>
-                  <legend>Other Relevant Information</legend>
-                  <label htmlFor="languageProficiency">Language Proficiency</label>
-                  <input
-                    type="text"
-                    id="languageProficiency"
-                    name="languageProficiency"
-                    value={formData.languageProficiency}
-                    onChange={handleInputChange}
-                    placeholder="Enter languages you are proficient in"
-                  />
-                  <label htmlFor="hobbiesOrInterests">Relevant Hobbies or Interests</label>
-                  <input
-                    type="text"
-                    id="hobbiesOrInterests"
-                    name="hobbiesOrInterests"
-                    value={formData.hobbiesOrInterests}
-                    onChange={handleInputChange}
-                    placeholder="Enter your hobbies or interests"
-                  />
-                  <label htmlFor="professionalMemberships">Professional Memberships or Associations</label>
-                  <input
-                    type="text"
-                    id="professionalMemberships"
-                    name="professionalMemberships"
-                    value={formData.professionalMemberships}
-                    onChange={handleInputChange}
-                    placeholder="Enter your professional memberships or associations"
-                  />
-                </fieldset>
-                <fieldset>
-                  <legend>Additional Information</legend>
-                  <label htmlFor="careerObjective">Summary or Career Objective</label>
-                  <textarea
-                    id="careerObjective"
-                    name="careerObjective"
-                    value={formData.careerObjective}
-                    onChange={handleInputChange}
-                    placeholder="Enter your summary or career objective"
-                  ></textarea>
-                  <label htmlFor="otherRelevantInfo">Other Relevant Information</label>
-                  <textarea
-                    id="otherRelevantInfo"
-                    name="otherRelevantInfo"
-                    value={formData.otherRelevantInfo}
-                    onChange={handleInputChange}
-                    placeholder="Enter any other relevant information"
-                  ></textarea>
-                  <label htmlFor="notableAchievements">Notable Awards, Recognition, or Achievements</label>
-                  <textarea
-                    id="notableAchievements"
-                    name="notableAchievements"
-                    value={formData.notableAchievements}
-                    onChange={handleInputChange}
-                    placeholder="Enter any notable awards, recognition, or achievements"
-                  ></textarea>
-                </fieldset>
-                <fieldset>
-                  <legend>References</legend>
-                  {formData.professionalReferences.map((reference, index) => (
-                    <div key={index} className="reference">
-                      <input
-                        type="text"
-                        name="name"
-                        id="name"
-                        placeholder="Name"
-                        value={reference.name}
-                        onChange={(e) => handleInputChange(e, index, "professionalReferences")}
-                        required
-                      />
-                      <input
-                        type="email"
-                        name="email"
-                        id="email"
-                        placeholder="Email"
-                        value={reference.email}
-                        onChange={(e) => handleInputChange(e, index, "professionalReferences")}
-                        required
-                      />
-                      <input
-                        type="text"
-                        name="phoneNumber"
-                        id="phoneNumber"
-                        placeholder="Phone Number"
-                        value={reference.phoneNumber}
-                        onChange={(e) => handleInputChange(e, index, "professionalReferences")}
-                        required
-                      />
-                      <input
-                        type="text"
-                        name="companyName"
-                        id="companyName"
-                        placeholder="Company Name"
-                        value={reference.companyName}
-                        onChange={(e) => handleInputChange(e, index, "professionalReferences")}
-                        required
-                      />
-                      <input
-                        type="text"
-                        name="relationship"
-                        id="relationship"
-                        placeholder="Relationship"
-                        value={reference.relationship}
-                        onChange={(e) => handleInputChange(e, index, "professionalReferences")}
-                      />
-                      <button
-                        type="button"
-                        className="btn btn-delete"
-                        onClick={() => handleRemoveClick(index, "professionalReferences")}
-                      >
-                        Remove Reference
-                      </button>
-                    </div>
-                  ))}
-                  <button
-                    type="button"
-                    className="btn"
-                    onClick={() =>
-                      handleAddClick("professionalReferences", {
-                        name: "",
-                        email: "",
-                        phoneNumber: "",
-                        companyName: "",
-                        relationship: "",
-                      })
-                    }
-                  >
-                    Add Reference
-                  </button>
-                </fieldset>
-                <fieldset>
-                  <legend>Job Preferences</legend>
-                  <label htmlFor="jobCategories">Job Categories and Industries of Interest</label>
-                  <input
-                    type="text"
-                    id="jobCategories"
-                    name="jobCategories"
-                    value={formData.jobCategories}
-                    onChange={handleInputChange}
-                    placeholder="Enter job categories and industries of interest"
-                  />
-                  <label htmlFor="preferredLocation">Job Preferred Location</label>
-                  <input
-                    type="text"
-                    id="preferredLocation"
-                    name="preferredLocation"
-                    value={formData.preferredLocation}
-                    onChange={handleInputChange}
-                    placeholder="Enter job preferred Location"
-                  />
-                  <label htmlFor="jobType">Job Type</label>
-                  <input
-                    type="text"
-                    id="jobType"
-                    name="jobType"
-                    value={formData.jobType}
-                    onChange={handleInputChange}
-                    placeholder="Enter job type"
-                  />
-                </fieldset>
-                <fieldset>
-                  <legend>Accessibility Requirements</legend>
-                  <label htmlFor="accommodationsNeeded">Accommodations Needed for the Job</label>
-                  <input
-                    type="text"
-                    id="accommodationsNeeded"
-                    name="accommodationsNeeded"
-                    value={formData.accommodationsNeeded}
-                    onChange={handleInputChange}
-                    placeholder="Enter accommodations needed for the job"
-                  />
-                  <label htmlFor="transportationNeeded">Transportation Needed for the Job</label>
-                  <input
-                    type="text"
-                    id="transportationNeeded"
-                    name="transportationNeeded"
-                    value={formData.transportationNeeded}
-                    onChange={handleInputChange}
-                    placeholder="Enter transportation needed for the job"
-                  />
-                  <label htmlFor="specificNeed">Specific Need</label>
-                  <input
-                    type="text"
-                    id="specificNeed"
-                    name="specificNeed"
-                    value={formData.specificNeed}
-                    onChange={handleInputChange}
-                    placeholder="Enter specific need (e.g., Wheelchair Accessibility, Sign Language Interpreter, Adaptive Software)"
-                  />
-                  <label htmlFor="softwareRequirements">Software Requirements</label>
-                  <input
-                    type="text"
-                    id="softwareRequirements"
-                    name="softwareRequirements"
-                    value={formData.softwareRequirements}
-                    onChange={handleInputChange}
-                    placeholder="Enter software requirements"
-                  />
-                  <label htmlFor="specificEquipment">Any Specific Equipment</label>
-                  <input
-                    type="text"
-                    id="specificEquipment"
-                    name="specificEquipment"
-                    value={formData.specificEquipment}
-                    onChange={handleInputChange}
-                    placeholder="Enter any specific equipment"
-                  />
-                </fieldset>
-                <div className="btn-container">
-                  <button
-                    type="submit"
-                    value="Register"
-                    className="btn"
-                    name="job_seekerRegisterButton"
-                  >
-                    Register
-                  </button>
-                  <button type="button" className="btn btn-delete">
-                    Cancel
-                  </button>
-                </div>
-              </form>
-            </section>
+          <fieldset>
+            <legend>Other Relevant Information</legend>
+            <label htmlFor="languageProficiency">Language Proficiency</label>
+            <input
+              type="text"
+              id="languageProficiency"
+              name="languageProficiency"
+              value={formData.languageProficiency}
+              onChange={handleInputChange}
+              placeholder="Enter languages you are proficient in"
+            />
+            <label htmlFor="hobbiesOrInterests">
+              Relevant Hobbies or Interests
+            </label>
+            <input
+              type="text"
+              id="hobbiesOrInterests"
+              name="hobbiesOrInterests"
+              value={formData.hobbiesOrInterests}
+              onChange={handleInputChange}
+              placeholder="Enter your hobbies or interests"
+            />
+            <label htmlFor="professionalMemberships">
+              Professional Memberships or Associations
+            </label>
+            <input
+              type="text"
+              id="professionalMemberships"
+              name="professionalMemberships"
+              value={formData.professionalMemberships}
+              onChange={handleInputChange}
+              placeholder="Enter your professional memberships or associations"
+            />
+          </fieldset>
+          <fieldset>
+            <legend>Additional Information</legend>
+            <label htmlFor="careerObjective">Summary or Career Objective</label>
+            <textarea
+              id="careerObjective"
+              name="careerObjective"
+              value={formData.careerObjective}
+              onChange={handleInputChange}
+              placeholder="Enter your summary or career objective"
+            ></textarea>
+            <label htmlFor="otherRelevantInfo">
+              Other Relevant Information
+            </label>
+            <textarea
+              id="otherRelevantInfo"
+              name="otherRelevantInfo"
+              value={formData.otherRelevantInfo}
+              onChange={handleInputChange}
+              placeholder="Enter any other relevant information"
+            ></textarea>
+            <label htmlFor="notableAchievements">
+              Notable Awards, Recognition, or Achievements
+            </label>
+            <textarea
+              id="notableAchievements"
+              name="notableAchievements"
+              value={formData.notableAchievements}
+              onChange={handleInputChange}
+              placeholder="Enter any notable awards, recognition, or achievements"
+            ></textarea>
+          </fieldset>
+          <fieldset>
+            <legend>References</legend>
+            {formData.professionalReferences?.map((reference, index) => (
+              <div key={index} className="reference">
+                <input
+                  type="text"
+                  name="name"
+                  id="name"
+                  placeholder="Name"
+                  value={reference.name}
+                  onChange={(e) =>
+                    handleInputChange(e, index, "professionalReferences")
+                  }
+                  required
+                />
+                <input
+                  type="email"
+                  name="email"
+                  id="email"
+                  placeholder="Email"
+                  value={reference.email}
+                  onChange={(e) =>
+                    handleInputChange(e, index, "professionalReferences")
+                  }
+                  required
+                />
+                <input
+                  type="text"
+                  name="phoneNumber"
+                  id="phoneNumber"
+                  placeholder="Phone Number"
+                  value={reference.phoneNumber}
+                  onChange={(e) =>
+                    handleInputChange(e, index, "professionalReferences")
+                  }
+                  required
+                />
+                <input
+                  type="text"
+                  name="companyName"
+                  id="companyName"
+                  placeholder="Company Name"
+                  value={reference.companyName}
+                  onChange={(e) =>
+                    handleInputChange(e, index, "professionalReferences")
+                  }
+                  required
+                />
+                <input
+                  type="text"
+                  name="relationship"
+                  id="relationship"
+                  placeholder="Relationship"
+                  value={reference.relationship}
+                  onChange={(e) =>
+                    handleInputChange(e, index, "professionalReferences")
+                  }
+                />
+                <button
+                  type="button"
+                  className="btn btn-delete"
+                  onClick={() =>
+                    handleRemoveClick(index, "professionalReferences")
+                  }
+                >
+                  Remove Reference
+                </button>
+              </div>
+            ))}
+            <button
+              type="button"
+              className="btn"
+              onClick={() =>
+                handleAddClick("professionalReferences", {
+                  name: "",
+                  email: "",
+                  phoneNumber: "",
+                  companyName: "",
+                  relationship: "",
+                })
+              }
+            >
+              Add Reference
+            </button>
+          </fieldset>
+          <fieldset>
+            <legend>Job Preferences</legend>
+            <label htmlFor="jobCategories">
+              Job Categories and Industries of Interest
+            </label>
+            <input
+              type="text"
+              id="jobCategories"
+              name="jobCategories"
+              value={formData.jobCategories}
+              onChange={handleInputChange}
+              placeholder="Enter job categories and industries of interest"
+            />
+            <label htmlFor="preferredLocation">Job Preferred Location</label>
+            <input
+              type="text"
+              id="preferredLocation"
+              name="preferredLocation"
+              value={formData.preferredLocation}
+              onChange={handleInputChange}
+              placeholder="Enter job preferred Location"
+            />
+            <label htmlFor="jobType">Job Type</label>
+            <input
+              type="text"
+              id="jobType"
+              name="jobType"
+              value={formData.jobType}
+              onChange={handleInputChange}
+              placeholder="Enter job type"
+            />
+          </fieldset>
+          <fieldset>
+            <legend>Accessibility Requirements</legend>
+            <label htmlFor="accommodationsNeeded">
+              Accommodations Needed for the Job
+            </label>
+            <input
+              type="text"
+              id="accommodationsNeeded"
+              name="accommodationsNeeded"
+              value={formData.accommodationsNeeded}
+              onChange={handleInputChange}
+              placeholder="Enter accommodations needed for the job"
+            />
+            <label htmlFor="transportationNeeded">
+              Transportation Needed for the Job
+            </label>
+            <input
+              type="text"
+              id="transportationNeeded"
+              name="transportationNeeded"
+              value={formData.transportationNeeded}
+              onChange={handleInputChange}
+              placeholder="Enter transportation needed for the job"
+            />
+            <label htmlFor="specificNeed">Specific Need</label>
+            <input
+              type="text"
+              id="specificNeed"
+              name="specificNeed"
+              value={formData.specificNeed}
+              onChange={handleInputChange}
+              placeholder="Enter specific need (e.g., Wheelchair Accessibility, Sign Language Interpreter, Adaptive Software)"
+            />
+            <label htmlFor="softwareRequirements">Software Requirements</label>
+            <input
+              type="text"
+              id="softwareRequirements"
+              name="softwareRequirements"
+              value={formData.softwareRequirements}
+              onChange={handleInputChange}
+              placeholder="Enter software requirements"
+            />
+            <label htmlFor="specificEquipment">Any Specific Equipment</label>
+            <input
+              type="text"
+              id="specificEquipment"
+              name="specificEquipment"
+              value={formData.specificEquipment}
+              onChange={handleInputChange}
+              placeholder="Enter any specific equipment"
+            />
+          </fieldset>
+          <div className="btn-container">
+            <button
+              type="submit"
+              value="Register"
+              className="btn"
+              name="job_seekerRegisterButton"
+            >
+              Register
+            </button>
+            <button type="button" className="btn btn-delete">
+              Cancel
+            </button>
           </div>
-        );
-      };
-      
-
+        </form>
+      </section>
+    </div>
+  );
+};
 
 export default JobSeekerDashboard;

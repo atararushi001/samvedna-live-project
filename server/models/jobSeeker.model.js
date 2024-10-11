@@ -313,64 +313,9 @@ const JobSeeker = {
   create: (newJobSeeker, callback) => {
     const {
       email,
-      username,
       password,
-      confirmPassword,
-      FirstName,
-      FatherName,
-      Surname,
-      lastName,
-      artSkills,
-      employmentGapReason,
-      employmentGapDuration,
-      languageProficiency,
-      hobbiesOrInterests,
-      professionalMemberships,
-      careerObjective,
-      otherRelevantInfo,
-      notableAchievements,
-      jobCategories,
-      preferredLocation,
-      jobType,
-      accommodationsNeeded,
-      transportationNeeded,
-      specificNeed,
-      softwareRequirements,
-      specificEquipment,
-      photo,
-      resume,
-      dob,
-      gender,
-      permanentAddress,
-      currentAddress,
-      city,
-      state,
-      postalCode,
-      country,
-      contactNumber,
-      whatsappNumber,
-      AadharCardNumber,
-      LinkedInID,
-      jobAlerts,
-      homePhone,
-      addHomePhone,
-      qualification,
-      educationSpecialization,
-      typeOfDisability,
-      transportationMobility,
-      specificDisability,
-      levelOfDisability,
-      assistiveTechnology,
-      experienceAndAppliance,
-      yesNoQuestion,
-      twoWheeler,
-      threeWheeler,
-      car,
-      disabilityPercentage,
-      specializationInDisability,
-      education,
-      Experience,
-      professionalReferences,
+      
+    
     } = newJobSeeker;
 
     // db.query("START TRANSACTION", (err) => {
@@ -380,202 +325,22 @@ const JobSeeker = {
     //   }
 
     const insertJobSeekerQuery = `INSERT INTO ${db_name}.job_seekers (
-        email, username, password, confirmPassword, FirstName, FatherName, Surname, lastName, artSkills, employmentGapReason, employmentGapDuration, languageProficiency, hobbiesOrInterests, professionalMemberships, careerObjective, otherRelevantInfo, notableAchievements, jobCategories, preferredLocation, jobType, accommodationsNeeded, transportationNeeded, specificNeed, softwareRequirements, specificEquipment, photo, resume, dob, gender, permanentAddress, currentAddress, city, state, postalCode, country, contactNumber, whatsappNumber, AadharCardNumber, LinkedInID, jobAlerts, homePhone, addHomePhone, qualification, educationSpecialization, typeOfDisability, transportationMobility, specificDisability, levelOfDisability, assistiveTechnology, experienceAndAppliance, yesNoQuestion, twoWheeler, threeWheeler, car, disabilityPercentage, specializationInDisability
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-    `;
+        email, password ) VALUES (?, ?);`;
 
     db.query(
       insertJobSeekerQuery,
       [
         email,
-        username,
         password,
-        confirmPassword,
-        FirstName,
-        FatherName,
-        Surname,
-        lastName,
-        artSkills,
-        employmentGapReason,
-        employmentGapDuration,
-        languageProficiency,
-        hobbiesOrInterests,
-        professionalMemberships,
-        careerObjective,
-        otherRelevantInfo,
-        notableAchievements,
-        jobCategories,
-        preferredLocation,
-        jobType,
-        accommodationsNeeded,
-        transportationNeeded,
-        specificNeed,
-        softwareRequirements,
-        specificEquipment,
-        photo,
-        resume,
-        dob,
-        gender,
-        permanentAddress,
-        currentAddress,
-        city,
-        state,
-        postalCode,
-        country,
-        contactNumber,
-        whatsappNumber,
-        AadharCardNumber,
-        LinkedInID,
-        jobAlerts,
-        homePhone,
-        addHomePhone,
-        qualification,
-        educationSpecialization,
-        typeOfDisability,
-        transportationMobility,
-        specificDisability,
-        levelOfDisability,
-        assistiveTechnology,
-        experienceAndAppliance,
-        yesNoQuestion,
-        twoWheeler,
-        threeWheeler,
-        car,
-        disabilityPercentage,
-        specializationInDisability,
       ],
       (err, result) => {
         if (err) {
           return callback(err);
         } else {
-          const jobSeekerId = result.insertId;
-          // Log the education variable properly
-
-          parsedEducation =
-            typeof education === "string" ? JSON.parse(education) : education;
-
-          // Ensure education is an array
-          const educationArray = Array.isArray(parsedEducation)
-            ? parsedEducation
-            : parsedEducation
-            ? [parsedEducation]
-            : [];
-
-          parsedExperience =
-            typeof Experience === "string"
-              ? JSON.parse(Experience)
-              : Experience;
-
-          // Ensure education is an array
-          const ExperienceArray = Array.isArray(parsedExperience)
-            ? parsedExperience
-            : parsedExperience
-            ? [parsedExperience]
-            : [];
-
-
-            parsedprofessionalReferences =
-            typeof professionalReferences === "string"
-              ? JSON.parse(professionalReferences)
-              : professionalReferences;
-
-          // Ensure education is an array
-          const professionalReferencesArray = Array.isArray(parsedprofessionalReferences)
-            ? parsedprofessionalReferences
-            : parsedprofessionalReferences
-            ? [parsedprofessionalReferences]
-            : [];
-          const educationPromises = educationArray.map((educations) => {
-            return new Promise((resolve, reject) => {
-              db.query(
-                `INSERT INTO ${db_name}.education_job_seekers (education_jobSeekerId, institutionName, country, state, city) VALUES (?, ?, ?, ?, ?)`,
-                [
-                  jobSeekerId,
-                  educations.institutionName,
-                  educations.country,
-                  educations.state,
-                  educations.city,
-                ],
-                (err, result) => {
-                  if (err) {
-                    return reject(err);
-                  }
-                  resolve(result);
-                }
-              );
-            });
-          });
-
-          const experiencePromises = ExperienceArray.map((experiences) => {
-            return new Promise((resolve, reject) => {
-              db.query(
-                `INSERT INTO ${db_name}.experience_job_seekers (jobSeekerId, companyName, Jobtitle, startDate, endDate, JobDescriptions, Projects) VALUES (?, ?, ?, ?, ?, ?, ?)`,
-                [
-                  jobSeekerId,
-                  experiences.companyname,
-                  experiences.jobTitle,
-                  experiences.startDate,
-                  experiences.endDate,
-                  experiences.JobDescriptions,
-                  experiences.Projects,
-                ],
-                (err, result) => {
-                  if (err) {
-                    return reject(err);
-                  }
-                  resolve(result);
-                }
-              );
-            });
-          });
-
-          const referencesPromises = professionalReferencesArray.map(
-            (references) => {
-              return new Promise((resolve, reject) => {
-                db.query(
-                  `INSERT INTO ${db_name}.professionalreferences_job_seekers_id (professionalreferencesjob_seekers_id, name, companyName, phoneNumber, email, relationship) VALUES (?, ?, ?, ?, ?, ?)`,
-                  [
-                    jobSeekerId,
-                    references.name,
-                    references.companyName,
-                    references.phoneNumber,
-                    references.email,
-                    references.relationship,
-                  ],
-                  (err, result) => {
-                    if (err) {
-                      return reject(err);
-                    }
-                    resolve(result);
-                  }
-                );
-              });
-            }
-          );
-
-          Promise.all([
-            ...educationPromises,
-            ...referencesPromises,
-            ...experiencePromises,
-          ])
-            .then(() => {
-              db.query("COMMIT", (err) => {
-                if (err) {
-                  return callback(err, null);
-                }
-
                 callback(null, {
                   success: true,
                   message: "Job Seeker created successfully",
                 });
-              });
-            })
-            .catch((err) => {
-              // db.query("ROLLBACK", () => {
-              //   callback(err, null);
-              // });
-              console.log(err);
-            });
         }
       }
     );
@@ -848,54 +613,50 @@ const JobSeeker = {
     );
   },
   getById: (id, callback) => {
-    const jobSeekerQuery = `SELECT * FROM ${db_name}.job_seekers WHERE job_seeker_id = ?`;
-    const educationQuery = `SELECT * FROM ${db_name}.education_job_seekers WHERE education_jobSeekerId = ?`;
-    const experienceQuery = `SELECT * FROM ${db_name}.experience_job_seekers WHERE jobSeekerId = ?`;
-    const referencesQuery = `SELECT * FROM ${db_name}.professionalreferences_job_seekers_id WHERE professionalreferencesjob_seekers_id = ?`;
-
+    const jobSeekerQuery = `SELECT * FROM job_seekers WHERE job_seeker_id = ?`;
+    const educationQuery = `SELECT * FROM education_job_seekers WHERE education_jobSeekerId = ?`;
+    const experienceQuery = `SELECT * FROM experience_job_seekers WHERE jobSeekerId = ?`;
+    const referencesQuery = `SELECT * FROM professionalreferences_job_seekers_id WHERE professionalreferencesjob_seekers_id = ?`;
+  
     db.query(jobSeekerQuery, [id], (err, jobSeekers) => {
       if (err) {
+        console.error('Error querying job_seekers:', err);
         return callback(err);
       }
-
+  
       if (jobSeekers.length === 0) {
-        return callback(new Error("No job seeker found!"));
+        return callback(new Error('No job seeker found!'));
       }
-
+  
       const jobSeeker = jobSeekers[0];
-
+  
       db.query(educationQuery, [jobSeeker.job_seeker_id], (err, educations) => {
         if (err) {
+          console.error('Error querying education_job_seekers:', err);
           return callback(err);
         }
-
+  
         jobSeeker.education = educations;
-
-        db.query(
-          experienceQuery,
-          [jobSeeker.job_seeker_id],
-          (err, experiences) => {
+  
+        db.query(experienceQuery, [jobSeeker.job_seeker_id], (err, experiences) => {
+          if (err) {
+            console.error('Error querying experience_job_seekers:', err);
+            return callback(err);
+          }
+  
+          jobSeeker.experience = experiences;
+  
+          db.query(referencesQuery, [jobSeeker.job_seeker_id], (err, references) => {
             if (err) {
+              console.error('Error querying professionalreferences_job_seekers_id:', err);
               return callback(err);
             }
-
-            jobSeeker.Experience = experiences;
-
-            db.query(
-              referencesQuery,
-              [jobSeeker.job_seeker_id],
-              (err, references) => {
-                if (err) {
-                  return callback(err);
-                }
-
-                jobSeeker.professionalReferences = references;
-
-                callback(null, jobSeeker);
-              }
-            );
-          }
-        );
+  
+            jobSeeker.professionalReferences = references;
+  
+            callback(null, jobSeeker);
+          });
+        });
       });
     });
   },

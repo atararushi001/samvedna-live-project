@@ -11,7 +11,10 @@ const moment = require("moment");
 // Set up storage for photo uploads
 const storagePhoto = multer.diskStorage({
   destination: function (req, file, cb) {
-    const uploadDirectory = path.join(__dirname, "../public/uploads/job/profile");
+    const uploadDirectory = path.join(
+      __dirname,
+      "../public/uploads/job/profile"
+    );
     if (!fs.existsSync(uploadDirectory)) {
       fs.mkdirSync(uploadDirectory, { recursive: true });
     }
@@ -25,7 +28,10 @@ const storagePhoto = multer.diskStorage({
 // Set up storage for resume uploads
 const storageResume = multer.diskStorage({
   destination: function (req, file, cb) {
-    const uploadDirectory = path.join(__dirname, "../public/uploads/job/resume");
+    const uploadDirectory = path.join(
+      __dirname,
+      "../public/uploads/job/resume"
+    );
     if (!fs.existsSync(uploadDirectory)) {
       fs.mkdirSync(uploadDirectory, { recursive: true });
     }
@@ -54,9 +60,6 @@ const upload = multer({
   { name: "resume", maxCount: 1 },
 ]);
 
-
-
-
 const jobSeekerController = {
   getAll: (req, res) => {
     jobSeeker.getAll((err, results) => {
@@ -68,20 +71,181 @@ const jobSeekerController = {
     });
   },
   getById: (req, res) => {
-    const id = req.user.id;
+    const id = req.user.id; // Extract user ID from authMiddleware
     jobSeeker.getById(id, (err, results) => {
+      console.log(results);
       if (err) {
-        console.log(err);
-        return res.status(500).json({ message: "Internal server error" });
+        return res.status(500).json({ message: 'Internal server error' });
       }
-      if (!results.length) {
-        return res.status(404).json("Job Seeker not found");
-      }
-      res.status(200).json({ jobSeeker: results[0] });
+      // if (!results.length) {
+      //   return res.status(404).json({ message: 'Job Seeker not found' });
+      // }
+      res.status(200).json({ jobSeeker: results });
     });
   },
 
-  register: [
+  // register: [
+  //   // Middleware to handle file uploads
+  //   // uploadPhoto.single("photo"),
+  //   // uploadResume.single("resume"),
+  //   upload,
+  //   (req, res) => {
+  //     // console.log(req.body.education);
+  //     const {
+  //       email,
+  //       username,
+  //       password,
+  //       confirmPassword,
+  //       FirstName,
+  //       FatherName,
+  //       Surname,
+  //       lastName,
+  //       artSkills,
+  //       employmentGapReason,
+  //       employmentGapDuration,
+  //       languageProficiency,
+  //       hobbiesOrInterests,
+  //       professionalMemberships,
+  //       careerObjective,
+  //       otherRelevantInfo,
+  //       notableAchievements,
+  //       jobCategories,
+  //       preferredLocation,
+  //       jobType,
+  //       accommodationsNeeded,
+  //       transportationNeeded,
+  //       specificNeed,
+  //       softwareRequirements,
+  //       specificEquipment,
+  //       dob,
+  //       gender,
+  //       permanentAddress,
+  //       currentAddress,
+  //       city,
+  //       state,
+  //       postalCode,
+  //       country,
+  //       contactNumber,
+  //       whatsappNumber,
+  //       AadharCardNumber,
+  //       LinkedInID,
+  //       jobAlerts,
+  //       homePhone,
+  //       addHomePhone,
+  //       qualification,
+  //       educationSpecialization,
+  //       typeOfDisability,
+  //       transportationMobility,
+  //       specificDisability,
+  //       levelOfDisability,
+  //       assistiveTechnology,
+  //       experienceAndAppliance,
+  //       yesNoQuestion,
+  //       twoWheeler,
+  //       threeWheeler,
+  //       car,
+  //       disabilityPercentage,
+  //       specializationInDisability,
+  //       education,
+  //       Experience,
+  //       professionalReferences,
+  //     } = req.body;
+
+  //     const photo = req.files && req.files.photo ? req.files.photo[0].filename : null;
+  //     const resume = req.files && req.files.resume ? req.files.resume[0].filename : null;
+
+  //     // console.log('photo:', photo);
+  //     // console.log('resume:', resume);
+
+  //     if (password) {
+  //       bcrypt.hash(password, 10, (err, hash) => {
+  //         if (err) {
+  //           res.status(500).json({ message: "Internal server error" });
+  //           return;
+  //         }
+
+  //       const newJobSeeker = {
+  //         email,
+  //         username,
+  //         password,
+  //         confirmPassword,
+  //         FirstName,
+  //         FatherName,
+  //         Surname,
+  //         lastName,
+  //         artSkills,
+  //         employmentGapReason,
+  //         employmentGapDuration,
+  //         languageProficiency,
+  //         hobbiesOrInterests,
+  //         professionalMemberships,
+  //         careerObjective,
+  //         otherRelevantInfo,
+  //         notableAchievements,
+  //         jobCategories,
+  //         preferredLocation,
+  //         jobType,
+  //         accommodationsNeeded,
+  //         transportationNeeded,
+  //         specificNeed,
+  //         softwareRequirements,
+  //         specificEquipment,
+  //         photo,
+  //         resume,
+  //         dob,
+  //         gender,
+  //         permanentAddress,
+  //         currentAddress,
+  //         city,
+  //         state,
+  //         postalCode,
+  //         country,
+  //         contactNumber,
+  //         whatsappNumber,
+  //         AadharCardNumber,
+  //         LinkedInID,
+  //         jobAlerts,
+  //         homePhone,
+  //         addHomePhone,
+  //         qualification,
+  //         educationSpecialization,
+  //         typeOfDisability,
+  //         transportationMobility,
+  //         specificDisability,
+  //         levelOfDisability,
+  //         assistiveTechnology,
+  //         experienceAndAppliance,
+  //         yesNoQuestion,
+  //         twoWheeler,
+  //         threeWheeler,
+  //         car,
+  //         disabilityPercentage,
+  //         specializationInDisability,
+  //         education,
+  //         Experience,
+  //         professionalReferences,
+  //       };
+
+  //       jobSeeker.create(newJobSeeker, (err, result) => {
+  //         // console.log(err);
+  //         if (err) {
+  //           console.error("Database error", err); // Enhanced logging
+  //           res
+  //             .status(500)
+  //             .json({ message: "Internal server error", error: err });
+  //           return;
+  //         } else {
+  //           return res
+  //             .status(201)
+  //             .json({ message: "Job Seeker created successfully" });
+  //         }
+  //       });
+  //     });
+  //   }
+  // }
+  // ],
+
+ register: [
     // Middleware to handle file uploads
     // uploadPhoto.single("photo"),
     // uploadResume.single("resume"),
@@ -90,66 +254,14 @@ const jobSeekerController = {
       // console.log(req.body.education);
       const {
         email,
-        username,
+      
         password,
         confirmPassword,
-        FirstName,
-        FatherName,
-        Surname,
-        lastName,
-        artSkills,
-        employmentGapReason,
-        employmentGapDuration,
-        languageProficiency,
-        hobbiesOrInterests,
-        professionalMemberships,
-        careerObjective,
-        otherRelevantInfo,
-        notableAchievements,
-        jobCategories,
-        preferredLocation,
-        jobType,
-        accommodationsNeeded,
-        transportationNeeded,
-        specificNeed,
-        softwareRequirements,
-        specificEquipment,
-        dob,
-        gender,
-        permanentAddress,
-        currentAddress,
-        city,
-        state,
-        postalCode,
-        country,
-        contactNumber,
-        whatsappNumber,
-        AadharCardNumber,
-        LinkedInID,
-        jobAlerts,
-        homePhone,
-        addHomePhone,
-        qualification,
-        educationSpecialization,
-        typeOfDisability,
-        transportationMobility,
-        specificDisability,
-        levelOfDisability,
-        assistiveTechnology,
-        experienceAndAppliance,
-        yesNoQuestion,
-        twoWheeler,
-        threeWheeler,
-        car,
-        disabilityPercentage,
-        specializationInDisability,
-        education,
-        Experience,
-        professionalReferences,
+      
       } = req.body;
 
-      const photo = req.files && req.files.photo ? req.files.photo[0].filename : null;
-      const resume = req.files && req.files.resume ? req.files.resume[0].filename : null;
+      // const photo = req.files && req.files.photo ? req.files.photo[0].filename : null;
+      // const resume = req.files && req.files.resume ? req.files.resume[0].filename : null;
 
       // console.log('photo:', photo);
       // console.log('resume:', resume);
@@ -160,69 +272,15 @@ const jobSeekerController = {
             res.status(500).json({ message: "Internal server error" });
             return;
           }
-
+      
         const newJobSeeker = {
           email,
-          username,
+         
           password,
-          confirmPassword,
-          FirstName,
-          FatherName,
-          Surname,
-          lastName,
-          artSkills,
-          employmentGapReason,
-          employmentGapDuration,
-          languageProficiency,
-          hobbiesOrInterests,
-          professionalMemberships,
-          careerObjective,
-          otherRelevantInfo,
-          notableAchievements,
-          jobCategories,
-          preferredLocation,
-          jobType,
-          accommodationsNeeded,
-          transportationNeeded,
-          specificNeed,
-          softwareRequirements,
-          specificEquipment,
-          photo,
-          resume,
-          dob,
-          gender,
-          permanentAddress,
-          currentAddress,
-          city,
-          state,
-          postalCode,
-          country,
-          contactNumber,
-          whatsappNumber,
-          AadharCardNumber,
-          LinkedInID,
-          jobAlerts,
-          homePhone,
-          addHomePhone,
-          qualification,
-          educationSpecialization,
-          typeOfDisability,
-          transportationMobility,
-          specificDisability,
-          levelOfDisability,
-          assistiveTechnology,
-          experienceAndAppliance,
-          yesNoQuestion,
-          twoWheeler,
-          threeWheeler,
-          car,
-          disabilityPercentage,
-          specializationInDisability,
-          education,
-          Experience,
-          professionalReferences,
+        
+         
         };
-
+     newJobSeeker.password = hash;
         jobSeeker.create(newJobSeeker, (err, result) => {
           // console.log(err);
           if (err) {
@@ -241,6 +299,7 @@ const jobSeekerController = {
     }
   }
   ],
+
 
   login: (req, res) => {
     const { email, password } = req.body;
@@ -349,8 +408,10 @@ const jobSeekerController = {
         professionalReferences,
       } = req.body;
 
-      const photo = req.files && req.files.photo ? req.files.photo[0].filename : null;
-      const resume = req.files && req.files.resume ? req.files.resume[0].filename : null;
+      const photo =
+        req.files && req.files.photo ? req.files.photo[0].filename : null;
+      const resume =
+        req.files && req.files.resume ? req.files.resume[0].filename : null;
 
       const updatedJobSeeker = {
         email,

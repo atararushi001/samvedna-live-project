@@ -12,105 +12,9 @@ const JobSeekerRegister = () => {
 
   const [formData, setFormData] = useState({
     email: "",
-    username: "",
     password: "",
     confirmPassword: "",
-    FirstName: "",
-    FatherName: "",
-    Surname: "",
-    lastName: "",
-    artSkills: "",
-    education: [
-      {
-        institutionName: "",
-        country: "",
-        state: "",
-        city: "",
-        degrees: [
-          {
-            degree: "",
-            educationCompleted: "",
-            major: "",
-            graduationDate: "",
-            additionalInfo: "",
-            grade: "",
-            outOf: "",
-          },
-        ],
-      },
-    ],
-
-    Experience: [
-      {
-        jobTitle: "",
-        companyname: "",
-        JobDescriptions: "",
-        startDate: "",
-        endDate: "",
-        Projects: "",
-      },
-    ],
-    employmentGapReason: "",
-    employmentGapDuration: "",
-    languageProficiency: "", // Add this line
-    hobbiesOrInterests: "", // Add this line
-    professionalMemberships: "",
-    careerObjective: "", // Add this line
-    otherRelevantInfo: "", // Add this line
-    notableAchievements: "",
-    professionalReferences: [
-      {
-        name: "",
-        email: "",
-        phoneNumber: "",
-        companyName: "",
-        relationship: "",
-      },
-    ],
-    jobCategories: "", // Add this line
-    preferredLocation: "", // Add this line
-    jobType: "",
-    accommodationsNeeded: "", // Add this line
-    transportationNeeded: "", // Add this line
-    specificNeed: "", // Add this line
-    softwareRequirements: "", // Add this line
-    specificEquipment: "",
-    photo: null, // Add this line
-    resume: null,
-
-    dob: "",
-    gender: "",
-    permanentAddress: "",
-    currentAddress: "",
-    city: "",
-    state: "",
-    postalCode: "",
-    country: "",
-    contactNumber: "",
-    whatsappNumber: "",
-
-    AadharCardNumber: "",
-    LinkedInID: "",
-
-    jobAlerts: false,
-    homePhone: "",
-    addHomePhone: "",
-    qualification: "",
-    educationSpecialization: "",
-
-    typeOfDisability: "",
-    transportationMobility: "",
-    specificDisability: "",
-    levelOfDisability: "",
-    assistiveTechnology: "",
-
-    experienceAndAppliance: "",
-    yesNoQuestion: "",
-    twoWheeler: false,
-    threeWheeler: false,
-    car: false,
-    disabilityPercentage: "",
-    specializationInDisability: "",
+  
   });
 
   const [countries, setCountries] = useState([]);
@@ -402,45 +306,35 @@ const JobSeekerRegister = () => {
       return;
     }
 
-    if (formData.dob > new Date().toISOString().split("T")[0]) {
-      toast.error("Date of Birth cannot be in the future");
-      return;
-    }
+    // if (formData.dob > new Date().toISOString().split("T")[0]) {
+    //   toast.error("Date of Birth cannot be in the future");
+    //   return;
+    // }
 
-    const currentYear = new Date().getFullYear();
-    const birthYear = new Date(formData.dob).getFullYear();
+    // const currentYear = new Date().getFullYear();
+    // const birthYear = new Date(formData.dob).getFullYear();
 
-    if (currentYear - birthYear < 18) {
-      toast.error("You must be at least 18 years old to register");
-      return;
-    }
+    // if (currentYear - birthYear < 18) {
+    //   toast.error("You must be at least 18 years old to register");
+    //   return;
+    // }
 
-    if (
-      formData.yesNoQuestion === "yes" &&
-      !formData.twoWheeler &&
-      !formData.threeWheeler &&
-      !formData.car
-    ) {
-      toast.error("Please select at least one vehicle type");
-      return;
-    }
+    // if (
+    //   formData.yesNoQuestion === "yes" &&
+    //   !formData.twoWheeler &&
+    //   !formData.threeWheeler &&
+    //   !formData.car
+    // ) {
+    //   toast.error("Please select at least one vehicle type");
+    //   return;
+    // }
 
     const newFormData = new FormData();
 
     for (const key in formData) {
-      if (key === "photo" || key === "resume") {
-        if (formData[key]) {
-          newFormData.append(key, formData[key]);
-        }
-      } else if (
-        key === "education" ||
-        key === "Experience" ||
-        key === "professionalReferences"
-      ) {
-        newFormData.append(key, JSON.stringify(formData[key]));
-      } else {
+   
         newFormData.append(key, formData[key]);
-      }
+   
     }
 
     const response = await fetch(`${API}/job-seeker/register`, {
@@ -462,7 +356,7 @@ const JobSeekerRegister = () => {
   };
   return (
     <div className="container">
-      <section className="job-seeker-register">
+      {/* <section className="job-seeker-register">
         <h1>
           <span className="highlight-text">Job Seeker</span> Registration
         </h1>
@@ -1650,7 +1544,55 @@ const JobSeekerRegister = () => {
             </button>
           </div>
         </form>
-      </section>
+      </section> */}
+      <section className="job-seeker-register">
+      <form method="post" onSubmit={handleSubmit}>
+          <fieldset>
+            <legend>Account Information *</legend>
+      <input
+              type="email"
+              id="email"
+              name="email"
+              placeholder="Enter Email Address"
+              value={formData.email}
+              onChange={handleInputChange}
+              required
+            />
+              <input
+              type="password"
+              id="password"
+              name="password"
+              placeholder="Enter Password"
+              value={formData.password}
+              onChange={handleInputChange}
+              required
+            />
+            <input
+              type="password"
+              id="confirmPassword"
+              name="confirmPassword"
+              placeholder="Confirm Password"
+              value={formData.confirmPassword}
+              onChange={handleInputChange}
+              required
+            />
+               <div className="btn-container">
+            <button
+              type="submit"
+              value="Register"
+              className="btn"
+              name="job_seekerRegisterButton"
+            >
+              Register
+            </button>
+            <button type="button" className="btn btn-delete">
+              Cancel
+            </button>
+          </div>
+      </fieldset>
+   
+          </form>
+          </section>
     </div>
   );
 };
