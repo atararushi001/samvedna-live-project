@@ -1498,6 +1498,15 @@ const JobSeeker = {
   },
 };
 
+// Helper function to handle transaction rollback and connection release
+function rollbackAndRelease(connection, err, callback) {
+  connection.rollback(() => {
+    connection.release();
+    console.error("Transaction rolled back due to error:", err);
+    callback(err);
+  });
+}
+
 function updateRelatedTables(
   connection,
   id,
@@ -1506,113 +1515,232 @@ function updateRelatedTables(
   professionalReferences,
   callback
 ) {
-  const deleteQueries = [
-    `DELETE FROM ${db_name}.education_job_seekers WHERE education_jobSeekerId = ?`,
-    `DELETE FROM ${db_name}.experience_job_seekers WHERE jobSeekerId = ?`,
-    `DELETE FROM ${db_name}.professionalreferences_job_seekers_id WHERE professionalreferencesjob_seekers_id = ?`,
-  ];
+  // Input validation
+  if (!id) {
+    return rollbackAndRelease(
+      connection,
+      new Error("Job seeker ID is required"),
+      callback
+    );
+  }
 
-  Promise.all(
-    deleteQueries.map(
-      (query) =>
-        new Promise((resolve, reject) => {
-          connection.query(query, [id], (err) =>
-            err ? reject(err) : resolve()
+  console.log("Starting to update related tables for job seeker ID:", id);
+  console.log("Education data:", JSON.stringify(education));
+  console.log("Experience data:", JSON.stringify(experience));
+  console.log("References data:", JSON.stringify(professionalReferences));
+
+  // Helper function to execute delete query with proper error handling
+  const executeDelete = async (tableName, columnName) => {
+    const query = `DELETE FROM ${db_name}.${tableName} WHERE ${columnName} = ?`;
+    console.log(`Executing delete query for ${tableName}:`, query);
+
+    return new Promise((resolve, reject) => {
+      connection.query(query, [id], (err, result) => {
+        if (err) {
+          console.error(`Error deleting from ${tableName}:`, err);
+          reject(err);
+        } else {
+          console.log(
+            `Successfully deleted from ${tableName}. Rows affected:`,
+            result.affectedRows
           );
-        })
-    )
-  )
-    .then(() => {
-      const insertPromises = [
-        ...insertEducation(connection, id, education),
-        ...insertExperience(connection, id, experience),
-        ...insertReferences(connection, id, professionalReferences),
-      ];
+          resolve(result);
+        }
+      });
+    });
+  };
 
-      Promise.all(insertPromises)
-        .then(() => {
-          connection.commit((err) => {
-            if (err) return rollbackAndRelease(connection, err, callback);
-            connection.release();
-            callback(null, {
-              success: true,
-              message: "Job Seeker updated successfully",
-            });
-          });
-        })
-        .catch((err) => rollbackAndRelease(connection, err, callback));
-    })
-    .catch((err) => rollbackAndRelease(connection, err, callback));
+  // Main execution flow using async/await
+  (async () => {
+    try {
+      // Delete existing records
+      await Promise.all([
+        executeDelete("education_job_seekers", "education_jobSeekerId"),
+        executeDelete("education_degrees", "education_id"),
+        executeDelete("experience_job_seekers", "jobSeekerId"),
+        executeDelete(
+          "professionalreferences_job_seekers_id",
+          "professionalreferencesjob_seekers_id"
+        ),
+      ]);
+
+      // Insert new records
+      await Promise.all([
+        ...education.map((edu) => insertEducation(connection, id, edu)),
+        ...experience.map((exp) => insertExperience(connection, id, exp)),
+        ...professionalReferences.map((ref) =>
+          insertReferences(connection, id, ref)
+        ),
+      ]);
+
+      // Commit transaction
+      connection.commit((err) => {
+        if (err) {
+          console.error("Error committing transaction:", err);
+          return rollbackAndRelease(connection, err, callback);
+        }
+        console.log("Transaction committed successfully");
+        connection.release();
+        callback(null, {
+          success: true,
+          message: "Job Seeker and related tables updated successfully",
+        });
+      });
+    } catch (err) {
+      console.error("Error in updateRelatedTables:", err);
+      return rollbackAndRelease(connection, err, callback);
+    }
+  })();
 }
 
-function insertEducation(connection, id, education) {
-  return (education || []).map(
-    (edu) =>
-      new Promise((resolve, reject) => {
-        const query = `INSERT INTO ${db_name}.education_job_seekers 
+async function insertEducation(connection, id, edu) {
+  if (!edu || !edu.institutionName) {
+    console.warn("Skipping invalid education record:", edu);
+    return Promise.resolve();
+  }
+
+  return new Promise((resolve, reject) => {
+    // First insert the education record
+    const eduQuery = `
+      INSERT INTO ${db_name}.education_job_seekers 
       (education_jobSeekerId, institutionName, country, state, city) 
-      VALUES (?, ?, ?, ?, ?)`;
-        connection.query(
-          query,
-          [id, edu.institutionName, edu.country, edu.state, edu.city],
-          (err) => (err ? reject(err) : resolve())
-        );
-      })
-  );
+      VALUES (?, ?, ?, ?, ?)
+    `;
+    const eduValues = [
+      id,
+      edu.institutionName,
+      edu.country,
+      edu.state,
+      edu.city,
+    ];
+
+    console.log("Inserting education record:", eduValues);
+    connection.query(eduQuery, eduValues, async (err, result) => {
+      if (err) {
+        console.error("Error inserting education:", err);
+        return reject(err);
+      }
+
+      const educationId = result.insertId;
+      console.log("Education record inserted successfully, ID:", educationId);
+
+      // Then insert the degrees if they exist
+      if (edu.degrees && Array.isArray(edu.degrees)) {
+        try {
+          await Promise.all(
+            edu.degrees.map((degree) =>
+              insertDegree(connection, educationId, degree)
+            )
+          );
+          resolve(result);
+        } catch (degreeErr) {
+          reject(degreeErr);
+        }
+      } else {
+        resolve(result);
+      }
+    });
+  });
 }
 
-function insertExperience(connection, id, experience) {
-  return (experience || []).map(
-    (exp) =>
-      new Promise((resolve, reject) => {
-        const query = `INSERT INTO ${db_name}.experience_job_seekers 
+async function insertDegree(connection, educationId, degree) {
+  return new Promise((resolve, reject) => {
+    const query = `
+      INSERT INTO ${db_name}.education_degrees 
+      (education_id, degree, education_completed, major, graduation_date, 
+       additional_info, grade, out_of) 
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+    `;
+    const values = [
+      educationId,
+      degree.degree,
+      degree.educationCompleted,
+      degree.major,
+      degree.graduationDate,
+      degree.additionalInfo,
+      degree.grade,
+      degree.outOf,
+    ];
+
+    console.log("Inserting degree record:", values);
+    connection.query(query, values, (err, result) => {
+      if (err) {
+        console.error("Error inserting degree:", err);
+        reject(err);
+      } else {
+        console.log("Degree record inserted successfully");
+        resolve(result);
+      }
+    });
+  });
+}
+
+async function insertExperience(connection, id, exp) {
+  if (!exp || !exp.companyName) {
+    console.warn("Skipping invalid experience record:", exp);
+    return Promise.resolve();
+  }
+
+  return new Promise((resolve, reject) => {
+    const query = `
+      INSERT INTO ${db_name}.experience_job_seekers 
       (jobSeekerId, companyName, jobTitle, startDate, endDate, jobDescriptions, projects) 
-      VALUES (?, ?, ?, ?, ?, ?, ?)`;
-        connection.query(
-          query,
-          [
-            id,
-            exp.companyName,
-            exp.jobTitle,
-            exp.startDate,
-            exp.endDate,
-            exp.jobDescriptions,
-            exp.projects,
-          ],
-          (err) => (err ? reject(err) : resolve())
-        );
-      })
-  );
+      VALUES (?, ?, ?, ?, ?, ?, ?)
+    `;
+    const values = [
+      id,
+      exp.companyName,
+      exp.jobTitle,
+      exp.startDate,
+      exp.endDate,
+      exp.jobDescriptions,
+      exp.projects,
+    ];
+
+    console.log("Inserting experience record:", values);
+    connection.query(query, values, (err, result) => {
+      if (err) {
+        console.error("Error inserting experience:", err);
+        reject(err);
+      } else {
+        console.log("Experience record inserted successfully");
+        resolve(result);
+      }
+    });
+  });
 }
 
-function insertReferences(connection, id, references) {
-  return (references || []).map(
-    (ref) =>
-      new Promise((resolve, reject) => {
-        const query = `INSERT INTO ${db_name}.professionalreferences_job_seekers_id 
+async function insertReferences(connection, id, ref) {
+  if (!ref || !ref.name) {
+    console.warn("Skipping invalid reference record:", ref);
+    return Promise.resolve();
+  }
+
+  return new Promise((resolve, reject) => {
+    const query = `
+      INSERT INTO ${db_name}.professionalreferences_job_seekers_id 
       (professionalreferencesjob_seekers_id, name, companyName, phoneNumber, email, relationship) 
-      VALUES (?, ?, ?, ?, ?, ?)`;
-        connection.query(
-          query,
-          [
-            id,
-            ref.name,
-            ref.companyName,
-            ref.phoneNumber,
-            ref.email,
-            ref.relationship,
-          ],
-          (err) => (err ? reject(err) : resolve())
-        );
-      })
-  );
-}
+      VALUES (?, ?, ?, ?, ?, ?)
+    `;
+    const values = [
+      id,
+      ref.name,
+      ref.companyName,
+      ref.phoneNumber,
+      ref.email,
+      ref.relationship,
+    ];
 
-function rollbackAndRelease(connection, err, callback) {
-  connection.rollback(() => {
-    connection.release();
-    console.error("Transaction rolled back due to error:", err);
-    callback(err);
+    console.log("Inserting reference record:", values);
+    connection.query(query, values, (err, result) => {
+      if (err) {
+        console.error("Error inserting reference:", err);
+        reject(err);
+      } else {
+        console.log("Reference record inserted successfully");
+        resolve(result);
+      }
+    });
   });
 }
 

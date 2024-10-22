@@ -223,9 +223,11 @@ const jobSeekerController = {
         disabilityPercentage,
         specializationInDisability,
         education,
-        Experience,
+        experience,
         professionalReferences,
       } = req.body;
+
+      console.log(experience);
 
       const photo =
         req.files && req.files.photo ? req.files.photo[0].filename : null;
@@ -290,7 +292,7 @@ const jobSeekerController = {
         disabilityPercentage,
         specializationInDisability,
         education,
-        Experience,
+        experience,
         professionalReferences,
       };
 
