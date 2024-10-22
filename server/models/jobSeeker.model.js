@@ -311,12 +311,7 @@ const JobSeeker = {
   //   }
   // },
   create: (newJobSeeker, callback) => {
-    const {
-      email,
-      password,
-      
-    
-    } = newJobSeeker;
+    const { email, password } = newJobSeeker;
 
     // db.query("START TRANSACTION", (err) => {
     //   if (err) {
@@ -327,282 +322,482 @@ const JobSeeker = {
     const insertJobSeekerQuery = `INSERT INTO ${db_name}.job_seekers (
         email, password ) VALUES (?, ?);`;
 
-    db.query(
-      insertJobSeekerQuery,
-      [
-        email,
-        password,
-      ],
-      (err, result) => {
-        if (err) {
-          return callback(err);
-        } else {
-                callback(null, {
-                  success: true,
-                  message: "Job Seeker created successfully",
-                });
-        }
+    db.query(insertJobSeekerQuery, [email, password], (err, result) => {
+      if (err) {
+        return callback(err);
+      } else {
+        callback(null, {
+          success: true,
+          message: "Job Seeker created successfully",
+        });
       }
-    );
+    });
   },
+  // update: (id, newJobSeeker, callback) => {
+  //   const {
+  //     email,
+  //     username,
+  //     FirstName,
+  //     FatherName,
+  //     Surname,
+  //     lastName,
+  //     artSkills,
+  //     employmentGapReason,
+  //     employmentGapDuration,
+  //     languageProficiency,
+  //     hobbiesOrInterests,
+  //     professionalMemberships,
+  //     careerObjective,
+  //     otherRelevantInfo,
+  //     notableAchievements,
+  //     jobCategories,
+  //     preferredLocation,
+  //     jobType,
+  //     accommodationsNeeded,
+  //     transportationNeeded,
+  //     specificNeed,
+  //     softwareRequirements,
+  //     specificEquipment,
+  //     photo,
+  //     resume,
+  //     dob,
+  //     gender,
+  //     permanentAddress,
+  //     currentAddress,
+  //     city,
+  //     state,
+  //     postalCode,
+  //     country,
+  //     contactNumber,
+  //     whatsappNumber,
+  //     AadharCardNumber,
+  //     LinkedInID,
+  //     jobAlerts,
+  //     homePhone,
+  //     addHomePhone,
+  //     qualification,
+  //     educationSpecialization,
+  //     typeOfDisability,
+  //     transportationMobility,
+  //     specificDisability,
+  //     levelOfDisability,
+  //     assistiveTechnology,
+  //     experienceAndAppliance,
+  //     yesNoQuestion,
+  //     twoWheeler,
+  //     threeWheeler,
+  //     car,
+  //     disabilityPercentage,
+  //     specializationInDisability,
+  //     education,
+  //     Experience,
+  //     professionalReferences,
+  //   } = newJobSeeker;
+
+  //   // Parse the input fields
+  //   const parsedEducation =
+  //     typeof education === "string" ? JSON.parse(education) : education;
+  //   const educationArray = Array.isArray(parsedEducation)
+  //     ? parsedEducation
+  //     : parsedEducation
+  //     ? [parsedEducation]
+  //     : [];
+
+  //   const parsedExperience =
+  //     typeof Experience === "string" ? JSON.parse(Experience) : Experience;
+  //   const experienceArray = Array.isArray(parsedExperience)
+  //     ? parsedExperience
+  //     : parsedExperience
+  //     ? [parsedExperience]
+  //     : [];
+
+  //   const parsedProfessionalReferences =
+  //     typeof professionalReferences === "string"
+  //       ? JSON.parse(professionalReferences)
+  //       : professionalReferences;
+  //   const professionalReferencesArray = Array.isArray(
+  //     parsedProfessionalReferences
+  //   )
+  //     ? parsedProfessionalReferences
+  //     : parsedProfessionalReferences
+  //     ? [parsedProfessionalReferences]
+  //     : [];
+
+  //   db.query("START TRANSACTION", (err, result) => {
+  //     if (err) {
+  //       callback(err, null);
+  //       return;
+  //     }
+
+  //     db.query(
+  //       `UPDATE ${db_name}.job_seekers SET
+  //         email = ?, username = ?, FirstName = ?, FatherName = ?, Surname = ?, lastName = ?, artSkills = ?, employmentGapReason = ?, employmentGapDuration = ?, languageProficiency = ?, hobbiesOrInterests = ?, professionalMemberships = ?, careerObjective = ?, otherRelevantInfo = ?, notableAchievements = ?, jobCategories = ?, preferredLocation = ?, jobType = ?, accommodationsNeeded = ?, transportationNeeded = ?, specificNeed = ?, softwareRequirements = ?, specificEquipment = ?, photo = ?, resume = ?, dob = ?, gender = ?, permanentAddress = ?, currentAddress = ?, city = ?, state = ?, postalCode = ?, country = ?, contactNumber = ?, whatsappNumber = ?, AadharCardNumber = ?, LinkedInID = ?, jobAlerts = ?, homePhone = ?, addHomePhone = ?, qualification = ?, educationSpecialization = ?, typeOfDisability = ?, transportationMobility = ?, specificDisability = ?, levelOfDisability = ?, assistiveTechnology = ?, experienceAndAppliance = ?, yesNoQuestion = ?, twoWheeler = ?, threeWheeler = ?, car = ?, disabilityPercentage = ?, specializationInDisability = ? WHERE job_seeker_id = ?`,
+  //       [
+  //         email,
+  //         username,
+  //         FirstName,
+  //         FatherName,
+  //         Surname,
+  //         lastName,
+  //         artSkills,
+  //         employmentGapReason,
+  //         employmentGapDuration,
+  //         languageProficiency,
+  //         hobbiesOrInterests,
+  //         professionalMemberships,
+  //         careerObjective,
+  //         otherRelevantInfo,
+  //         notableAchievements,
+  //         jobCategories,
+  //         preferredLocation,
+  //         jobType,
+  //         accommodationsNeeded,
+  //         transportationNeeded,
+  //         specificNeed,
+  //         softwareRequirements,
+  //         specificEquipment,
+  //         photo,
+  //         resume,
+  //         dob,
+  //         gender,
+  //         permanentAddress,
+  //         currentAddress,
+  //         city,
+  //         state,
+  //         postalCode,
+  //         country,
+  //         contactNumber,
+  //         whatsappNumber,
+  //         AadharCardNumber,
+  //         LinkedInID,
+  //         jobAlerts,
+  //         homePhone,
+  //         addHomePhone,
+  //         qualification,
+  //         educationSpecialization,
+  //         typeOfDisability,
+  //         transportationMobility,
+  //         specificDisability,
+  //         levelOfDisability,
+  //         assistiveTechnology,
+  //         experienceAndAppliance,
+  //         yesNoQuestion,
+  //         twoWheeler,
+  //         threeWheeler,
+  //         car,
+  //         disabilityPercentage,
+  //         specializationInDisability,
+  //         id,
+  //       ],
+  //       (err, result) => {
+  //         if (err) {
+  //           return callback(err);
+  //         }
+
+  //         if (result.affectedRows === 0) {
+  //           return callback(new Error("No job seeker updated"), null);
+  //         }
+
+  //         const deleteEducationQuery = `DELETE FROM ${db_name}.education_job_seekers WHERE education_jobSeekerId = ?`;
+  //         const deleteExperienceQuery = `DELETE FROM ${db_name}.experience_job_seekers WHERE jobSeekerId = ?`;
+  //         const deleteReferencesQuery = `DELETE FROM ${db_name}.professionalreferences_job_seekers_id WHERE professionalreferencesjob_seekers_id = ?`;
+
+  //         db.query(deleteEducationQuery, [id], (err, result) => {
+  //           if (err) {
+  //             return callback(err);
+  //           }
+
+  //           db.query(deleteExperienceQuery, [id], (err, result) => {
+  //             if (err) {
+  //               return callback(err);
+  //             }
+
+  //             db.query(deleteReferencesQuery, [id], (err, result) => {
+  //               if (err) {
+  //                 return callback(err);
+  //               }
+
+  //               const educationPromises = educationArray.map((educations) => {
+  //                 return new Promise((resolve, reject) => {
+  //                   db.query(
+  //                     `INSERT INTO ${db_name}.education_job_seekers (education_jobSeekerId, institutionName, country, state, city) VALUES (?, ?, ?, ?, ?)`,
+  //                     [
+  //                       id,
+  //                       educations.institutionName,
+  //                       educations.country,
+  //                       educations.state,
+  //                       educations.city,
+  //                     ],
+  //                     (err, result) => {
+  //                       if (err) {
+  //                         return reject(err);
+  //                       }
+  //                       resolve(result);
+  //                     }
+  //                   );
+  //                 });
+  //               });
+
+  //               const experiencePromises = experienceArray.map(
+  //                 (experiences) => {
+  //                   return new Promise((resolve, reject) => {
+  //                     db.query(
+  //                       `INSERT INTO ${db_name}.experience_job_seekers (jobSeekerId, companyName, Jobtitle, startDate, endDate, JobDescriptions, Projects) VALUES (?, ?, ?, ?, ?, ?, ?)`,
+  //                       [
+  //                         id,
+  //                         experiences.companyname,
+  //                         experiences.Jobtitle,
+  //                         experiences.startDate,
+  //                         experiences.endDate,
+  //                         experiences.JobDescriptions,
+  //                         experiences.Projects,
+  //                       ],
+  //                       (err, result) => {
+  //                         if (err) {
+  //                           return reject(err);
+  //                         }
+  //                         resolve(result);
+  //                       }
+  //                     );
+  //                   });
+  //                 }
+  //               );
+
+  //               const referencesPromises = professionalReferencesArray.map(
+  //                 (references) => {
+  //                   return new Promise((resolve, reject) => {
+  //                     db.query(
+  //                       `INSERT INTO ${db_name}.professionalreferences_job_seekers_id (professionalreferencesjob_seekers_id, name, companyName, phoneNumber, email, relationship) VALUES (?, ?, ?, ?, ?, ?)`,
+  //                       [
+  //                         id,
+  //                         references.name,
+  //                         references.companyName,
+  //                         references.phoneNumber,
+  //                         references.email,
+  //                         references.relationship,
+  //                       ],
+  //                       (err, result) => {
+  //                         if (err) {
+  //                           return reject(err);
+  //                         }
+  //                         resolve(result);
+  //                       }
+  //                     );
+  //                   });
+  //                 }
+  //               );
+
+  //               Promise.all([
+  //                 ...educationPromises,
+  //                 ...experiencePromises,
+  //                 ...referencesPromises,
+  //               ])
+  //                 .then(() => {
+  //                   db.query("COMMIT", (err) => {
+  //                     if (err) {
+  //                       return callback(err, null);
+  //                     }
+
+  //                     callback(null, {
+  //                       success: true,
+  //                       message: "Job Seeker updated successfully",
+  //                     });
+  //                   });
+  //                 })
+  //                 .catch((err) => {
+  //                   db.query("ROLLBACK", () => {
+  //                     callback(err, null);
+  //                   });
+  //                 });
+  //             });
+  //           });
+  //         });
+  //       }
+  //     );
+  //   });
+  // },
   update: (id, newJobSeeker, callback) => {
     const {
       email,
       username,
-      password,
-      confirmPassword,
-      FirstName,
-      FatherName,
-      Surname,
-      lastName,
-      artSkills,
-      employmentGapReason,
-      employmentGapDuration,
-      languageProficiency,
-      hobbiesOrInterests,
-      professionalMemberships,
-      careerObjective,
-      otherRelevantInfo,
-      notableAchievements,
-      jobCategories,
-      preferredLocation,
-      jobType,
+      firstName,
+      fatherName,
+      surname,
       accommodationsNeeded,
-      transportationNeeded,
-      specificNeed,
-      softwareRequirements,
-      specificEquipment,
-      photo,
-      resume,
-      dob,
-      gender,
-      permanentAddress,
-      currentAddress,
+      addHomePhone,
+      artSkills,
+      car,
+      careerObjective,
       city,
-      state,
-      postalCode,
-      country,
       contactNumber,
+      country,
+      currentAddress,
+      disabilityPercentage,
+      dob,
+      education,
+      educationSpecialization,
+      employmentGapDuration,
+      employmentGapReason,
+      experience,
+      experienceAndAppliance,
+      gender,
+      hobbiesOrInterests,
+      homePhone,
+      jobAlerts,
+      jobCategories,
+      jobType,
+      languageProficiency,
+      lastName,
+      name,
+      notableAchievements,
+      otherRelevantInfo,
+      permanentAddress,
+      photo,
+      postalCode,
+      preferredLocation,
+      professionalMemberships,
+      professionalReferences,
+      qualification,
+      resume,
+      softwareRequirements,
+      specializationInDisability,
+      specificEquipment,
+      specificNeed,
+      state,
+      threeWheeler,
+      transportationNeeded,
+      twoWheeler,
       whatsappNumber,
+      yesNoQuestion,
       AadharCardNumber,
       LinkedInID,
-      jobAlerts,
-      homePhone,
-      addHomePhone,
-      qualification,
-      educationSpecialization,
       typeOfDisability,
       transportationMobility,
       specificDisability,
       levelOfDisability,
       assistiveTechnology,
-      experienceAndAppliance,
-      yesNoQuestion,
-      twoWheeler,
-      threeWheeler,
-      car,
-      disabilityPercentage,
-      specializationInDisability,
-      education,
-      Experience,
-      professionalReferences,
     } = newJobSeeker;
-  
-    // Parse the input fields
-    const parsedEducation = typeof education === "string" ? JSON.parse(education) : education;
-    const educationArray = Array.isArray(parsedEducation) ? parsedEducation : parsedEducation ? [parsedEducation] : [];
-  
-    const parsedExperience = typeof Experience === "string" ? JSON.parse(Experience) : Experience;
-    const experienceArray = Array.isArray(parsedExperience) ? parsedExperience : parsedExperience ? [parsedExperience] : [];
-  
-    const parsedProfessionalReferences = typeof professionalReferences === "string" ? JSON.parse(professionalReferences) : professionalReferences;
-    const professionalReferencesArray = Array.isArray(parsedProfessionalReferences) ? parsedProfessionalReferences : parsedProfessionalReferences ? [parsedProfessionalReferences] : [];
-  
-    db.query("START TRANSACTION", (err, result) => {
+
+    db.getConnection((err, connection) => {
       if (err) {
-        callback(err, null);
-        return;
+        console.error("Error getting database connection:", err);
+        return callback(err);
       }
-  
-      db.query(
-        `UPDATE ${db_name}.job_seekers SET 
-          email = ?, username = ?, password = ?, confirmPassword = ?, FirstName = ?, FatherName = ?, Surname = ?, lastName = ?, artSkills = ?, employmentGapReason = ?, employmentGapDuration = ?, languageProficiency = ?, hobbiesOrInterests = ?, professionalMemberships = ?, careerObjective = ?, otherRelevantInfo = ?, notableAchievements = ?, jobCategories = ?, preferredLocation = ?, jobType = ?, accommodationsNeeded = ?, transportationNeeded = ?, specificNeed = ?, softwareRequirements = ?, specificEquipment = ?, photo = ?, resume = ?, dob = ?, gender = ?, permanentAddress = ?, currentAddress = ?, city = ?, state = ?, postalCode = ?, country = ?, contactNumber = ?, whatsappNumber = ?, AadharCardNumber = ?, LinkedInID = ?, jobAlerts = ?, homePhone = ?, addHomePhone = ?, qualification = ?, educationSpecialization = ?, typeOfDisability = ?, transportationMobility = ?, specificDisability = ?, levelOfDisability = ?, assistiveTechnology = ?, experienceAndAppliance = ?, yesNoQuestion = ?, twoWheeler = ?, threeWheeler = ?, car = ?, disabilityPercentage = ?, specializationInDisability = ? WHERE job_seeker_id = ?`,
-        [
+
+      connection.beginTransaction((err) => {
+        if (err) {
+          connection.release();
+          console.error("Error beginning transaction:", err);
+          return callback(err);
+        }
+
+        const updateJobSeekerQuery = `
+          UPDATE ${db_name}.job_seekers SET 
+          email = ?, username = ?, FirstName = ?, FatherName = ?, Surname = ?, 
+          accommodationsNeeded = ?, addHomePhone = ?, artSkills = ?, car = ?, 
+          careerObjective = ?, city = ?, contactNumber = ?, country = ?, 
+          currentAddress = ?, disabilityPercentage = ?, dob = ?, 
+          educationSpecialization = ?, employmentGapDuration = ?, 
+          employmentGapReason = ?, experienceAndAppliance = ?, gender = ?, 
+          hobbiesOrInterests = ?, homePhone = ?, jobAlerts = ?, jobCategories = ?, 
+          jobType = ?, languageProficiency = ?, lastName = ?, name = ?, 
+          notableAchievements = ?, otherRelevantInfo = ?, permanentAddress = ?, 
+          photo = ?, postalCode = ?, preferredLocation = ?, 
+          professionalMemberships = ?, qualification = ?, resume = ?, 
+          softwareRequirements = ?, specializationInDisability = ?, 
+          specificEquipment = ?, specificNeed = ?, state = ?, threeWheeler = ?, 
+          transportationNeeded = ?, twoWheeler = ?, whatsappNumber = ?, 
+          yesNoQuestion = ?, AadharCardNumber = ?, LinkedInID = ?,
+          typeOfDisability = ?, transportationMobility = ?, specificDisability = ?,
+          levelOfDisability = ?, assistiveTechnology = ?
+          WHERE job_seeker_id = ?
+        `;
+
+        const updateValues = [
           email,
           username,
-          password,
-          confirmPassword,
-          FirstName,
-          FatherName,
-          Surname,
-          lastName,
-          artSkills,
-          employmentGapReason,
-          employmentGapDuration,
-          languageProficiency,
-          hobbiesOrInterests,
-          professionalMemberships,
-          careerObjective,
-          otherRelevantInfo,
-          notableAchievements,
-          jobCategories,
-          preferredLocation,
-          jobType,
+          firstName,
+          fatherName,
+          surname,
           accommodationsNeeded,
-          transportationNeeded,
-          specificNeed,
-          softwareRequirements,
-          specificEquipment,
-          photo,
-          resume,
-          dob,
-          gender,
-          permanentAddress,
-          currentAddress,
+          addHomePhone,
+          artSkills,
+          car,
+          careerObjective,
           city,
-          state,
-          postalCode,
-          country,
           contactNumber,
+          country,
+          currentAddress,
+          disabilityPercentage,
+          dob,
+          educationSpecialization,
+          employmentGapDuration,
+          employmentGapReason,
+          experienceAndAppliance,
+          gender,
+          hobbiesOrInterests,
+          homePhone,
+          jobAlerts,
+          jobCategories,
+          jobType,
+          languageProficiency,
+          lastName,
+          name,
+          notableAchievements,
+          otherRelevantInfo,
+          permanentAddress,
+          photo,
+          postalCode,
+          preferredLocation,
+          professionalMemberships,
+          qualification,
+          resume,
+          softwareRequirements,
+          specializationInDisability,
+          specificEquipment,
+          specificNeed,
+          state,
+          threeWheeler,
+          transportationNeeded,
+          twoWheeler,
           whatsappNumber,
+          yesNoQuestion,
           AadharCardNumber,
           LinkedInID,
-          jobAlerts,
-          homePhone,
-          addHomePhone,
-          qualification,
-          educationSpecialization,
           typeOfDisability,
           transportationMobility,
           specificDisability,
           levelOfDisability,
           assistiveTechnology,
-          experienceAndAppliance,
-          yesNoQuestion,
-          twoWheeler,
-          threeWheeler,
-          car,
-          disabilityPercentage,
-          specializationInDisability,
           id,
-        ],
-        (err, result) => {
+        ];
+
+        connection.query(updateJobSeekerQuery, updateValues, (err, result) => {
           if (err) {
-            return callback(err);
+            return rollbackAndRelease(connection, err, callback);
           }
-  
+
           if (result.affectedRows === 0) {
-            return callback(new Error("No job seeker updated"), null);
+            return rollbackAndRelease(
+              connection,
+              new Error(`No job seeker found with id: ${id}`),
+              callback
+            );
           }
-  
-          const deleteEducationQuery = `DELETE FROM ${db_name}.education_job_seekers WHERE education_jobSeekerId = ?`;
-          const deleteExperienceQuery = `DELETE FROM ${db_name}.experience_job_seekers WHERE jobSeekerId = ?`;
-          const deleteReferencesQuery = `DELETE FROM ${db_name}.professionalreferences_job_seekers_id WHERE professionalreferencesjob_seekers_id = ?`;
-  
-          db.query(deleteEducationQuery, [id], (err, result) => {
-            if (err) {
-              return callback(err);
-            }
-  
-            db.query(deleteExperienceQuery, [id], (err, result) => {
-              if (err) {
-                return callback(err);
-              }
-  
-              db.query(deleteReferencesQuery, [id], (err, result) => {
-                if (err) {
-                  return callback(err);
-                }
-  
-                const educationPromises = educationArray.map((educations) => {
-                  return new Promise((resolve, reject) => {
-                    db.query(
-                      `INSERT INTO ${db_name}.education_job_seekers (education_jobSeekerId, institutionName, country, state, city) VALUES (?, ?, ?, ?, ?)`,
-                      [
-                        id,
-                        educations.institutionName,
-                        educations.country,
-                        educations.state,
-                        educations.city,
-                      ],
-                      (err, result) => {
-                        if (err) {
-                          return reject(err);
-                        }
-                        resolve(result);
-                      }
-                    );
-                  });
-                });
-  
-                const experiencePromises = experienceArray.map((experiences) => {
-                  return new Promise((resolve, reject) => {
-                    db.query(
-                      `INSERT INTO ${db_name}.experience_job_seekers (jobSeekerId, companyName, Jobtitle, startDate, endDate, JobDescriptions, Projects) VALUES (?, ?, ?, ?, ?, ?, ?)`,
-                      [
-                        id,
-                        experiences.companyname,
-                        experiences.Jobtitle,
-                        experiences.startDate,
-                        experiences.endDate,
-                        experiences.JobDescriptions,
-                        experiences.Projects,
-                      ],
-                      (err, result) => {
-                        if (err) {
-                          return reject(err);
-                        }
-                        resolve(result);
-                      }
-                    );
-                  });
-                });
-  
-                const referencesPromises = professionalReferencesArray.map((references) => {
-                  return new Promise((resolve, reject) => {
-                    db.query(
-                      `INSERT INTO ${db_name}.professionalreferences_job_seekers_id (professionalreferencesjob_seekers_id, name, companyName, phoneNumber, email, relationship) VALUES (?, ?, ?, ?, ?, ?)`,
-                      [
-                        id,
-                        references.name,
-                        references.companyName,
-                        references.phoneNumber,
-                        references.email,
-                        references.relationship,
-                      ],
-                      (err, result) => {
-                        if (err) {
-                          return reject(err);
-                        }
-                        resolve(result);
-                      }
-                    );
-                  });
-                });
-  
-                Promise.all([...educationPromises, ...experiencePromises, ...referencesPromises])
-                  .then(() => {
-                    db.query("COMMIT", (err) => {
-                      if (err) {
-                        return callback(err, null);
-                      }
-  
-                      callback(null, {
-                        success: true,
-                        message: "Job Seeker updated successfully",
-                      });
-                    });
-                  })
-                  .catch((err) => {
-                    db.query("ROLLBACK", () => {
-                      callback(err, null);
-                    });
-                  });
-              });
-            });
-          });
-        }
-      );
+
+          console.log(
+            `Job seeker updated successfully. Rows affected: ${result.affectedRows}`
+          );
+          updateRelatedTables(
+            connection,
+            id,
+            education,
+            experience,
+            professionalReferences,
+            callback
+          );
+        });
+      });
     });
   },
   getByEmail: (email, callback) => {
@@ -617,46 +812,57 @@ const JobSeeker = {
     const educationQuery = `SELECT * FROM education_job_seekers WHERE education_jobSeekerId = ?`;
     const experienceQuery = `SELECT * FROM experience_job_seekers WHERE jobSeekerId = ?`;
     const referencesQuery = `SELECT * FROM professionalreferences_job_seekers_id WHERE professionalreferencesjob_seekers_id = ?`;
-  
+
     db.query(jobSeekerQuery, [id], (err, jobSeekers) => {
       if (err) {
-        console.error('Error querying job_seekers:', err);
+        console.error("Error querying job_seekers:", err);
         return callback(err);
       }
-  
+
       if (jobSeekers.length === 0) {
-        return callback(new Error('No job seeker found!'));
+        return callback(new Error("No job seeker found!"));
       }
-  
+
       const jobSeeker = jobSeekers[0];
-  
+
       db.query(educationQuery, [jobSeeker.job_seeker_id], (err, educations) => {
         if (err) {
-          console.error('Error querying education_job_seekers:', err);
+          console.error("Error querying education_job_seekers:", err);
           return callback(err);
         }
-  
+
         jobSeeker.education = educations;
-  
-        db.query(experienceQuery, [jobSeeker.job_seeker_id], (err, experiences) => {
-          if (err) {
-            console.error('Error querying experience_job_seekers:', err);
-            return callback(err);
-          }
-  
-          jobSeeker.experience = experiences;
-  
-          db.query(referencesQuery, [jobSeeker.job_seeker_id], (err, references) => {
+
+        db.query(
+          experienceQuery,
+          [jobSeeker.job_seeker_id],
+          (err, experiences) => {
             if (err) {
-              console.error('Error querying professionalreferences_job_seekers_id:', err);
+              console.error("Error querying experience_job_seekers:", err);
               return callback(err);
             }
-  
-            jobSeeker.professionalReferences = references;
-  
-            callback(null, jobSeeker);
-          });
-        });
+
+            jobSeeker.experience = experiences;
+
+            db.query(
+              referencesQuery,
+              [jobSeeker.job_seeker_id],
+              (err, references) => {
+                if (err) {
+                  console.error(
+                    "Error querying professionalreferences_job_seekers_id:",
+                    err
+                  );
+                  return callback(err);
+                }
+
+                jobSeeker.professionalReferences = references;
+
+                callback(null, jobSeeker);
+              }
+            );
+          }
+        );
       });
     });
   },
@@ -1207,6 +1413,207 @@ const JobSeeker = {
       callback
     );
   },
+  searchJobSeeker: (searchCriteria, callback) => {
+    const { search, email, firstName, lastName } = searchCriteria;
+
+    const jobSeekerQuery = `
+      SELECT * FROM ${db_name}.job_seekers 
+      WHERE 
+        (email LIKE ? OR ? IS NULL) AND
+        (firstName LIKE ? OR ? IS NULL) AND
+        (lastName LIKE ? OR ? IS NULL)
+    `;
+
+    db.query(
+      jobSeekerQuery,
+      [
+        `%${search}%`,
+        search,
+        `%${email}%`,
+        email,
+        `%${firstName}%`,
+        firstName,
+        `%${lastName}%`,
+        lastName,
+      ],
+      (err, jobSeekers) => {
+        if (err) {
+          return callback(err);
+        }
+
+        const jobSeekerPromises = jobSeekers.map((jobSeeker) => {
+          return new Promise((resolve, reject) => {
+            const jobSeekerId = jobSeeker.job_seeker_id;
+
+            const educationQuery = `SELECT * FROM ${db_name}.education_job_seekers WHERE education_jobSeekerId = ?`;
+            const experienceQuery = `SELECT * FROM ${db_name}.experience_job_seekers WHERE jobSeekerId = ?`;
+            const referencesQuery = `SELECT * FROM ${db_name}.professionalreferences_job_seekers_id WHERE professionalreferencesjob_seekers_id = ?`;
+            const resumeQuery = `SELECT * FROM ${db_name}.resumes WHERE job_seeker_id = ?`;
+
+            db.query(educationQuery, [jobSeekerId], (err, educations) => {
+              if (err) {
+                return reject(err);
+              }
+
+              jobSeeker.education = educations;
+
+              db.query(experienceQuery, [jobSeekerId], (err, experiences) => {
+                if (err) {
+                  return reject(err);
+                }
+
+                jobSeeker.experience = experiences;
+
+                db.query(referencesQuery, [jobSeekerId], (err, references) => {
+                  if (err) {
+                    return reject(err);
+                  }
+
+                  jobSeeker.professionalReferences = references;
+
+                  db.query(resumeQuery, [jobSeekerId], (err, resumes) => {
+                    if (err) {
+                      return reject(err);
+                    }
+
+                    jobSeeker.resumes = resumes;
+
+                    resolve(jobSeeker);
+                  });
+                });
+              });
+            });
+          });
+        });
+
+        Promise.all(jobSeekerPromises)
+          .then((jobSeekersWithDetails) => {
+            callback(null, jobSeekersWithDetails);
+          })
+          .catch((err) => {
+            callback(err);
+          });
+      }
+    );
+  },
 };
+
+function updateRelatedTables(
+  connection,
+  id,
+  education,
+  experience,
+  professionalReferences,
+  callback
+) {
+  const deleteQueries = [
+    `DELETE FROM ${db_name}.education_job_seekers WHERE education_jobSeekerId = ?`,
+    `DELETE FROM ${db_name}.experience_job_seekers WHERE jobSeekerId = ?`,
+    `DELETE FROM ${db_name}.professionalreferences_job_seekers_id WHERE professionalreferencesjob_seekers_id = ?`,
+  ];
+
+  Promise.all(
+    deleteQueries.map(
+      (query) =>
+        new Promise((resolve, reject) => {
+          connection.query(query, [id], (err) =>
+            err ? reject(err) : resolve()
+          );
+        })
+    )
+  )
+    .then(() => {
+      const insertPromises = [
+        ...insertEducation(connection, id, education),
+        ...insertExperience(connection, id, experience),
+        ...insertReferences(connection, id, professionalReferences),
+      ];
+
+      Promise.all(insertPromises)
+        .then(() => {
+          connection.commit((err) => {
+            if (err) return rollbackAndRelease(connection, err, callback);
+            connection.release();
+            callback(null, {
+              success: true,
+              message: "Job Seeker updated successfully",
+            });
+          });
+        })
+        .catch((err) => rollbackAndRelease(connection, err, callback));
+    })
+    .catch((err) => rollbackAndRelease(connection, err, callback));
+}
+
+function insertEducation(connection, id, education) {
+  return (education || []).map(
+    (edu) =>
+      new Promise((resolve, reject) => {
+        const query = `INSERT INTO ${db_name}.education_job_seekers 
+      (education_jobSeekerId, institutionName, country, state, city) 
+      VALUES (?, ?, ?, ?, ?)`;
+        connection.query(
+          query,
+          [id, edu.institutionName, edu.country, edu.state, edu.city],
+          (err) => (err ? reject(err) : resolve())
+        );
+      })
+  );
+}
+
+function insertExperience(connection, id, experience) {
+  return (experience || []).map(
+    (exp) =>
+      new Promise((resolve, reject) => {
+        const query = `INSERT INTO ${db_name}.experience_job_seekers 
+      (jobSeekerId, companyName, jobTitle, startDate, endDate, jobDescriptions, projects) 
+      VALUES (?, ?, ?, ?, ?, ?, ?)`;
+        connection.query(
+          query,
+          [
+            id,
+            exp.companyName,
+            exp.jobTitle,
+            exp.startDate,
+            exp.endDate,
+            exp.jobDescriptions,
+            exp.projects,
+          ],
+          (err) => (err ? reject(err) : resolve())
+        );
+      })
+  );
+}
+
+function insertReferences(connection, id, references) {
+  return (references || []).map(
+    (ref) =>
+      new Promise((resolve, reject) => {
+        const query = `INSERT INTO ${db_name}.professionalreferences_job_seekers_id 
+      (professionalreferencesjob_seekers_id, name, companyName, phoneNumber, email, relationship) 
+      VALUES (?, ?, ?, ?, ?, ?)`;
+        connection.query(
+          query,
+          [
+            id,
+            ref.name,
+            ref.companyName,
+            ref.phoneNumber,
+            ref.email,
+            ref.relationship,
+          ],
+          (err) => (err ? reject(err) : resolve())
+        );
+      })
+  );
+}
+
+function rollbackAndRelease(connection, err, callback) {
+  connection.rollback(() => {
+    connection.release();
+    console.error("Transaction rolled back due to error:", err);
+    callback(err);
+  });
+}
 
 module.exports = JobSeeker;

@@ -5,13 +5,18 @@ const jobSeekerController = require("../controllers/jobSeeker.controller");
 const authMiddleware = require("../middlewares/auth.middleware");
 
 // router.post("/register", jobSeekerController.register);
-router.post("/register", 
+router.post(
+  "/register",
   // console.log("Register route called");
   // console.log(req.body);
   jobSeekerController.register
 );
 router.post("/login", jobSeekerController.login);
-router.put("/update", authMiddleware("Job Seeker"), jobSeekerController.update);
+router.put(
+  "/update/:id",
+  authMiddleware("Job Seeker"),
+  jobSeekerController.update
+);
 router.get(
   "/company-directory",
   authMiddleware("Job Seeker"),

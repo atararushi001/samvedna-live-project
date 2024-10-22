@@ -60,6 +60,7 @@ import Explore from "./pages/Explore";
 import AdminLogin from "./pages/admin/AdminLogin";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import Jobseekerresumecreate from "./pages/jobseekerresumecreate";
+import SearchJobSeekers from "./pages/SearchJobSeekers";
 
 const App = () => {
   return (
@@ -101,6 +102,7 @@ const App = () => {
           <Route path="edit-job/:id" element={<EditJob />} />
           <Route path="resume-bank" element={<ResumeBank />} />
           <Route path="view-resume/:id" element={<ViewResumeRecruiter />} />
+          <Route path="job-seekers" element={<SearchJobSeekers />} />
         </Route>
 
         <Route path="job-seeker-dashboard" element={<JobSeeker />}>

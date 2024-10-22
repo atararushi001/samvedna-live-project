@@ -75,7 +75,7 @@ const jobSeekerController = {
     jobSeeker.getById(id, (err, results) => {
       console.log(results);
       if (err) {
-        return res.status(500).json({ message: 'Internal server error' });
+        return res.status(500).json({ message: "Internal server error" });
       }
       // if (!results.length) {
       //   return res.status(404).json({ message: 'Job Seeker not found' });
@@ -245,7 +245,7 @@ const jobSeekerController = {
   // }
   // ],
 
- register: [
+  register: [
     // Middleware to handle file uploads
     // uploadPhoto.single("photo"),
     // uploadResume.single("resume"),
@@ -254,10 +254,9 @@ const jobSeekerController = {
       // console.log(req.body.education);
       const {
         email,
-      
+
         password,
         confirmPassword,
-      
       } = req.body;
 
       // const photo = req.files && req.files.photo ? req.files.photo[0].filename : null;
@@ -272,34 +271,31 @@ const jobSeekerController = {
             res.status(500).json({ message: "Internal server error" });
             return;
           }
-      
-        const newJobSeeker = {
-          email,
-         
-          password,
-        
-         
-        };
-     newJobSeeker.password = hash;
-        jobSeeker.create(newJobSeeker, (err, result) => {
-          // console.log(err);
-          if (err) {
-            console.error("Database error", err); // Enhanced logging
-            res
-              .status(500)
-              .json({ message: "Internal server error", error: err });
-            return;
-          } else {
-            return res
-              .status(201)
-              .json({ message: "Job Seeker created successfully" });
-          }
-        });
-      });
-    }
-  }
-  ],
 
+          const newJobSeeker = {
+            email,
+
+            password,
+          };
+          newJobSeeker.password = hash;
+          jobSeeker.create(newJobSeeker, (err, result) => {
+            // console.log(err);
+            if (err) {
+              console.error("Database error", err); // Enhanced logging
+              res
+                .status(500)
+                .json({ message: "Internal server error", error: err });
+              return;
+            } else {
+              return res
+                .status(201)
+                .json({ message: "Job Seeker created successfully" });
+            }
+          });
+        });
+      }
+    },
+  ],
 
   login: (req, res) => {
     const { email, password } = req.body;

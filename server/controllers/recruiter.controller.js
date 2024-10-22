@@ -5,6 +5,7 @@ const path = require("path");
 const fs = require("fs");
 
 const recruiter = require("../models/recruiter.model");
+const jobSeeker = require("../models/jobSeeker.model");
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -512,6 +513,15 @@ const recruiterController = {
       res.status(200).json(result);
     });
   },
+  searchJobSeeker: (req, res) => {
+    jobSeeker.searchJobSeeker(req.params.search, (err, result) => {
+      if (err) {
+        res.status(500).json({ message: "Internal server error" });
+        return;
+      }
+      res.status(200).json(result);
+    });
+  }
 };
 
 module.exports = recruiterController;

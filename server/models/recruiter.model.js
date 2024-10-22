@@ -415,6 +415,8 @@ const Recruiter = {
       });
     });
   },
+  searchJobSeekers: (search, callback) => {
+  }
 };
 
 module.exports = Recruiter;

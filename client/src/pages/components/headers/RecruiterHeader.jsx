@@ -108,6 +108,15 @@ const RecruiterHeader = () => {
           <li>
             <Link
               className="nav-link"
+              to="/recruiter-dashboard/job-seekers"
+              onClick={handleLinkNavigation}
+            >
+              Search Job Seekers
+            </Link>
+          </li>
+          <li>
+            <Link
+              className="nav-link"
               to="/recruiter-dashboard/resume-bank"
               onClick={handleLinkNavigation}
             >

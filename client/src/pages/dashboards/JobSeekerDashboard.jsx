@@ -1,7 +1,6 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
-
 import UserStore from "../../stores/UserStore";
 
 const API = import.meta.env.VITE_API_URL;
@@ -14,16 +13,14 @@ const JobSeekerDashboard = () => {
   const [formData, setFormData] = useState({
     email: "",
     username: "",
-    password: "",
-    confirmPassword: "",
     FirstName: "",
     FatherName: "",
     Surname: "",
-    accommodationsNeeded: null,
+    accommodationsNeeded: "",
     addHomePhone: "",
-    artSkills: null,
+    artSkills: "",
     car: 0,
-    careerObjective: null,
+    careerObjective: "",
     city: "",
     contactNumber: "",
     country: "",
@@ -32,42 +29,43 @@ const JobSeekerDashboard = () => {
     dob: "",
     education: [],
     educationSpecialization: "",
-    employmentGapDuration: null,
-    employmentGapReason: null,
+    employmentGapDuration: "",
+    employmentGapReason: "",
     experience: [],
     experienceAndAppliance: "",
     gender: "",
-    hobbiesOrInterests: null,
+    hobbiesOrInterests: "",
     homePhone: "",
-    jobAlerts: 0,
-    jobCategories: null,
-    jobType: null,
+    jobAlerts: false,
+    jobCategories: "",
+    jobType: "",
     job_seeker_id: null,
     job_seeker_status: 1,
-    languageProficiency: null,
+    languageProficiency: "",
     lastName: "",
     name: "",
-    notableAchievements: null,
-    otherRelevantInfo: null,
+    notableAchievements: "",
+    otherRelevantInfo: "",
     permanentAddress: "",
     photo: null,
     postalCode: "",
-    preferredLocation: null,
-    professionalMemberships: null,
+    preferredLocation: "",
+    professionalMemberships: "",
     professionalReferences: [],
     qualification: "",
     resume: null,
-    softwareRequirements: null,
+    softwareRequirements: "",
     specializationInDisability: "",
-    specificEquipment: null,
-    specificNeed: null,
+    specificEquipment: "",
+    specificNeed: "",
     state: "",
     threeWheeler: 0,
-    transportationNeeded: null,
+    transportationNeeded: "",
     twoWheeler: 0,
     whatsappNumber: "",
     yesNoQuestion: "",
   });
+
   const [countries, setCountries] = useState([]);
   const [states, setStates] = useState([]);
   const [cities, setCities] = useState([]);
@@ -75,38 +73,8 @@ const JobSeekerDashboard = () => {
   const [specializations, setSpecializations] = useState([]);
 
   const handleInputChange = (e, index, section, subIndex, subSection) => {
-    const { name, type, value } = e.target;
-    const isChecked = type === "checkbox" ? e.target.checked : false;
-
-    const handleCheckboxChange = (prevState, name, value) => {
-      if (name === "desiredJobType") {
-        return {
-          ...prevState,
-          [name]: prevState[name].includes(value)
-            ? prevState[name].filter((item) => item !== value)
-            : [...prevState[name], value],
-        };
-      } else if (Array.isArray(prevState[name])) {
-        return {
-          ...prevState,
-          [name]: prevState[name].includes(value)
-            ? prevState[name].filter((item) => item !== value)
-            : [...prevState[name], value],
-        };
-      } else {
-        return {
-          ...prevState,
-          [name]: isChecked,
-        };
-      }
-    };
-
-    const handleFieldChange = (prevState, name, value) => {
-      return {
-        ...prevState,
-        [name]: value,
-      };
-    };
+    const { name, type, value, checked } = e.target;
+    const isChecked = type === "checkbox" ? checked : false;
 
     setFormData((prevState) => {
       if (section && subSection) {
@@ -120,10 +88,7 @@ const JobSeekerDashboard = () => {
                     subIdx === subIndex
                       ? {
                           ...subItem,
-                          [name]:
-                            type === "checkbox"
-                              ? handleCheckboxChange(subItem, name, value)[name]
-                              : handleFieldChange(subItem, name, value)[name],
+                          [name]: type === "checkbox" ? isChecked : value,
                         }
                       : subItem
                   ),
@@ -136,28 +101,18 @@ const JobSeekerDashboard = () => {
           ...prevState,
           [section]: prevState[section].map((item, idx) =>
             idx === index
-              ? {
-                  ...item,
-                  [name]:
-                    type === "checkbox"
-                      ? handleCheckboxChange(item, name, value)[name]
-                      : handleFieldChange(item, name, value)[name],
-                }
+              ? { ...item, [name]: type === "checkbox" ? isChecked : value }
               : item
           ),
         };
       } else {
         return {
           ...prevState,
-          [name]:
-            type === "checkbox"
-              ? handleCheckboxChange(prevState, name, value)[name]
-              : handleFieldChange(prevState, name, value)[name],
+          [name]: type === "checkbox" ? isChecked : value,
         };
       }
     });
   };
-
 
   const handleAddClick = (section, newItem) => {
     setFormData((prevState) => ({
@@ -167,70 +122,54 @@ const JobSeekerDashboard = () => {
   };
 
   const handleRemoveClick = (index, section) => {
-    setFormData((prevState) => {
-      return {
-        ...prevState,
-        [section]: prevState[section].filter((item, idx) => idx !== index),
-      };
-    });
+    setFormData((prevState) => ({
+      ...prevState,
+      [section]: prevState[section].filter((_, idx) => idx !== index),
+    }));
   };
 
   const handleSubAddClick = (index, section, subSection, newItem) => {
-    setFormData((prevState) => {
-      return {
-        ...prevState,
-        [section]: prevState[section].map((item, idx) =>
-          idx === index
-            ? {
-                ...item,
-                [subSection]: [...item[subSection], newItem],
-              }
-            : item
-        ),
-      };
-    });
+    setFormData((prevState) => ({
+      ...prevState,
+      [section]: prevState[section].map((item, idx) =>
+        idx === index
+          ? {
+              ...item,
+              [subSection]: [...item[subSection], newItem],
+            }
+          : item
+      ),
+    }));
   };
 
   const handleSubRemoveClick = (index, section, subIndex, subSection) => {
-    setFormData((prevState) => {
-      return {
-        ...prevState,
-        [section]: prevState[section].map((item, idx) =>
-          idx === index
-            ? {
-                ...item,
-                [subSection]: item[subSection].filter(
-                  (subItem, subIdx) => subIdx !== subIndex
-                ),
-              }
-            : item
-        ),
-      };
-    });
+    setFormData((prevState) => ({
+      ...prevState,
+      [section]: prevState[section].map((item, idx) =>
+        idx === index
+          ? {
+              ...item,
+              [subSection]: item[subSection].filter(
+                (_, subIdx) => subIdx !== subIndex
+              ),
+            }
+          : item
+      ),
+    }));
   };
 
   const handleFileChange = (e) => {
     const { name, files } = e.target;
-    setFormData({
-      ...formData,
+    setFormData((prevState) => ({
+      ...prevState,
       [name]: files[0],
-    });
+    }));
   };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
 
     toast.loading("Submitting Your Data, Please Wait...");
-
-    if (formData.password !== formData.confirmPassword) {
-      toast.error("Passwords do not match");
-      return;
-    }
-
-    if (formData.password.length < 8) {
-      toast.error("Password should be at least 8 characters long");
-      return;
-    }
 
     if (formData.dob > new Date().toISOString().split("T")[0]) {
       toast.error("Date of Birth cannot be in the future");
@@ -264,7 +203,7 @@ const JobSeekerDashboard = () => {
         }
       } else if (
         key === "education" ||
-        key === "Experience" ||
+        key === "experience" ||
         key === "professionalReferences"
       ) {
         newFormData.append(key, JSON.stringify(formData[key]));
@@ -273,20 +212,36 @@ const JobSeekerDashboard = () => {
       }
     }
 
-    const response = await fetch(`${API}/job-seeker/update-resume/${id}`, {
-      method: "PUT",
-      body: newFormData,
-    });
+    try {
+      const response = await fetch(
+        `${API}/job-seeker/update/${userDetails.id}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            "x-auth-token": userDetails.token,
+          },
+          body: JSON.stringify(formData),
+        }
+      );
 
-    const data = await response.json();
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
 
-    if (response.ok) {
+      const data = await response.json();
+
+      if (response.ok) {
+        toast.dismiss();
+        toast.success(data.message);
+      } else {
+        toast.dismiss();
+        toast.error(data.message);
+      }
+    } catch (error) {
+      console.error("Error updating job seeker:", error);
       toast.dismiss();
-      toast.success(data.message);
-      navigate("/job-seeker-dashboard/manage-resumes");
-    } else {
-      toast.dismiss();
-      toast.error(data.message);
+      toast.error("Failed to update job seeker");
     }
   };
 
@@ -361,16 +316,15 @@ const JobSeekerDashboard = () => {
             "x-auth-token": userDetails.token,
           },
         });
-  
+
         const data = await response.json();
         console.log(data.jobSeeker);
-        console.log(formData);
-  
+
         if (response.ok) {
           setFormData((prevFormData) => ({
             ...prevFormData,
             ...data.jobSeeker,
-            experience: data.jobSeeker.experience || [], // Ensure experience is an array
+            experience: data.jobSeeker.experience || [],
           }));
         } else {
           toast.error(data.message);
@@ -380,12 +334,12 @@ const JobSeekerDashboard = () => {
         toast.error("Failed to fetch job seeker data");
       }
     };
-  
+
     if (loginState) {
       fetchData();
     }
   }, [id, navigate, loginState, userDetails]);
-  console.log(formData);
+
   return (
     <div className="container">
       <section className="job-seeker-register">
@@ -398,10 +352,10 @@ const JobSeekerDashboard = () => {
           <span className="highlight-text">NOW</span>
         </p>
 
-        <form method="post" onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit}>
+          {/* Account Information */}
           <fieldset>
             <legend>Account Information *</legend>
-
             <input
               type="text"
               id="username"
@@ -420,31 +374,11 @@ const JobSeekerDashboard = () => {
               onChange={handleInputChange}
               required
             />
-
-            <input
-              type="password"
-              id="password"
-              name="password"
-              placeholder="Enter Password"
-              // value={formData.password}
-              onChange={handleInputChange}
-              
-            />
-
-            <input
-              type="password"
-              id="confirmPassword"
-              name="confirmPassword"
-              placeholder="Confirm Password"
-              value={formData.confirmPassword}
-              onChange={handleInputChange}
-              
-            />
           </fieldset>
 
+          {/* Personal Data / Details */}
           <fieldset>
             <legend>Personal Data / Details *</legend>
-
             <input
               type="text"
               id="FirstName"
@@ -454,7 +388,6 @@ const JobSeekerDashboard = () => {
               onChange={handleInputChange}
               required
             />
-
             <input
               type="text"
               id="FatherName"
@@ -473,7 +406,6 @@ const JobSeekerDashboard = () => {
               onChange={handleInputChange}
               required
             />
-
             <input
               type="date"
               id="dob"
@@ -483,7 +415,6 @@ const JobSeekerDashboard = () => {
               onChange={handleInputChange}
               required
             />
-
             <div className="input-group">
               <input
                 type="radio"
@@ -514,7 +445,6 @@ const JobSeekerDashboard = () => {
               accept="image/*"
               onChange={handleFileChange}
             />
-
             <label htmlFor="resume">Upload Your Resume in PDF/Word File</label>
             <input
               type="file"
@@ -525,9 +455,9 @@ const JobSeekerDashboard = () => {
             />
           </fieldset>
 
+          {/* Address Information */}
           <fieldset>
             <legend>Address Information *</legend>
-
             <textarea
               id="permanentAddress"
               name="permanentAddress"
@@ -544,7 +474,6 @@ const JobSeekerDashboard = () => {
               onChange={handleInputChange}
               required
             ></textarea>
-
             <select
               name="country"
               value={formData.country}
@@ -616,6 +545,7 @@ const JobSeekerDashboard = () => {
             />
           </fieldset>
 
+          {/* Identification */}
           <fieldset>
             <legend>Identification</legend>
             <input
@@ -637,6 +567,8 @@ const JobSeekerDashboard = () => {
               required
             />
           </fieldset>
+
+          {/* Education Qualification */}
           <fieldset>
             <legend>Education Qualification *</legend>
             <label htmlFor="qualification">Qualification Level:</label>
@@ -645,7 +577,7 @@ const JobSeekerDashboard = () => {
               name="qualification"
               onChange={handleInputChange}
               required
-              defaultValue=""
+              value={formData.qualification}
             >
               <option value="" disabled>
                 Select Qualification Level
@@ -660,10 +592,18 @@ const JobSeekerDashboard = () => {
               ))}
             </select>
           </fieldset>
+
+          {/* Disability Information */}
           <fieldset>
             <legend>Disability Information *</legend>
-            <select id="typeOfDisability" name="typeOfDisability" required>
-              <option value="" selected disabled>
+            <select
+              id="typeOfDisability"
+              name="typeOfDisability"
+              required
+              value={formData.typeOfDisability}
+              onChange={handleInputChange}
+            >
+              <option value="" disabled>
                 Select Type of Disability
               </option>
               <option value="Locomotor">Locomotor</option>
@@ -688,8 +628,10 @@ const JobSeekerDashboard = () => {
               id="transportationMobility"
               name="transportationMobility"
               required
+              value={formData.transportationMobility}
+              onChange={handleInputChange}
             >
-              <option value="" selected disabled>
+              <option value="" disabled>
                 Select Transportation Mobility
               </option>
               <option value="Tricycle">Tricycle</option>
@@ -701,8 +643,14 @@ const JobSeekerDashboard = () => {
             </select>
 
             <label htmlFor="specificDisability">Specific Disability</label>
-            <select id="specificDisability" name="specificDisability" required>
-              <option value="" selected disabled>
+            <select
+              id="specificDisability"
+              name="specificDisability"
+              required
+              value={formData.specificDisability}
+              onChange={handleInputChange}
+            >
+              <option value="" disabled>
                 Select Specific Disability
               </option>
               <option value="Wheelchair User">Wheelchair User</option>
@@ -715,8 +663,14 @@ const JobSeekerDashboard = () => {
             </select>
 
             <label htmlFor="levelOfDisability">Level of Disability</label>
-            <select id="levelOfDisability" name="levelOfDisability" required>
-              <option value="" disabled selected>
+            <select
+              id="levelOfDisability"
+              name="levelOfDisability"
+              required
+              value={formData.levelOfDisability}
+              onChange={handleInputChange}
+            >
+              <option value="" disabled>
                 Select Level of Disability
               </option>
               <option value="Mild">Mild</option>
@@ -732,8 +686,10 @@ const JobSeekerDashboard = () => {
               id="assistiveTechnology"
               name="assistiveTechnology"
               required
+              value={formData.assistiveTechnology}
+              onChange={handleInputChange}
             >
-              <option value="" selected disabled>
+              <option value="" disabled>
                 Select Assistive Technology/Device
               </option>
               <option value="Manual Wheelchair">Manual Wheelchair</option>
@@ -751,6 +707,8 @@ const JobSeekerDashboard = () => {
               <option value="Others">Others</option>
             </select>
           </fieldset>
+
+          {/* Education Specialization */}
           <fieldset>
             <legend>Education Specialization</legend>
             <label htmlFor="educationSpecialization">
@@ -761,7 +719,7 @@ const JobSeekerDashboard = () => {
               name="educationSpecialization"
               onChange={handleInputChange}
               required
-              defaultValue=""
+              value={formData.educationSpecialization}
             >
               <option value="" disabled>
                 Select Education Specialization
@@ -776,6 +734,8 @@ const JobSeekerDashboard = () => {
               ))}
             </select>
           </fieldset>
+
+          {/* Job Alerts */}
           <fieldset>
             <legend>Job Alerts</legend>
             <div className="input-group">
@@ -791,6 +751,8 @@ const JobSeekerDashboard = () => {
               </label>
             </div>
           </fieldset>
+
+          {/* Additional Phone Numbers */}
           <fieldset>
             <legend>Additional Phone Numbers</legend>
             <input
@@ -800,7 +762,6 @@ const JobSeekerDashboard = () => {
               placeholder="Home Phone"
               value={formData.homePhone}
               onChange={handleInputChange}
-              required
             />
             <input
               type="tel"
@@ -809,9 +770,10 @@ const JobSeekerDashboard = () => {
               placeholder="Add another phone number"
               value={formData.addHomePhone}
               onChange={handleInputChange}
-              required
             />
           </fieldset>
+
+          {/* Education */}
           <fieldset>
             <legend>Education</legend>
             {formData.education?.map((education, index) => (
@@ -819,7 +781,6 @@ const JobSeekerDashboard = () => {
                 <input
                   type="text"
                   name="institutionName"
-                  id="institutionName"
                   placeholder="Institution Name"
                   value={education.institutionName}
                   onChange={(e) => handleInputChange(e, index, "education")}
@@ -828,7 +789,6 @@ const JobSeekerDashboard = () => {
                 <input
                   type="text"
                   name="country"
-                  id="country"
                   placeholder="Country"
                   value={education.country}
                   onChange={(e) => handleInputChange(e, index, "education")}
@@ -837,7 +797,6 @@ const JobSeekerDashboard = () => {
                 <input
                   type="text"
                   name="state"
-                  id="state"
                   placeholder="State"
                   value={education.state}
                   onChange={(e) => handleInputChange(e, index, "education")}
@@ -846,7 +805,6 @@ const JobSeekerDashboard = () => {
                 <input
                   type="text"
                   name="city"
-                  id="city"
                   placeholder="City"
                   value={education.city}
                   onChange={(e) => handleInputChange(e, index, "education")}
@@ -857,7 +815,6 @@ const JobSeekerDashboard = () => {
                     <input
                       type="text"
                       name="degree"
-                      id="degree"
                       placeholder="Degree"
                       value={degree.degree}
                       onChange={(e) =>
@@ -874,7 +831,6 @@ const JobSeekerDashboard = () => {
                     <input
                       type="text"
                       name="educationCompleted"
-                      id="educationCompleted"
                       placeholder="Education Completed"
                       value={degree.educationCompleted}
                       onChange={(e) =>
@@ -891,7 +847,6 @@ const JobSeekerDashboard = () => {
                     <input
                       type="text"
                       name="major"
-                      id="major"
                       placeholder="Major"
                       value={degree.major}
                       onChange={(e) =>
@@ -908,7 +863,6 @@ const JobSeekerDashboard = () => {
                     <input
                       type="date"
                       name="graduationDate"
-                      id="graduationDate"
                       placeholder="Graduation Date"
                       value={degree.graduationDate}
                       onChange={(e) =>
@@ -925,7 +879,6 @@ const JobSeekerDashboard = () => {
                     <input
                       type="text"
                       name="additionalInfo"
-                      id="additionalInfo"
                       placeholder="Additional Info"
                       value={degree.additionalInfo}
                       onChange={(e) =>
@@ -941,7 +894,6 @@ const JobSeekerDashboard = () => {
                     <input
                       type="text"
                       name="grade"
-                      id="grade"
                       placeholder="Grade"
                       value={degree.grade}
                       onChange={(e) =>
@@ -957,7 +909,6 @@ const JobSeekerDashboard = () => {
                     <input
                       type="text"
                       name="outOf"
-                      id="outOf"
                       placeholder="Out Of"
                       value={degree.outOf}
                       onChange={(e) =>
@@ -1038,150 +989,63 @@ const JobSeekerDashboard = () => {
               Add Institution
             </button>
           </fieldset>
+
+          {/* Experience */}
           <fieldset>
-          <legend>Experience</legend>
-          {formData.experience?.map((experiences, index) => (
-            <div key={index} className="experience">
-              <input
-                type="text"
-                name="jobTitle"
-                id="jobTitle"
-                placeholder="Job Title"
-                value={experiences.jobTitle}
-                onChange={(e) => handleInputChange(e, index, "experience")}
-                required
-              />
-              <input
-                type="text"
-                name="companyname"
-                id="companyname"
-                placeholder="Company Name"
-                value={experiences.companyName}
-                onChange={(e) => handleInputChange(e, index, "experience")}
-                required
-              />
-              <input
-                type="text"
-                name="JobDescriptions"
-                id="JobDescriptions"
-                placeholder="Job Descriptions"
-                value={experiences.jobDescriptions}
-                onChange={(e) => handleInputChange(e, index, "experience")}
-                required
-              />
-              <input
-                type="date"
-                name="startDate"
-                id="startDate"
-                placeholder="Start Date"
-                value={experiences.startDate}
-                onChange={(e) => handleInputChange(e, index, "experience")}
-                required
-              />
-              <input
-                type="date"
-                name="endDate"
-                id="endDate"
-                placeholder="End Date"
-                value={experiences.endDate}
-                onChange={(e) => handleInputChange(e, index, "experience")}
-                required
-              />
-              <input
-                type="text"
-                name="Projects"
-                id="Projects"
-                placeholder="Projects or Portfolio"
-                value={experiences.projects}
-                onChange={(e) => handleInputChange(e, index, "experience")}
-              />
-              <button
-                type="button"
-                className="btn btn-delete"
-                onClick={() => handleRemoveClick(index, "experience")}
-              >
-                Remove Experience
-              </button>
-            </div>
-          ))}
-          <button
-            type="button"
-            className="btn"
-            onClick={() =>
-              handleAddClick("experience", {
-                jobTitle: "",
-                companyname: "",
-                JobDescriptions: "",
-                startDate: "",
-                endDate: "",
-                Projects: "",
-              })
-            }
-          >
-            Add Experience
-          </button>
-        </fieldset>
-          {/* <fieldset>
             <legend>Experience</legend>
-            {formData.Experience?.map((experiences, index) => (
+            {formData.experience?.map((experience, index) => (
               <div key={index} className="experience">
                 <input
                   type="text"
                   name="jobTitle"
-                  id="jobTitle"
                   placeholder="Job Title"
-                  value={experiences.jobTitle}
-                  onChange={(e) => handleInputChange(e, index, "Experience")}
+                  value={experience.jobTitle}
+                  onChange={(e) => handleInputChange(e, index, "experience")}
                   required
                 />
                 <input
                   type="text"
-                  name="companyname"
-                  id="companyname"
+                  name="companyName"
                   placeholder="Company Name"
-                  value={experiences.companyname}
-                  onChange={(e) => handleInputChange(e, index, "Experience")}
+                  value={experience.companyName}
+                  onChange={(e) => handleInputChange(e, index, "experience")}
                   required
                 />
                 <input
                   type="text"
-                  name="JobDescriptions"
-                  id="JobDescriptions"
+                  name="jobDescriptions"
                   placeholder="Job Descriptions"
-                  value={experiences.JobDescriptions}
-                  onChange={(e) => handleInputChange(e, index, "Experience")}
+                  value={experience.jobDescriptions}
+                  onChange={(e) => handleInputChange(e, index, "experience")}
                   required
                 />
                 <input
                   type="date"
                   name="startDate"
-                  id="startDate"
                   placeholder="Start Date"
-                  value={experiences.startDate}
-                  onChange={(e) => handleInputChange(e, index, "Experience")}
+                  value={experience.startDate}
+                  onChange={(e) => handleInputChange(e, index, "experience")}
                   required
                 />
                 <input
                   type="date"
                   name="endDate"
-                  id="endDate"
                   placeholder="End Date"
-                  value={experiences.endDate}
-                  onChange={(e) => handleInputChange(e, index, "Experience")}
+                  value={experience.endDate}
+                  onChange={(e) => handleInputChange(e, index, "experience")}
                   required
                 />
                 <input
                   type="text"
-                  name="Projects"
-                  id="Projects"
+                  name="projects"
                   placeholder="Projects or Portfolio"
-                  value={experiences.Projects}
-                  onChange={(e) => handleInputChange(e, index, "Experience")}
+                  value={experience.projects}
+                  onChange={(e) => handleInputChange(e, index, "experience")}
                 />
                 <button
                   type="button"
                   className="btn btn-delete"
-                  onClick={() => handleRemoveClick(index, "Experience")}
+                  onClick={() => handleRemoveClick(index, "experience")}
                 >
                   Remove Experience
                 </button>
@@ -1191,19 +1055,21 @@ const JobSeekerDashboard = () => {
               type="button"
               className="btn"
               onClick={() =>
-                handleAddClick("Experience", {
+                handleAddClick("experience", {
                   jobTitle: "",
-                  companyname: "",
-                  JobDescriptions: "",
+                  companyName: "",
+                  jobDescriptions: "",
                   startDate: "",
                   endDate: "",
-                  Projects: "",
+                  projects: "",
                 })
               }
             >
               Add Experience
             </button>
-          </fieldset> */}
+          </fieldset>
+
+          {/* Employment Gap Information */}
           <fieldset>
             <legend>Employment Gap Information (if applicable)</legend>
             <label htmlFor="employmentGapReason">
@@ -1235,6 +1101,8 @@ const JobSeekerDashboard = () => {
               placeholder="Enter duration (e.g., 6 months, 1 year)"
             />
           </fieldset>
+
+          {/* Other Relevant Information */}
           <fieldset>
             <legend>Other Relevant Information</legend>
             <label htmlFor="languageProficiency">Language Proficiency</label>
@@ -1269,6 +1137,8 @@ const JobSeekerDashboard = () => {
               placeholder="Enter your professional memberships or associations"
             />
           </fieldset>
+
+          {/* Additional Information */}
           <fieldset>
             <legend>Additional Information</legend>
             <label htmlFor="careerObjective">Summary or Career Objective</label>
@@ -1300,6 +1170,8 @@ const JobSeekerDashboard = () => {
               placeholder="Enter any notable awards, recognition, or achievements"
             ></textarea>
           </fieldset>
+
+          {/* References */}
           <fieldset>
             <legend>References</legend>
             {formData.professionalReferences?.map((reference, index) => (
@@ -1307,7 +1179,6 @@ const JobSeekerDashboard = () => {
                 <input
                   type="text"
                   name="name"
-                  id="name"
                   placeholder="Name"
                   value={reference.name}
                   onChange={(e) =>
@@ -1318,7 +1189,6 @@ const JobSeekerDashboard = () => {
                 <input
                   type="email"
                   name="email"
-                  id="email"
                   placeholder="Email"
                   value={reference.email}
                   onChange={(e) =>
@@ -1329,7 +1199,6 @@ const JobSeekerDashboard = () => {
                 <input
                   type="text"
                   name="phoneNumber"
-                  id="phoneNumber"
                   placeholder="Phone Number"
                   value={reference.phoneNumber}
                   onChange={(e) =>
@@ -1340,7 +1209,6 @@ const JobSeekerDashboard = () => {
                 <input
                   type="text"
                   name="companyName"
-                  id="companyName"
                   placeholder="Company Name"
                   value={reference.companyName}
                   onChange={(e) =>
@@ -1351,7 +1219,6 @@ const JobSeekerDashboard = () => {
                 <input
                   type="text"
                   name="relationship"
-                  id="relationship"
                   placeholder="Relationship"
                   value={reference.relationship}
                   onChange={(e) =>
@@ -1385,6 +1252,8 @@ const JobSeekerDashboard = () => {
               Add Reference
             </button>
           </fieldset>
+
+          {/* Job Preferences */}
           <fieldset>
             <legend>Job Preferences</legend>
             <label htmlFor="jobCategories">
@@ -1417,6 +1286,8 @@ const JobSeekerDashboard = () => {
               placeholder="Enter job type"
             />
           </fieldset>
+
+          {/* Accessibility Requirements */}
           <fieldset>
             <legend>Accessibility Requirements</legend>
             <label htmlFor="accommodationsNeeded">
@@ -1469,14 +1340,15 @@ const JobSeekerDashboard = () => {
               placeholder="Enter any specific equipment"
             />
           </fieldset>
+
+          {/* Submit and Cancel buttons */}
           <div className="btn-container">
             <button
               type="submit"
-              value="Register"
               className="btn"
               name="job_seekerRegisterButton"
             >
-              Register
+              Update
             </button>
             <button type="button" className="btn btn-delete">
               Cancel

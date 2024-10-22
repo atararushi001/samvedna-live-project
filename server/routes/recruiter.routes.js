@@ -44,5 +44,10 @@ router.get(
   authMiddlware("Recruiter"),
   recruiterController.getFullResume
 );
+router.get(
+  '/get-jobseekers/:search',
+  authMiddlware("Recruiter"),
+  recruiterController.searchJobSeeker
+)
 
 module.exports = router;
