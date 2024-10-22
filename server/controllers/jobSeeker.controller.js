@@ -1,12 +1,10 @@
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-
 const jobSeeker = require("../models/jobSeeker.model");
 const multer = require("multer");
 const path = require("path");
 const fs = require("fs");
 const moment = require("moment");
-// Set up storage for photo uploads
 
 // Set up storage for photo uploads
 const storagePhoto = multer.diskStorage({
@@ -42,10 +40,16 @@ const storageResume = multer.diskStorage({
   },
 });
 
+// Initialize multer instances
 const upload = multer({
   storage: multer.diskStorage({
     destination: function (req, file, cb) {
-      const uploadDirectory = path.join(__dirname, "../public/uploads/job");
+      let uploadDirectory;
+      if (file.fieldname === "photo") {
+        uploadDirectory = path.join(__dirname, "../public/uploads/job/profile");
+      } else if (file.fieldname === "resume") {
+        uploadDirectory = path.join(__dirname, "../public/uploads/job/resume");
+      }
       if (!fs.existsSync(uploadDirectory)) {
         fs.mkdirSync(uploadDirectory, { recursive: true });
       }
@@ -77,193 +81,13 @@ const jobSeekerController = {
       if (err) {
         return res.status(500).json({ message: "Internal server error" });
       }
-      // if (!results.length) {
-      //   return res.status(404).json({ message: 'Job Seeker not found' });
-      // }
       res.status(200).json({ jobSeeker: results });
     });
   },
-
-  // register: [
-  //   // Middleware to handle file uploads
-  //   // uploadPhoto.single("photo"),
-  //   // uploadResume.single("resume"),
-  //   upload,
-  //   (req, res) => {
-  //     // console.log(req.body.education);
-  //     const {
-  //       email,
-  //       username,
-  //       password,
-  //       confirmPassword,
-  //       FirstName,
-  //       FatherName,
-  //       Surname,
-  //       lastName,
-  //       artSkills,
-  //       employmentGapReason,
-  //       employmentGapDuration,
-  //       languageProficiency,
-  //       hobbiesOrInterests,
-  //       professionalMemberships,
-  //       careerObjective,
-  //       otherRelevantInfo,
-  //       notableAchievements,
-  //       jobCategories,
-  //       preferredLocation,
-  //       jobType,
-  //       accommodationsNeeded,
-  //       transportationNeeded,
-  //       specificNeed,
-  //       softwareRequirements,
-  //       specificEquipment,
-  //       dob,
-  //       gender,
-  //       permanentAddress,
-  //       currentAddress,
-  //       city,
-  //       state,
-  //       postalCode,
-  //       country,
-  //       contactNumber,
-  //       whatsappNumber,
-  //       AadharCardNumber,
-  //       LinkedInID,
-  //       jobAlerts,
-  //       homePhone,
-  //       addHomePhone,
-  //       qualification,
-  //       educationSpecialization,
-  //       typeOfDisability,
-  //       transportationMobility,
-  //       specificDisability,
-  //       levelOfDisability,
-  //       assistiveTechnology,
-  //       experienceAndAppliance,
-  //       yesNoQuestion,
-  //       twoWheeler,
-  //       threeWheeler,
-  //       car,
-  //       disabilityPercentage,
-  //       specializationInDisability,
-  //       education,
-  //       Experience,
-  //       professionalReferences,
-  //     } = req.body;
-
-  //     const photo = req.files && req.files.photo ? req.files.photo[0].filename : null;
-  //     const resume = req.files && req.files.resume ? req.files.resume[0].filename : null;
-
-  //     // console.log('photo:', photo);
-  //     // console.log('resume:', resume);
-
-  //     if (password) {
-  //       bcrypt.hash(password, 10, (err, hash) => {
-  //         if (err) {
-  //           res.status(500).json({ message: "Internal server error" });
-  //           return;
-  //         }
-
-  //       const newJobSeeker = {
-  //         email,
-  //         username,
-  //         password,
-  //         confirmPassword,
-  //         FirstName,
-  //         FatherName,
-  //         Surname,
-  //         lastName,
-  //         artSkills,
-  //         employmentGapReason,
-  //         employmentGapDuration,
-  //         languageProficiency,
-  //         hobbiesOrInterests,
-  //         professionalMemberships,
-  //         careerObjective,
-  //         otherRelevantInfo,
-  //         notableAchievements,
-  //         jobCategories,
-  //         preferredLocation,
-  //         jobType,
-  //         accommodationsNeeded,
-  //         transportationNeeded,
-  //         specificNeed,
-  //         softwareRequirements,
-  //         specificEquipment,
-  //         photo,
-  //         resume,
-  //         dob,
-  //         gender,
-  //         permanentAddress,
-  //         currentAddress,
-  //         city,
-  //         state,
-  //         postalCode,
-  //         country,
-  //         contactNumber,
-  //         whatsappNumber,
-  //         AadharCardNumber,
-  //         LinkedInID,
-  //         jobAlerts,
-  //         homePhone,
-  //         addHomePhone,
-  //         qualification,
-  //         educationSpecialization,
-  //         typeOfDisability,
-  //         transportationMobility,
-  //         specificDisability,
-  //         levelOfDisability,
-  //         assistiveTechnology,
-  //         experienceAndAppliance,
-  //         yesNoQuestion,
-  //         twoWheeler,
-  //         threeWheeler,
-  //         car,
-  //         disabilityPercentage,
-  //         specializationInDisability,
-  //         education,
-  //         Experience,
-  //         professionalReferences,
-  //       };
-
-  //       jobSeeker.create(newJobSeeker, (err, result) => {
-  //         // console.log(err);
-  //         if (err) {
-  //           console.error("Database error", err); // Enhanced logging
-  //           res
-  //             .status(500)
-  //             .json({ message: "Internal server error", error: err });
-  //           return;
-  //         } else {
-  //           return res
-  //             .status(201)
-  //             .json({ message: "Job Seeker created successfully" });
-  //         }
-  //       });
-  //     });
-  //   }
-  // }
-  // ],
-
   register: [
-    // Middleware to handle file uploads
-    // uploadPhoto.single("photo"),
-    // uploadResume.single("resume"),
     upload,
     (req, res) => {
-      // console.log(req.body.education);
-      const {
-        email,
-
-        password,
-        confirmPassword,
-      } = req.body;
-
-      // const photo = req.files && req.files.photo ? req.files.photo[0].filename : null;
-      // const resume = req.files && req.files.resume ? req.files.resume[0].filename : null;
-
-      // console.log('photo:', photo);
-      // console.log('resume:', resume);
+      const { email, password, confirmPassword } = req.body;
 
       if (password) {
         bcrypt.hash(password, 10, (err, hash) => {
@@ -274,12 +98,16 @@ const jobSeekerController = {
 
           const newJobSeeker = {
             email,
-
-            password,
+            password: hash,
+            photo:
+              req.files && req.files.photo ? req.files.photo[0].filename : null,
+            resume:
+              req.files && req.files.resume
+                ? req.files.resume[0].filename
+                : null,
           };
-          newJobSeeker.password = hash;
+
           jobSeeker.create(newJobSeeker, (err, result) => {
-            // console.log(err);
             if (err) {
               console.error("Database error", err); // Enhanced logging
               res
@@ -296,7 +124,6 @@ const jobSeekerController = {
       }
     },
   ],
-
   login: (req, res) => {
     const { email, password } = req.body;
 
@@ -306,9 +133,8 @@ const jobSeekerController = {
         console.log("Database error", err);
         return;
       }
-      // console.log( password);
+
       if (!result.length) {
-        // console.log(result);
         res.status(401).json({ message: "Invalid email or password" });
         return;
       }
@@ -328,9 +154,7 @@ const jobSeekerController = {
         const token = jwt.sign(
           { id: result[0].job_seeker_id, type: "Job Seeker" },
           process.env.JWT_SECRET,
-          {
-            expiresIn: "1d",
-          }
+          { expiresIn: "1d" }
         );
 
         res.status(200).json({
@@ -341,7 +165,6 @@ const jobSeekerController = {
     });
   },
   update: [
-    // Middleware to handle file uploads
     upload,
     (req, res) => {
       const {

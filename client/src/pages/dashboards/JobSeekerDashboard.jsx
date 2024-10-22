@@ -4,6 +4,7 @@ import { toast } from "react-toastify";
 import UserStore from "../../stores/UserStore";
 
 const API = import.meta.env.VITE_API_URL;
+const STATIC_API = import.meta.env.VITE_STATIC_FILES_URL;
 
 const JobSeekerDashboard = () => {
   const navigate = useNavigate();
@@ -171,6 +172,7 @@ const JobSeekerDashboard = () => {
 
     toast.loading("Submitting Your Data, Please Wait...");
 
+    // Validate DOB
     if (formData.dob > new Date().toISOString().split("T")[0]) {
       toast.error("Date of Birth cannot be in the future");
       return;
@@ -184,6 +186,7 @@ const JobSeekerDashboard = () => {
       return;
     }
 
+    // Validate vehicle selection
     if (
       formData.yesNoQuestion === "yes" &&
       !formData.twoWheeler &&
@@ -196,19 +199,20 @@ const JobSeekerDashboard = () => {
 
     const newFormData = new FormData();
 
+    // Append form data fields
     for (const key in formData) {
       if (key === "photo" || key === "resume") {
         if (formData[key]) {
-          newFormData.append(key, formData[key]);
+          newFormData.append(key, formData[key]); // append files
         }
       } else if (
         key === "education" ||
         key === "experience" ||
         key === "professionalReferences"
       ) {
-        newFormData.append(key, JSON.stringify(formData[key]));
+        newFormData.append(key, JSON.stringify(formData[key])); // stringify complex objects
       } else {
-        newFormData.append(key, formData[key]);
+        newFormData.append(key, formData[key]); // append normal fields
       }
     }
 
@@ -218,10 +222,9 @@ const JobSeekerDashboard = () => {
         {
           method: "PUT",
           headers: {
-            "Content-Type": "application/json",
-            "x-auth-token": userDetails.token,
+            "x-auth-token": userDetails.token, // Include authentication token
           },
-          body: JSON.stringify(formData),
+          body: newFormData, // Send the FormData directly
         }
       );
 
@@ -231,11 +234,10 @@ const JobSeekerDashboard = () => {
 
       const data = await response.json();
 
+      toast.dismiss();
       if (response.ok) {
-        toast.dismiss();
         toast.success(data.message);
       } else {
-        toast.dismiss();
         toast.error(data.message);
       }
     } catch (error) {
@@ -435,6 +437,28 @@ const JobSeekerDashboard = () => {
               />
               <label htmlFor="female">Female</label>
             </div>
+            {formData.photo && (
+              <div>
+                <label>Uploaded Photo:</label>
+                <img
+                  src={`${STATIC_API}/uploads/job/profile/${formData.photo}`}
+                  alt="Uploaded Photo"
+                  style={{ width: "100px", height: "100px" }}
+                />
+              </div>
+            )}
+            {formData.resume && (
+              <div>
+                <label>Uploaded Resume:</label>
+                <a
+                  href={`${STATIC_API}/uploads/job/resume/${formData.resume}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  View Resume
+                </a>
+              </div>
+            )}
             <label htmlFor="photo">
               Upload Your Photo (Passport Size Photo)
             </label>
