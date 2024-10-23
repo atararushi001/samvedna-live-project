@@ -41,28 +41,8 @@ const storageResume = multer.diskStorage({
 });
 
 // Initialize multer instances
-const upload = multer({
-  storage: multer.diskStorage({
-    destination: function (req, file, cb) {
-      let uploadDirectory;
-      if (file.fieldname === "photo") {
-        uploadDirectory = path.join(__dirname, "../public/uploads/job/profile");
-      } else if (file.fieldname === "resume") {
-        uploadDirectory = path.join(__dirname, "../public/uploads/job/resume");
-      }
-      if (!fs.existsSync(uploadDirectory)) {
-        fs.mkdirSync(uploadDirectory, { recursive: true });
-      }
-      cb(null, uploadDirectory);
-    },
-    filename: function (req, file, cb) {
-      cb(null, Date.now() + path.extname(file.originalname));
-    },
-  }),
-}).fields([
-  { name: "photo", maxCount: 1 },
-  { name: "resume", maxCount: 1 },
-]);
+const uploadPhoto = multer({ storage: storagePhoto });
+const uploadResume = multer({ storage: storageResume });
 
 const jobSeekerController = {
   getAll: (req, res) => {
@@ -85,7 +65,8 @@ const jobSeekerController = {
     });
   },
   register: [
-    upload,
+    uploadPhoto.single("photo"),
+    uploadResume.single("resume"),
     (req, res) => {
       const { email, password, confirmPassword } = req.body;
 
@@ -165,7 +146,8 @@ const jobSeekerController = {
     });
   },
   update: [
-    upload,
+    uploadPhoto.single("photo"),
+    uploadResume.single("resume"),
     (req, res) => {
       const {
         email,
@@ -227,99 +209,81 @@ const jobSeekerController = {
         professionalReferences,
       } = req.body;
 
-      console.log(experience);
-
+      // Check if Photo and Resume are already uploaded and not changed from the form, if so then keep the same values
       const photo =
-        req.files && req.files.photo ? req.files.photo[0].filename : null;
+        req.file && req.file.fieldname === "photo" ? req.file.filename : null;
       const resume =
-        req.files && req.files.resume ? req.files.resume[0].filename : null;
+        req.file && req.file.fieldname === "resume" ? req.file.filename : null;
 
-      const updatedJobSeeker = {
-        email,
-        username,
-        password,
-        confirmPassword,
-        FirstName,
-        FatherName,
-        Surname,
-        lastName,
-        artSkills,
-        employmentGapReason,
-        employmentGapDuration,
-        languageProficiency,
-        hobbiesOrInterests,
-        professionalMemberships,
-        careerObjective,
-        otherRelevantInfo,
-        notableAchievements,
-        jobCategories,
-        preferredLocation,
-        jobType,
-        accommodationsNeeded,
-        transportationNeeded,
-        specificNeed,
-        softwareRequirements,
-        specificEquipment,
-        photo,
-        resume,
-        dob,
-        gender,
-        permanentAddress,
-        currentAddress,
-        city,
-        state,
-        postalCode,
-        country,
-        contactNumber,
-        whatsappNumber,
-        AadharCardNumber,
-        LinkedInID,
-        jobAlerts,
-        homePhone,
-        addHomePhone,
-        qualification,
-        educationSpecialization,
-        typeOfDisability,
-        transportationMobility,
-        specificDisability,
-        levelOfDisability,
-        assistiveTechnology,
-        experienceAndAppliance,
-        yesNoQuestion,
-        twoWheeler,
-        threeWheeler,
-        car,
-        disabilityPercentage,
-        specializationInDisability,
-        education,
-        experience,
-        professionalReferences,
-      };
+      // Fetch the existing job seeker data to retain the current photo and resume if not updated
+      jobSeeker.getById(req.params.id, (err, existingJobSeeker) => {
+        if (err) {
+          console.error("Error fetching job seeker data:", err);
+          return res.status(500).json({ message: "Internal server error" });
+        }
 
-      if (password) {
-        bcrypt.hash(password, 10, (err, hash) => {
-          if (err) {
-            res.status(500).json({ message: "Internal server error" });
-            return;
-          }
+        const updatedJobSeeker = {
+          email,
+          username,
+          password,
+          confirmPassword,
+          FirstName,
+          FatherName,
+          Surname,
+          lastName,
+          artSkills,
+          employmentGapReason,
+          employmentGapDuration,
+          languageProficiency,
+          hobbiesOrInterests,
+          professionalMemberships,
+          careerObjective,
+          otherRelevantInfo,
+          notableAchievements,
+          jobCategories,
+          preferredLocation,
+          jobType,
+          accommodationsNeeded,
+          transportationNeeded,
+          specificNeed,
+          softwareRequirements,
+          specificEquipment,
+          photo: photo || existingJobSeeker.photo,
+          resume: resume || existingJobSeeker.resume,
+          dob,
+          gender,
+          permanentAddress,
+          currentAddress,
+          city,
+          state,
+          postalCode,
+          country,
+          contactNumber,
+          whatsappNumber,
+          AadharCardNumber,
+          LinkedInID,
+          jobAlerts,
+          homePhone,
+          addHomePhone,
+          qualification,
+          educationSpecialization,
+          typeOfDisability,
+          transportationMobility,
+          specificDisability,
+          levelOfDisability,
+          assistiveTechnology,
+          experienceAndAppliance,
+          yesNoQuestion,
+          twoWheeler,
+          threeWheeler,
+          car,
+          disabilityPercentage,
+          specializationInDisability,
+          education,
+          experience,
+          professionalReferences,
+        };
 
-          updatedJobSeeker.password = hash;
-
-          jobSeeker.update(req.params.id, updatedJobSeeker, (err, result) => {
-            if (err) {
-              console.error("Database error", err); // Enhanced logging
-              res
-                .status(500)
-                .json({ message: "Internal server error", error: err });
-              return;
-            } else {
-              return res
-                .status(200)
-                .json({ message: "Job Seeker updated successfully" });
-            }
-          });
-        });
-      } else {
         jobSeeker.update(req.params.id, updatedJobSeeker, (err, result) => {
           if (err) {
             console.error("Database error", err); // Enhanced logging
@@ -333,7 +297,7 @@ const jobSeekerController = {
               .json({ message: "Job Seeker updated successfully" });
           }
         });
-      }
+      });
     },
   ],
   getCompanyDirectory: (req, res) => {
