@@ -1436,6 +1436,92 @@ const JobSeeker = {
       callback
     );
   },
+//   searchJobSeeker: (searchCriteria, callback) => {
+//     const search = searchCriteria;
+  
+//     let jobSeekerQuery = `SELECT * FROM ${db_name}.job_seekers WHERE 1=1`;
+//     const queryParams = [];
+  
+//     if (search) {
+//       jobSeekerQuery += ` AND (email LIKE ? OR FirstName LIKE ? OR LastName LIKE ?)`;
+//       queryParams.push(`%${search}%`, `%${search}%`, `%${search}%`);
+//     }
+  
+//   //   if (email) {
+//   //     jobSeekerQuery += ` AND email LIKE ?`;
+//   //     queryParams.push(`%${email}%`);
+//   //   }
+//   // console.log(email);
+//   //   if (FirstName) {
+//   //     jobSeekerQuery += ` AND FirstName LIKE ?`;
+//   //     queryParams.push(`%${FirstName}%`);
+//   //   }
+  
+//   //   if (lastName) {
+//   //     jobSeekerQuery += ` AND LastName LIKE ?`;
+//   //     queryParams.push(`%${lastName}%`);
+//   //   }
+  
+//     db.query(jobSeekerQuery, queryParams, (err, jobSeekers) => {
+//       if (err) {
+//         return callback(err);
+//       }
+// console.log(jobSeekers);
+//         const jobSeekerPromises = jobSeekers.map((jobSeeker) => {
+//           return new Promise((resolve, reject) => {
+//             const jobSeekerId = jobSeeker.job_seeker_id;
+
+//             const educationQuery = `SELECT * FROM ${db_name}.education_job_seekers WHERE education_jobSeekerId = ?`;
+//             const experienceQuery = `SELECT * FROM ${db_name}.experience_job_seekers WHERE jobSeekerId = ?`;
+//             const referencesQuery = `SELECT * FROM ${db_name}.professionalreferences_job_seekers_id WHERE professionalreferencesjob_seekers_id = ?`;
+//             const resumeQuery = `SELECT * FROM ${db_name}.resumes WHERE job_seeker_id = ?`;
+
+//             db.query(educationQuery, [jobSeekerId], (err, educations) => {
+//               if (err) {
+//                 return reject(err);
+//               }
+
+//               jobSeeker.education = educations;
+
+//               db.query(experienceQuery, [jobSeekerId], (err, experiences) => {
+//                 if (err) {
+//                   return reject(err);
+//                 }
+
+//                 jobSeeker.experience = experiences;
+
+//                 db.query(referencesQuery, [jobSeekerId], (err, references) => {
+//                   if (err) {
+//                     return reject(err);
+//                   }
+
+//                   jobSeeker.professionalReferences = references;
+
+//                   db.query(resumeQuery, [jobSeekerId], (err, resumes) => {
+//                     if (err) {
+//                       return reject(err);
+//                     }
+
+//                     jobSeeker.resumes = resumes;
+
+//                     resolve(jobSeeker);
+//                   });
+//                 });
+//               });
+//             });
+//           });
+//         });
+
+//         Promise.all(jobSeekerPromises)
+//           .then((jobSeekersWithDetails) => {
+//             callback(null, jobSeekersWithDetails);
+//           })
+//           .catch((err) => {
+//             callback(err);
+//           });
+//       }
+//     );
+//   },
   searchJobSeeker: (searchCriteria, callback) => {
     const search = searchCriteria;
   
@@ -1447,80 +1533,84 @@ const JobSeeker = {
       queryParams.push(`%${search}%`, `%${search}%`, `%${search}%`);
     }
   
-  //   if (email) {
-  //     jobSeekerQuery += ` AND email LIKE ?`;
-  //     queryParams.push(`%${email}%`);
-  //   }
-  // console.log(email);
-  //   if (FirstName) {
-  //     jobSeekerQuery += ` AND FirstName LIKE ?`;
-  //     queryParams.push(`%${FirstName}%`);
-  //   }
-  
-  //   if (lastName) {
-  //     jobSeekerQuery += ` AND LastName LIKE ?`;
-  //     queryParams.push(`%${lastName}%`);
-  //   }
-  
     db.query(jobSeekerQuery, queryParams, (err, jobSeekers) => {
       if (err) {
         return callback(err);
       }
-console.log(jobSeekers);
-        const jobSeekerPromises = jobSeekers.map((jobSeeker) => {
-          return new Promise((resolve, reject) => {
-            const jobSeekerId = jobSeeker.job_seeker_id;
-
-            const educationQuery = `SELECT * FROM ${db_name}.education_job_seekers WHERE education_jobSeekerId = ?`;
-            const experienceQuery = `SELECT * FROM ${db_name}.experience_job_seekers WHERE jobSeekerId = ?`;
-            const referencesQuery = `SELECT * FROM ${db_name}.professionalreferences_job_seekers_id WHERE professionalreferencesjob_seekers_id = ?`;
-            const resumeQuery = `SELECT * FROM ${db_name}.resumes WHERE job_seeker_id = ?`;
-
-            db.query(educationQuery, [jobSeekerId], (err, educations) => {
-              if (err) {
-                return reject(err);
-              }
-
-              jobSeeker.education = educations;
-
-              db.query(experienceQuery, [jobSeekerId], (err, experiences) => {
-                if (err) {
-                  return reject(err);
-                }
-
-                jobSeeker.experience = experiences;
-
-                db.query(referencesQuery, [jobSeekerId], (err, references) => {
+      console.log(jobSeekers);
+      const jobSeekerPromises = jobSeekers.map((jobSeeker) => {
+        return new Promise((resolve, reject) => {
+          const jobSeekerId = jobSeeker.job_seeker_id;
+  
+          const educationQuery = `SELECT * FROM ${db_name}.education_job_seekers WHERE education_jobSeekerId = ?`;
+          const experienceQuery = `SELECT * FROM ${db_name}.experience_job_seekers WHERE jobSeekerId = ?`;
+          const referencesQuery = `SELECT * FROM ${db_name}.professionalreferences_job_seekers_id WHERE professionalreferencesjob_seekers_id = ?`;
+          const resumeQuery = `SELECT * FROM ${db_name}.resumes WHERE job_seeker_id = ?`;
+          const degreesQuery = `SELECT * FROM ${db_name}.education_degrees WHERE education_id = ?`;
+  
+          db.query(educationQuery, [jobSeekerId], (err, educations) => {
+            if (err) {
+              return reject(err);
+            }
+  
+            // Fetch degrees for each education record
+            const educationPromises = educations.map((education) => {
+              return new Promise((resolve, reject) => {
+                db.query(degreesQuery, [education.id], (err, degrees) => {
                   if (err) {
                     return reject(err);
                   }
-
-                  jobSeeker.professionalReferences = references;
-
-                  db.query(resumeQuery, [jobSeekerId], (err, resumes) => {
-                    if (err) {
-                      return reject(err);
-                    }
-
-                    jobSeeker.resumes = resumes;
-
-                    resolve(jobSeeker);
-                  });
+                  education.degrees = degrees;
+                  resolve(education);
                 });
               });
             });
+  
+            Promise.all(educationPromises)
+              .then((updatedEducations) => {
+                jobSeeker.education = updatedEducations;
+  
+                db.query(experienceQuery, [jobSeekerId], (err, experiences) => {
+                  if (err) {
+                    return reject(err);
+                  }
+  
+                  jobSeeker.experience = experiences;
+  
+                  db.query(referencesQuery, [jobSeekerId], (err, references) => {
+                    if (err) {
+                      return reject(err);
+                    }
+  
+                    jobSeeker.professionalReferences = references;
+  
+                    db.query(resumeQuery, [jobSeekerId], (err, resumes) => {
+                      if (err) {
+                        return reject(err);
+                      }
+  
+                      jobSeeker.resumes = resumes;
+  
+                      resolve(jobSeeker);
+                    });
+                  });
+                });
+              })
+              .catch((err) => {
+                reject(err);
+              });
           });
         });
-
-        Promise.all(jobSeekerPromises)
-          .then((jobSeekersWithDetails) => {
-            callback(null, jobSeekersWithDetails);
-          })
-          .catch((err) => {
-            callback(err);
-          });
-      }
-    );
+      });
+  
+      Promise.all(jobSeekerPromises)
+        .then((jobSeekersWithDetails) => {
+          callback(null, jobSeekersWithDetails);
+        })
+        .catch((err) => {
+          callback(err);
+        });
+    });
   },
 };
 
