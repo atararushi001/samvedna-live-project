@@ -824,57 +824,68 @@ const JobSeeker = {
     const educationQuery = `SELECT * FROM education_job_seekers WHERE education_jobSeekerId = ?`;
     const experienceQuery = `SELECT * FROM experience_job_seekers WHERE jobSeekerId = ?`;
     const referencesQuery = `SELECT * FROM professionalreferences_job_seekers_id WHERE professionalreferencesjob_seekers_id = ?`;
-
+    const degreesQuery = `SELECT * FROM education_degrees WHERE education_id = ?`;
+  
     db.query(jobSeekerQuery, [id], (err, jobSeekers) => {
       if (err) {
         console.error("Error querying job_seekers:", err);
         return callback(err);
       }
-
+  
       if (jobSeekers.length === 0) {
         return callback(new Error("No job seeker found!"));
       }
-
+  
       const jobSeeker = jobSeekers[0];
-
+  
       db.query(educationQuery, [jobSeeker.job_seeker_id], (err, educations) => {
         if (err) {
           console.error("Error querying education_job_seekers:", err);
           return callback(err);
         }
-
-        jobSeeker.education = educations;
-
-        db.query(
-          experienceQuery,
-          [jobSeeker.job_seeker_id],
-          (err, experiences) => {
-            if (err) {
-              console.error("Error querying experience_job_seekers:", err);
-              return callback(err);
-            }
-
-            jobSeeker.experience = experiences;
-
-            db.query(
-              referencesQuery,
-              [jobSeeker.job_seeker_id],
-              (err, references) => {
+  
+        // Fetch degrees for each education record
+        const educationPromises = educations.map((education) => {
+          return new Promise((resolve, reject) => {
+            db.query(degreesQuery, [education.id], (err, degrees) => {
+              if (err) {
+                console.error("Error querying education_degrees:", err);
+                return reject(err);
+              }
+              education.degrees = degrees;
+              resolve(education);
+            });
+          });
+        });
+  
+        Promise.all(educationPromises)
+          .then((updatedEducations) => {
+            jobSeeker.education = updatedEducations;
+  
+            db.query(experienceQuery, [jobSeeker.job_seeker_id], (err, experiences) => {
+              if (err) {
+                console.error("Error querying experience_job_seekers:", err);
+                return callback(err);
+              }
+  
+              jobSeeker.experience = experiences;
+  
+              db.query(referencesQuery, [jobSeeker.job_seeker_id], (err, references) => {
                 if (err) {
-                  console.error(
-                    "Error querying professionalreferences_job_seekers_id:",
-                    err
-                  );
+                  console.error("Error querying professionalreferences_job_seekers_id:", err);
                   return callback(err);
                 }
-
+  
                 jobSeeker.professionalReferences = references;
-
+  
                 callback(null, jobSeeker);
-              }
-            );
-          }
-        );
+              });
+            });
+          })
+          .catch((err) => {
+            console.error("Error fetching degrees for education records:", err);
+            return callback(err);
+          });
       });
     });
   },
