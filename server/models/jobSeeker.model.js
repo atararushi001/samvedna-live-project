@@ -530,8 +530,11 @@ const JobSeeker = {
   //                     ],
   //                     (err, result) => {
   //                       if (err) {
-  //                         return reject(err);
+  //                         // return reject(err);
+                  
+  //                         console.error("Error inserting references:", err);
   //                       }
+  //                       console.log("Education inserted");
   //                       resolve(result);
   //                     }
   //                   );
@@ -553,8 +556,11 @@ const JobSeeker = {
   //                         experiences.Projects,
   //                       ],
   //                       (err, result) => {
+  //                         console.log("Experience inserted");
   //                         if (err) {
-  //                           return reject(err);
+  //                           // return reject(err);
+                            
+  //                           console.error("Error inserting references:", err);
   //                         }
   //                         resolve(result);
   //                       }
@@ -567,7 +573,7 @@ const JobSeeker = {
   //                 (references) => {
   //                   return new Promise((resolve, reject) => {
   //                     db.query(
-  //                       `INSERT INTO ${db_name}.professionalreferences_job_seekers_id (professionalreferencesjob_seekers_id, name, companyName, phoneNumber, email, relationship) VALUES (?, ?, ?, ?, ?, ?)`,
+  //                       `INSERT INTO samvedna.professionalreferences_job_seekers_id (professionalreferencesjob_seekers_id, name, companyName, phoneNumber, email, relationship) VALUES (?, ?, ?, ?, ?, ?)`,
   //                       [
   //                         id,
   //                         references.name,
@@ -577,8 +583,11 @@ const JobSeeker = {
   //                         references.relationship,
   //                       ],
   //                       (err, result) => {
+  //                         console.log("References inserted");
   //                         if (err) {
-  //                           return reject(err);
+  //                           // return reject(err);
+
+  //                           console.error("Error inserting references:", err);
   //                         }
   //                         resolve(result);
   //                       }
@@ -788,6 +797,9 @@ const JobSeeker = {
           console.log(
             `Job seeker updated successfully. Rows affected: ${result.affectedRows}`
           );
+          // console.log(education);
+          console.log(experience);
+
           updateRelatedTables(
             connection,
             id,
@@ -1506,7 +1518,6 @@ function rollbackAndRelease(connection, err, callback) {
     callback(err);
   });
 }
-
 function updateRelatedTables(
   connection,
   id,
@@ -1523,11 +1534,59 @@ function updateRelatedTables(
       callback
     );
   }
+  console.log("Initial education data:", JSON.stringify(education));
+  console.log("Initial experience data:", JSON.stringify(experience));
+  console.log("Initial professionalReferences data:", JSON.stringify(professionalReferences));
+
+  // Parse education if it's a JSON string
+  if (typeof education === 'string') {
+    try {
+      education = JSON.parse(education);
+    } catch (error) {
+      console.error("Error parsing education JSON string:", error);
+      education = [];
+    }
+  }
+
+  // Ensure education is an array
+  education = Array.isArray(education) ? education : [];
+
+  // Log after ensuring array
+  console.log("Education data after ensuring array:", JSON.stringify(education));
+
+  // Parse experience if it's a JSON string
+  if (typeof experience === 'string') {
+    try {
+      experience = JSON.parse(experience);
+    } catch (error) {
+      console.error("Error parsing experience JSON string:", error);
+      experience = [];
+    }
+  }
+
+  // Ensure experience is an array
+  experience = Array.isArray(experience) ? experience : [];
+
+  // Log after ensuring array
+  console.log("Experience data after ensuring array:", JSON.stringify(experience));
+
+  // Parse professionalReferences if it's a JSON string
+  if (typeof professionalReferences === 'string') {
+    try {
+      professionalReferences = JSON.parse(professionalReferences);
+    } catch (error) {
+      console.error("Error parsing professionalReferences JSON string:", error);
+      professionalReferences = [];
+    }
+  }
+
+  // Ensure professionalReferences is an array
+  professionalReferences = Array.isArray(professionalReferences) ? professionalReferences : [];
+
+  // Log after ensuring array
+  console.log("ProfessionalReferences data after ensuring array:", JSON.stringify(professionalReferences));
 
   console.log("Starting to update related tables for job seeker ID:", id);
-  console.log("Education data:", JSON.stringify(education));
-  console.log("Experience data:", JSON.stringify(experience));
-  console.log("References data:", JSON.stringify(professionalReferences));
 
   // Helper function to execute delete query with proper error handling
   const executeDelete = async (tableName, columnName) => {
@@ -1558,10 +1617,7 @@ function updateRelatedTables(
         executeDelete("education_job_seekers", "education_jobSeekerId"),
         executeDelete("education_degrees", "education_id"),
         executeDelete("experience_job_seekers", "jobSeekerId"),
-        executeDelete(
-          "professionalreferences_job_seekers_id",
-          "professionalreferencesjob_seekers_id"
-        ),
+        executeDelete("professionalreferences_job_seekers_id", "professionalreferencesjob_seekers_id"),
       ]);
 
       // Insert new records
@@ -1580,11 +1636,11 @@ function updateRelatedTables(
           return rollbackAndRelease(connection, err, callback);
         }
         console.log("Transaction committed successfully");
-        connection.release();
+        // connection.release();
         callback(null, {
-          success: true,
-          message: "Job Seeker and related tables updated successfully",
-        });
+                                success: true,
+                                message: "Job Seeker updated successfully",
+                              });
       });
     } catch (err) {
       console.error("Error in updateRelatedTables:", err);

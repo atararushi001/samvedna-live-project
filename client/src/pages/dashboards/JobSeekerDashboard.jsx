@@ -113,6 +113,7 @@ const JobSeekerDashboard = () => {
         };
       }
     });
+    console.log(formData);
   };
 
   const handleAddClick = (section, newItem) => {
@@ -136,7 +137,7 @@ const JobSeekerDashboard = () => {
         idx === index
           ? {
               ...item,
-              [subSection]: [...item[subSection], newItem],
+              [subSection]: [...(item[subSection] || []), newItem],
             }
           : item
       ),
@@ -169,23 +170,23 @@ const JobSeekerDashboard = () => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-
+  
     toast.loading("Submitting Your Data, Please Wait...");
-
+  
     // Validate DOB
     if (formData.dob > new Date().toISOString().split("T")[0]) {
       toast.error("Date of Birth cannot be in the future");
       return;
     }
-
+  
     const currentYear = new Date().getFullYear();
     const birthYear = new Date(formData.dob).getFullYear();
-
+  
     if (currentYear - birthYear < 18) {
       toast.error("You must be at least 18 years old to register");
       return;
     }
-
+  
     // Validate vehicle selection
     if (
       formData.yesNoQuestion === "yes" &&
@@ -196,9 +197,10 @@ const JobSeekerDashboard = () => {
       toast.error("Please select at least one vehicle type");
       return;
     }
-
+  
     const newFormData = new FormData();
-
+    console.log("FormData before submission:", formData); // Log formData before submission
+  
     // Append form data fields
     for (const key in formData) {
       if (key === "photo" || key === "resume") {
@@ -215,7 +217,13 @@ const JobSeekerDashboard = () => {
         newFormData.append(key, formData[key]); // append normal fields
       }
     }
-
+  
+    // Log the contents of newFormData
+    console.log( newFormData.entries());
+    for (let pair of newFormData.entries()) {
+      console.log(`${pair[0]}: ${pair[1]}`);
+    }
+  
     try {
       const response = await fetch(
         `${API}/job-seeker/update/${userDetails.id}`,
@@ -223,17 +231,18 @@ const JobSeekerDashboard = () => {
           method: "PUT",
           headers: {
             "x-auth-token": userDetails.token, // Include authentication token
+            // Do not set Content-Type header manually
           },
           body: newFormData, // Send the FormData directly
         }
       );
-
+  
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-
+  
       const data = await response.json();
-
+  
       toast.dismiss();
       if (response.ok) {
         toast.success(data.message);

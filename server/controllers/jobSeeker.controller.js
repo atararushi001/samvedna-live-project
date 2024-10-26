@@ -6,7 +6,7 @@ const path = require("path");
 const fs = require("fs");
 const moment = require("moment");
 
-// Set up storage for photo uploads
+// Set up storage for uopod uploads
 const storagePhoto = multer.diskStorage({
   destination: function (req, file, cb) {
     const uploadDirectory = path.join(
@@ -22,6 +22,7 @@ const storagePhoto = multer.diskStorage({
     cb(null, Date.now() + path.extname(file.originalname));
   },
 });
+
 
 // Set up storage for resume uploads
 const storageResume = multer.diskStorage({
@@ -41,8 +42,10 @@ const storageResume = multer.diskStorage({
 });
 
 // Initialize multer instances
-const uploadPhoto = multer({ storage: storagePhoto });
-const uploadResume = multer({ storage: storageResume });
+const upload = multer({ storage: storagePhoto }).fields([
+  { name: 'photo', maxCount: 1 },
+  { name: 'resume', maxCount: 1 },
+]);
 
 const jobSeekerController = {
   getAll: (req, res) => {
@@ -57,7 +60,7 @@ const jobSeekerController = {
   getById: (req, res) => {
     const id = req.user.id; // Extract user ID from authMiddleware
     jobSeeker.getById(id, (err, results) => {
-      console.log(results);
+      // console.log(results);
       if (err) {
         return res.status(500).json({ message: "Internal server error" });
       }
@@ -65,8 +68,8 @@ const jobSeekerController = {
     });
   },
   register: [
-    uploadPhoto.single("photo"),
-    uploadResume.single("resume"),
+    // uploadPhoto.single("photo"),
+    // uploadResume.single("resume"),
     (req, res) => {
       const { email, password, confirmPassword } = req.body;
 
@@ -80,12 +83,12 @@ const jobSeekerController = {
           const newJobSeeker = {
             email,
             password: hash,
-            photo:
-              req.files && req.files.photo ? req.files.photo[0].filename : null,
-            resume:
-              req.files && req.files.resume
-                ? req.files.resume[0].filename
-                : null,
+            // photo:
+            //   req.files && req.files.photo ? req.files.photo[0].filename : null,
+            // resume:
+            //   req.files && req.files.resume
+            //     ? req.files.resume[0].filename
+            //     : null,
           };
 
           jobSeeker.create(newJobSeeker, (err, result) => {
@@ -146,9 +149,9 @@ const jobSeekerController = {
     });
   },
   update: [
-    uploadPhoto.single("photo"),
-    uploadResume.single("resume"),
+    upload,
     (req, res) => {
+      console.log(req.body);
       const {
         email,
         username,
@@ -208,12 +211,10 @@ const jobSeekerController = {
         experience,
         professionalReferences,
       } = req.body;
-
+      console.log(req.body);
       // Check if Photo and Resume are already uploaded and not changed from the form, if so then keep the same values
-      const photo =
-        req.file && req.file.fieldname === "photo" ? req.file.filename : null;
-      const resume =
-        req.file && req.file.fieldname === "resume" ? req.file.filename : null;
+      const photo = req.files && req.files.photo ? req.files.photo[0].filename : null;
+      const resume = req.files && req.files.resume ? req.files.resume[0].filename : null;
 
       // Fetch the existing job seeker data to retain the current photo and resume if not updated
       jobSeeker.getById(req.params.id, (err, existingJobSeeker) => {
