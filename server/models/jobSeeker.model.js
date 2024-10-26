@@ -1437,33 +1437,36 @@ const JobSeeker = {
     );
   },
   searchJobSeeker: (searchCriteria, callback) => {
-    const { search, email, firstName, lastName } = searchCriteria;
-
-    const jobSeekerQuery = `
-      SELECT * FROM ${db_name}.job_seekers 
-      WHERE 
-        (email LIKE ? OR ? IS NULL) AND
-        (firstName LIKE ? OR ? IS NULL) AND
-        (lastName LIKE ? OR ? IS NULL)
-    `;
-
-    db.query(
-      jobSeekerQuery,
-      [
-        `%${search}%`,
-        search,
-        `%${email}%`,
-        email,
-        `%${firstName}%`,
-        firstName,
-        `%${lastName}%`,
-        lastName,
-      ],
-      (err, jobSeekers) => {
-        if (err) {
-          return callback(err);
-        }
-
+    const search = searchCriteria;
+  
+    let jobSeekerQuery = `SELECT * FROM ${db_name}.job_seekers WHERE 1=1`;
+    const queryParams = [];
+  
+    if (search) {
+      jobSeekerQuery += ` AND (email LIKE ? OR FirstName LIKE ? OR LastName LIKE ?)`;
+      queryParams.push(`%${search}%`, `%${search}%`, `%${search}%`);
+    }
+  
+  //   if (email) {
+  //     jobSeekerQuery += ` AND email LIKE ?`;
+  //     queryParams.push(`%${email}%`);
+  //   }
+  // console.log(email);
+  //   if (FirstName) {
+  //     jobSeekerQuery += ` AND FirstName LIKE ?`;
+  //     queryParams.push(`%${FirstName}%`);
+  //   }
+  
+  //   if (lastName) {
+  //     jobSeekerQuery += ` AND LastName LIKE ?`;
+  //     queryParams.push(`%${lastName}%`);
+  //   }
+  
+    db.query(jobSeekerQuery, queryParams, (err, jobSeekers) => {
+      if (err) {
+        return callback(err);
+      }
+console.log(jobSeekers);
         const jobSeekerPromises = jobSeekers.map((jobSeeker) => {
           return new Promise((resolve, reject) => {
             const jobSeekerId = jobSeeker.job_seeker_id;
