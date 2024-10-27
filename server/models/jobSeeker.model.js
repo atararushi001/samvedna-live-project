@@ -313,12 +313,6 @@ const JobSeeker = {
   create: (newJobSeeker, callback) => {
     const { email, password } = newJobSeeker;
 
-    // db.query("START TRANSACTION", (err) => {
-    //   if (err) {
-    //     callback(err, null);
-    //     return;
-    //   }
-
     const insertJobSeekerQuery = `INSERT INTO ${db_name}.job_seekers (
         email, password ) VALUES (?, ?);`;
 
@@ -531,7 +525,7 @@ const JobSeeker = {
   //                     (err, result) => {
   //                       if (err) {
   //                         // return reject(err);
-                  
+
   //                         console.error("Error inserting references:", err);
   //                       }
   //                       console.log("Education inserted");
@@ -559,7 +553,7 @@ const JobSeeker = {
   //                         console.log("Experience inserted");
   //                         if (err) {
   //                           // return reject(err);
-                            
+
   //                           console.error("Error inserting references:", err);
   //                         }
   //                         resolve(result);
@@ -686,6 +680,10 @@ const JobSeeker = {
       levelOfDisability,
       assistiveTechnology,
     } = newJobSeeker;
+
+    console.log("First Name: ", FirstName);
+    console.log("Father Name: ", FatherName);
+    console.log("Surname: ", Surname);
 
     db.getConnection((err, connection) => {
       if (err) {
@@ -825,25 +823,25 @@ const JobSeeker = {
     const experienceQuery = `SELECT * FROM experience_job_seekers WHERE jobSeekerId = ?`;
     const referencesQuery = `SELECT * FROM professionalreferences_job_seekers_id WHERE professionalreferencesjob_seekers_id = ?`;
     const degreesQuery = `SELECT * FROM education_degrees WHERE education_id = ?`;
-  
+
     db.query(jobSeekerQuery, [id], (err, jobSeekers) => {
       if (err) {
         console.error("Error querying job_seekers:", err);
         return callback(err);
       }
-  
+
       if (jobSeekers.length === 0) {
         return callback(new Error("No job seeker found!"));
       }
-  
+
       const jobSeeker = jobSeekers[0];
-  
+
       db.query(educationQuery, [jobSeeker.job_seeker_id], (err, educations) => {
         if (err) {
           console.error("Error querying education_job_seekers:", err);
           return callback(err);
         }
-  
+
         // Fetch degrees for each education record
         const educationPromises = educations.map((education) => {
           return new Promise((resolve, reject) => {
@@ -857,30 +855,41 @@ const JobSeeker = {
             });
           });
         });
-  
+
         Promise.all(educationPromises)
           .then((updatedEducations) => {
             jobSeeker.education = updatedEducations;
-  
-            db.query(experienceQuery, [jobSeeker.job_seeker_id], (err, experiences) => {
-              if (err) {
-                console.error("Error querying experience_job_seekers:", err);
-                return callback(err);
-              }
-  
-              jobSeeker.experience = experiences;
-  
-              db.query(referencesQuery, [jobSeeker.job_seeker_id], (err, references) => {
+
+            db.query(
+              experienceQuery,
+              [jobSeeker.job_seeker_id],
+              (err, experiences) => {
                 if (err) {
-                  console.error("Error querying professionalreferences_job_seekers_id:", err);
+                  console.error("Error querying experience_job_seekers:", err);
                   return callback(err);
                 }
-  
-                jobSeeker.professionalReferences = references;
-  
-                callback(null, jobSeeker);
-              });
-            });
+
+                jobSeeker.experience = experiences;
+
+                db.query(
+                  referencesQuery,
+                  [jobSeeker.job_seeker_id],
+                  (err, references) => {
+                    if (err) {
+                      console.error(
+                        "Error querying professionalreferences_job_seekers_id:",
+                        err
+                      );
+                      return callback(err);
+                    }
+
+                    jobSeeker.professionalReferences = references;
+
+                    callback(null, jobSeeker);
+                  }
+                );
+              }
+            );
           })
           .catch((err) => {
             console.error("Error fetching degrees for education records:", err);
@@ -1436,103 +1445,103 @@ const JobSeeker = {
       callback
     );
   },
-//   searchJobSeeker: (searchCriteria, callback) => {
-//     const search = searchCriteria;
-  
-//     let jobSeekerQuery = `SELECT * FROM ${db_name}.job_seekers WHERE 1=1`;
-//     const queryParams = [];
-  
-//     if (search) {
-//       jobSeekerQuery += ` AND (email LIKE ? OR FirstName LIKE ? OR LastName LIKE ?)`;
-//       queryParams.push(`%${search}%`, `%${search}%`, `%${search}%`);
-//     }
-  
-//   //   if (email) {
-//   //     jobSeekerQuery += ` AND email LIKE ?`;
-//   //     queryParams.push(`%${email}%`);
-//   //   }
-//   // console.log(email);
-//   //   if (FirstName) {
-//   //     jobSeekerQuery += ` AND FirstName LIKE ?`;
-//   //     queryParams.push(`%${FirstName}%`);
-//   //   }
-  
-//   //   if (lastName) {
-//   //     jobSeekerQuery += ` AND LastName LIKE ?`;
-//   //     queryParams.push(`%${lastName}%`);
-//   //   }
-  
-//     db.query(jobSeekerQuery, queryParams, (err, jobSeekers) => {
-//       if (err) {
-//         return callback(err);
-//       }
-// console.log(jobSeekers);
-//         const jobSeekerPromises = jobSeekers.map((jobSeeker) => {
-//           return new Promise((resolve, reject) => {
-//             const jobSeekerId = jobSeeker.job_seeker_id;
+  //   searchJobSeeker: (searchCriteria, callback) => {
+  //     const search = searchCriteria;
 
-//             const educationQuery = `SELECT * FROM ${db_name}.education_job_seekers WHERE education_jobSeekerId = ?`;
-//             const experienceQuery = `SELECT * FROM ${db_name}.experience_job_seekers WHERE jobSeekerId = ?`;
-//             const referencesQuery = `SELECT * FROM ${db_name}.professionalreferences_job_seekers_id WHERE professionalreferencesjob_seekers_id = ?`;
-//             const resumeQuery = `SELECT * FROM ${db_name}.resumes WHERE job_seeker_id = ?`;
+  //     let jobSeekerQuery = `SELECT * FROM ${db_name}.job_seekers WHERE 1=1`;
+  //     const queryParams = [];
 
-//             db.query(educationQuery, [jobSeekerId], (err, educations) => {
-//               if (err) {
-//                 return reject(err);
-//               }
+  //     if (search) {
+  //       jobSeekerQuery += ` AND (email LIKE ? OR FirstName LIKE ? OR LastName LIKE ?)`;
+  //       queryParams.push(`%${search}%`, `%${search}%`, `%${search}%`);
+  //     }
 
-//               jobSeeker.education = educations;
+  //   //   if (email) {
+  //   //     jobSeekerQuery += ` AND email LIKE ?`;
+  //   //     queryParams.push(`%${email}%`);
+  //   //   }
+  //   // console.log(email);
+  //   //   if (FirstName) {
+  //   //     jobSeekerQuery += ` AND FirstName LIKE ?`;
+  //   //     queryParams.push(`%${FirstName}%`);
+  //   //   }
 
-//               db.query(experienceQuery, [jobSeekerId], (err, experiences) => {
-//                 if (err) {
-//                   return reject(err);
-//                 }
+  //   //   if (lastName) {
+  //   //     jobSeekerQuery += ` AND LastName LIKE ?`;
+  //   //     queryParams.push(`%${lastName}%`);
+  //   //   }
 
-//                 jobSeeker.experience = experiences;
+  //     db.query(jobSeekerQuery, queryParams, (err, jobSeekers) => {
+  //       if (err) {
+  //         return callback(err);
+  //       }
+  // console.log(jobSeekers);
+  //         const jobSeekerPromises = jobSeekers.map((jobSeeker) => {
+  //           return new Promise((resolve, reject) => {
+  //             const jobSeekerId = jobSeeker.job_seeker_id;
 
-//                 db.query(referencesQuery, [jobSeekerId], (err, references) => {
-//                   if (err) {
-//                     return reject(err);
-//                   }
+  //             const educationQuery = `SELECT * FROM ${db_name}.education_job_seekers WHERE education_jobSeekerId = ?`;
+  //             const experienceQuery = `SELECT * FROM ${db_name}.experience_job_seekers WHERE jobSeekerId = ?`;
+  //             const referencesQuery = `SELECT * FROM ${db_name}.professionalreferences_job_seekers_id WHERE professionalreferencesjob_seekers_id = ?`;
+  //             const resumeQuery = `SELECT * FROM ${db_name}.resumes WHERE job_seeker_id = ?`;
 
-//                   jobSeeker.professionalReferences = references;
+  //             db.query(educationQuery, [jobSeekerId], (err, educations) => {
+  //               if (err) {
+  //                 return reject(err);
+  //               }
 
-//                   db.query(resumeQuery, [jobSeekerId], (err, resumes) => {
-//                     if (err) {
-//                       return reject(err);
-//                     }
+  //               jobSeeker.education = educations;
 
-//                     jobSeeker.resumes = resumes;
+  //               db.query(experienceQuery, [jobSeekerId], (err, experiences) => {
+  //                 if (err) {
+  //                   return reject(err);
+  //                 }
 
-//                     resolve(jobSeeker);
-//                   });
-//                 });
-//               });
-//             });
-//           });
-//         });
+  //                 jobSeeker.experience = experiences;
 
-//         Promise.all(jobSeekerPromises)
-//           .then((jobSeekersWithDetails) => {
-//             callback(null, jobSeekersWithDetails);
-//           })
-//           .catch((err) => {
-//             callback(err);
-//           });
-//       }
-//     );
-//   },
+  //                 db.query(referencesQuery, [jobSeekerId], (err, references) => {
+  //                   if (err) {
+  //                     return reject(err);
+  //                   }
+
+  //                   jobSeeker.professionalReferences = references;
+
+  //                   db.query(resumeQuery, [jobSeekerId], (err, resumes) => {
+  //                     if (err) {
+  //                       return reject(err);
+  //                     }
+
+  //                     jobSeeker.resumes = resumes;
+
+  //                     resolve(jobSeeker);
+  //                   });
+  //                 });
+  //               });
+  //             });
+  //           });
+  //         });
+
+  //         Promise.all(jobSeekerPromises)
+  //           .then((jobSeekersWithDetails) => {
+  //             callback(null, jobSeekersWithDetails);
+  //           })
+  //           .catch((err) => {
+  //             callback(err);
+  //           });
+  //       }
+  //     );
+  //   },
   searchJobSeeker: (searchCriteria, callback) => {
     const search = searchCriteria;
-  
+
     let jobSeekerQuery = `SELECT * FROM ${db_name}.job_seekers WHERE 1=1`;
     const queryParams = [];
-  
+
     if (search) {
       jobSeekerQuery += ` AND (email LIKE ? OR FirstName LIKE ? OR LastName LIKE ?)`;
       queryParams.push(`%${search}%`, `%${search}%`, `%${search}%`);
     }
-  
+
     db.query(jobSeekerQuery, queryParams, (err, jobSeekers) => {
       if (err) {
         return callback(err);
@@ -1541,18 +1550,18 @@ const JobSeeker = {
       const jobSeekerPromises = jobSeekers.map((jobSeeker) => {
         return new Promise((resolve, reject) => {
           const jobSeekerId = jobSeeker.job_seeker_id;
-  
+
           const educationQuery = `SELECT * FROM ${db_name}.education_job_seekers WHERE education_jobSeekerId = ?`;
           const experienceQuery = `SELECT * FROM ${db_name}.experience_job_seekers WHERE jobSeekerId = ?`;
           const referencesQuery = `SELECT * FROM ${db_name}.professionalreferences_job_seekers_id WHERE professionalreferencesjob_seekers_id = ?`;
           const resumeQuery = `SELECT * FROM ${db_name}.resumes WHERE job_seeker_id = ?`;
           const degreesQuery = `SELECT * FROM ${db_name}.education_degrees WHERE education_id = ?`;
-  
+
           db.query(educationQuery, [jobSeekerId], (err, educations) => {
             if (err) {
               return reject(err);
             }
-  
+
             // Fetch degrees for each education record
             const educationPromises = educations.map((education) => {
               return new Promise((resolve, reject) => {
@@ -1565,35 +1574,39 @@ const JobSeeker = {
                 });
               });
             });
-  
+
             Promise.all(educationPromises)
               .then((updatedEducations) => {
                 jobSeeker.education = updatedEducations;
-  
+
                 db.query(experienceQuery, [jobSeekerId], (err, experiences) => {
                   if (err) {
                     return reject(err);
                   }
-  
+
                   jobSeeker.experience = experiences;
-  
-                  db.query(referencesQuery, [jobSeekerId], (err, references) => {
-                    if (err) {
-                      return reject(err);
-                    }
-  
-                    jobSeeker.professionalReferences = references;
-  
-                    db.query(resumeQuery, [jobSeekerId], (err, resumes) => {
+
+                  db.query(
+                    referencesQuery,
+                    [jobSeekerId],
+                    (err, references) => {
                       if (err) {
                         return reject(err);
                       }
-  
-                      jobSeeker.resumes = resumes;
-  
-                      resolve(jobSeeker);
-                    });
-                  });
+
+                      jobSeeker.professionalReferences = references;
+
+                      db.query(resumeQuery, [jobSeekerId], (err, resumes) => {
+                        if (err) {
+                          return reject(err);
+                        }
+
+                        jobSeeker.resumes = resumes;
+
+                        resolve(jobSeeker);
+                      });
+                    }
+                  );
                 });
               })
               .catch((err) => {
@@ -1602,7 +1615,7 @@ const JobSeeker = {
           });
         });
       });
-  
+
       Promise.all(jobSeekerPromises)
         .then((jobSeekersWithDetails) => {
           callback(null, jobSeekersWithDetails);
@@ -1640,10 +1653,13 @@ function updateRelatedTables(
   }
   console.log("Initial education data:", JSON.stringify(education));
   console.log("Initial experience data:", JSON.stringify(experience));
-  console.log("Initial professionalReferences data:", JSON.stringify(professionalReferences));
+  console.log(
+    "Initial professionalReferences data:",
+    JSON.stringify(professionalReferences)
+  );
 
   // Parse education if it's a JSON string
-  if (typeof education === 'string') {
+  if (typeof education === "string") {
     try {
       education = JSON.parse(education);
     } catch (error) {
@@ -1656,10 +1672,13 @@ function updateRelatedTables(
   education = Array.isArray(education) ? education : [];
 
   // Log after ensuring array
-  console.log("Education data after ensuring array:", JSON.stringify(education));
+  console.log(
+    "Education data after ensuring array:",
+    JSON.stringify(education)
+  );
 
   // Parse experience if it's a JSON string
-  if (typeof experience === 'string') {
+  if (typeof experience === "string") {
     try {
       experience = JSON.parse(experience);
     } catch (error) {
@@ -1672,10 +1691,13 @@ function updateRelatedTables(
   experience = Array.isArray(experience) ? experience : [];
 
   // Log after ensuring array
-  console.log("Experience data after ensuring array:", JSON.stringify(experience));
+  console.log(
+    "Experience data after ensuring array:",
+    JSON.stringify(experience)
+  );
 
   // Parse professionalReferences if it's a JSON string
-  if (typeof professionalReferences === 'string') {
+  if (typeof professionalReferences === "string") {
     try {
       professionalReferences = JSON.parse(professionalReferences);
     } catch (error) {
@@ -1685,10 +1707,15 @@ function updateRelatedTables(
   }
 
   // Ensure professionalReferences is an array
-  professionalReferences = Array.isArray(professionalReferences) ? professionalReferences : [];
+  professionalReferences = Array.isArray(professionalReferences)
+    ? professionalReferences
+    : [];
 
   // Log after ensuring array
-  console.log("ProfessionalReferences data after ensuring array:", JSON.stringify(professionalReferences));
+  console.log(
+    "ProfessionalReferences data after ensuring array:",
+    JSON.stringify(professionalReferences)
+  );
 
   console.log("Starting to update related tables for job seeker ID:", id);
 
@@ -1721,7 +1748,10 @@ function updateRelatedTables(
         executeDelete("education_job_seekers", "education_jobSeekerId"),
         executeDelete("education_degrees", "education_id"),
         executeDelete("experience_job_seekers", "jobSeekerId"),
-        executeDelete("professionalreferences_job_seekers_id", "professionalreferencesjob_seekers_id"),
+        executeDelete(
+          "professionalreferences_job_seekers_id",
+          "professionalreferencesjob_seekers_id"
+        ),
       ]);
 
       // Insert new records
@@ -1742,9 +1772,9 @@ function updateRelatedTables(
         console.log("Transaction committed successfully");
         // connection.release();
         callback(null, {
-                                success: true,
-                                message: "Job Seeker updated successfully",
-                              });
+          success: true,
+          message: "Job Seeker updated successfully",
+        });
       });
     } catch (err) {
       console.error("Error in updateRelatedTables:", err);
@@ -1814,12 +1844,12 @@ async function insertDegree(connection, educationId, degree) {
     const values = [
       educationId,
       degree.degree,
-      degree.educationCompleted,
+      degree.education_completed,
       degree.major,
-      degree.graduationDate,
-      degree.additionalInfo,
+      degree.graduation_date,
+      degree.additional_info,
       degree.grade,
-      degree.outOf,
+      degree.out_of,
     ];
 
     console.log("Inserting degree record:", values);

@@ -23,7 +23,6 @@ const storagePhoto = multer.diskStorage({
   },
 });
 
-
 // Set up storage for resume uploads
 const storageResume = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -43,8 +42,8 @@ const storageResume = multer.diskStorage({
 
 // Initialize multer instances
 const upload = multer({ storage: storagePhoto }).fields([
-  { name: 'photo', maxCount: 1 },
-  { name: 'resume', maxCount: 1 },
+  { name: "photo", maxCount: 1 },
+  { name: "resume", maxCount: 1 },
 ]);
 
 const jobSeekerController = {
@@ -67,47 +66,49 @@ const jobSeekerController = {
       res.status(200).json({ jobSeeker: results });
     });
   },
-  register: [
-    // uploadPhoto.single("photo"),
-    // uploadResume.single("resume"),
-    (req, res) => {
-      const { email, password, confirmPassword } = req.body;
+  register: (req, res) => {
+    const { email, password, confirmPassword } = req.body;
 
-      if (password) {
-        bcrypt.hash(password, 10, (err, hash) => {
+    console.log(req.body);
+
+    if (!email || !password || !confirmPassword) {
+      res.status(400).json({ message: "All fields are required" });
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      res.status(400).json({ message: "Passwords do not match" });
+      return;
+    }
+
+    if (password) {
+      bcrypt.hash(password, 10, (err, hash) => {
+        if (err) {
+          res.status(500).json({ message: "Internal server error" });
+          return;
+        }
+
+        const newJobSeeker = {
+          email,
+          password: hash,
+        };
+
+        jobSeeker.create(newJobSeeker, (err, result) => {
           if (err) {
-            res.status(500).json({ message: "Internal server error" });
+            console.error("Database error", err); // Enhanced logging
+            res
+              .status(500)
+              .json({ message: "Internal server error", error: err });
             return;
+          } else {
+            return res
+              .status(201)
+              .json({ message: "Job Seeker created successfully" });
           }
-
-          const newJobSeeker = {
-            email,
-            password: hash,
-            // photo:
-            //   req.files && req.files.photo ? req.files.photo[0].filename : null,
-            // resume:
-            //   req.files && req.files.resume
-            //     ? req.files.resume[0].filename
-            //     : null,
-          };
-
-          jobSeeker.create(newJobSeeker, (err, result) => {
-            if (err) {
-              console.error("Database error", err); // Enhanced logging
-              res
-                .status(500)
-                .json({ message: "Internal server error", error: err });
-              return;
-            } else {
-              return res
-                .status(201)
-                .json({ message: "Job Seeker created successfully" });
-            }
-          });
         });
-      }
-    },
-  ],
+      });
+    }
+  },
   login: (req, res) => {
     const { email, password } = req.body;
 
@@ -213,8 +214,10 @@ const jobSeekerController = {
       } = req.body;
       console.log(req.body);
       // Check if Photo and Resume are already uploaded and not changed from the form, if so then keep the same values
-      const photo = req.files && req.files.photo ? req.files.photo[0].filename : null;
-      const resume = req.files && req.files.resume ? req.files.resume[0].filename : null;
+      const photo =
+        req.files && req.files.photo ? req.files.photo[0].filename : null;
+      const resume =
+        req.files && req.files.resume ? req.files.resume[0].filename : null;
 
       // Fetch the existing job seeker data to retain the current photo and resume if not updated
       jobSeeker.getById(req.params.id, (err, existingJobSeeker) => {

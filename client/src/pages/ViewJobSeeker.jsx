@@ -261,7 +261,7 @@ const ViewJobSeeker = () => {
             {jobSeeker.resume && (
               <a
                 className="btn"
-                href={`${STATIC_API}/uploads/job/resume/${jobSeeker.resume}`}
+                href={`${STATIC_API}/uploads/job/profile/${jobSeeker.resume}`}
                 target="_blank"
                 rel="noreferrer">
                 View Resume
