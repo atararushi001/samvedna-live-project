@@ -32,6 +32,8 @@ const EditProfile = () => {
 
       const data = await response.json();
 
+      console.log(data);
+
       if (response.ok) {
         setFormData(data);
       } else {
@@ -254,8 +256,7 @@ const EditProfile = () => {
               id="gender"
               value={formData.gender}
               onChange={handleInputChange}
-              required
-            >
+              required>
               <option value="" disabled>
                 Select Your Gender
               </option>
@@ -313,8 +314,7 @@ const EditProfile = () => {
                 id="country"
                 value={formData.country}
                 onChange={handleInputChange}
-                required
-              >
+                required>
                 <option value="" disabled>
                   Select Country
                 </option>
@@ -330,8 +330,7 @@ const EditProfile = () => {
                 id="state"
                 value={formData.state}
                 onChange={handleInputChange}
-                required
-              >
+                required>
                 <option value="" disabled>
                   Select State
                 </option>
@@ -347,8 +346,7 @@ const EditProfile = () => {
                 id="city"
                 value={formData.city}
                 onChange={handleInputChange}
-                required
-              >
+                required>
                 <option value="" disabled>
                   Select City
                 </option>
@@ -384,8 +382,7 @@ const EditProfile = () => {
                 id="community"
                 value={formData.community}
                 onChange={handleInputChange}
-                required
-              >
+                required>
                 <option value="" disabled>
                   Select Your Community
                 </option>
@@ -411,8 +408,7 @@ const EditProfile = () => {
                 id="religion"
                 value={formData.religion}
                 onChange={handleInputChange}
-                required
-              >
+                required>
                 <option value="" disabled>
                   Select Your Religion
                 </option>
@@ -433,8 +429,7 @@ const EditProfile = () => {
                 id="caste"
                 value={formData.caste}
                 onChange={handleInputChange}
-                required
-              >
+                required>
                 <option value="" disabled>
                   Select Your Caste
                 </option>
@@ -578,8 +573,7 @@ const EditProfile = () => {
               id="maritalStatus"
               value={formData.maritalStatus}
               onChange={handleInputChange}
-              required
-            >
+              required>
               <option value="" disabled>
                 Select Your Marital Status
               </option>
@@ -599,8 +593,7 @@ const EditProfile = () => {
                     name="haveChildren"
                     id="haveChildren"
                     value={formData.haveChildren}
-                    onChange={handleInputChange}
-                  >
+                    onChange={handleInputChange}>
                     <option value="" disabled>
                       Select One Option
                     </option>
@@ -653,8 +646,7 @@ const EditProfile = () => {
                 id="complexion"
                 value={formData.complexion}
                 onChange={handleInputChange}
-                required
-              >
+                required>
                 <option value="" disabled>
                   Select Your Complexion
                 </option>
@@ -667,8 +659,7 @@ const EditProfile = () => {
                 id="bodyType"
                 value={formData.bodyType}
                 onChange={handleInputChange}
-                required
-              >
+                required>
                 <option value="" disabled>
                   Select Your Body Type
                 </option>
@@ -685,8 +676,7 @@ const EditProfile = () => {
                 id="bloodGroup"
                 value={formData.bloodGroup}
                 onChange={handleInputChange}
-                required
-              >
+                required>
                 <option value="" disabled>
                   Select Your Blood Group
                 </option>
@@ -705,8 +695,7 @@ const EditProfile = () => {
                 id="donateBlood"
                 value={formData.donateBlood}
                 onChange={handleInputChange}
-                required
-              >
+                required>
                 <option value="" disabled>
                   Are you willing to donate blood?
                 </option>
@@ -723,16 +712,14 @@ const EditProfile = () => {
                 id="qualification"
                 value={formData.qualification}
                 onChange={handleInputChange}
-                required
-              >
+                required>
                 <option value="" disabled>
                   Select Qualification Level
                 </option>
                 {qualifications.map((qualification, index) => (
                   <option
                     key={`${qualification.qualification_name}-${index}`}
-                    value={qualification.qualification_id}
-                  >
+                    value={qualification.qualification_id}>
                     {qualification.qualification_name}
                   </option>
                 ))}
@@ -742,16 +729,14 @@ const EditProfile = () => {
                 id="educationSpecialization"
                 value={formData.educationSpecialization}
                 onChange={handleInputChange}
-                required
-              >
+                required>
                 <option value="" disabled>
                   Select Education Specialization
                 </option>
                 {specializations.map((specialization, index) => (
                   <option
                     key={`${specialization.education_specialization_name}-${index}`}
-                    value={specialization.education_specialization_id}
-                  >
+                    value={specialization.education_specialization_id}>
                     {specialization.education_specialization_name}
                   </option>
                 ))}
@@ -763,16 +748,14 @@ const EditProfile = () => {
                 id="currentLocation"
                 value={formData.currentLocation}
                 onChange={handleInputChange}
-                required
-              >
+                required>
                 <option value="" disabled>
                   Select Current Location
                 </option>
                 {currentLocations.map((currentLocation, index) => (
                   <option
                     key={`${currentLocation.name}-${index}`}
-                    value={currentLocation.id}
-                  >
+                    value={currentLocation.id}>
                     {currentLocation.name}
                   </option>
                 ))}
@@ -783,8 +766,7 @@ const EditProfile = () => {
                 id="immigrationStatus"
                 value={formData.immigrationStatus}
                 onChange={handleInputChange}
-                required
-              >
+                required>
                 <option value="" disabled>
                   Select Your Immigration Status
                 </option>
@@ -814,16 +796,14 @@ const EditProfile = () => {
               placeholder="Enter Designation Details"
               value={formData.designationDetails}
               onChange={handleInputChange}
-              required
-            ></textarea>
+              required></textarea>
 
             <select
               name="annualIncome"
               id="annualIncome"
               value={formData.annualIncome}
               onChange={handleInputChange}
-              required
-            >
+              required>
               <option value="" disabled>
                 Select Annual Income
               </option>
@@ -883,8 +863,7 @@ const EditProfile = () => {
               id="fatherOccupation"
               value={formData.fatherOccupation}
               onChange={handleInputChange}
-              required
-            >
+              required>
               <option value="" disabled>
                 Select Your Father&apos;s Occupation
               </option>
@@ -930,8 +909,7 @@ const EditProfile = () => {
               id="motherOccupation"
               value={formData.motherOccupation}
               onChange={handleInputChange}
-              required
-            >
+              required>
               <option value="" disabled>
                 Select Your Mother&apos;s Occupation
               </option>
@@ -998,8 +976,7 @@ const EditProfile = () => {
                 id="noOfBrothers"
                 value={formData.noOfBrothers}
                 onChange={handleInputChange}
-                required
-              >
+                required>
                 <option value="" disabled>
                   Number of Brothers
                 </option>
@@ -1015,8 +992,7 @@ const EditProfile = () => {
                 id="noOfSisters"
                 value={formData.noOfSisters}
                 onChange={handleInputChange}
-                required
-              >
+                required>
                 <option value="" disabled>
                   Number of Sisters
                 </option>
@@ -1037,8 +1013,7 @@ const EditProfile = () => {
               id="believeInHoroscope"
               value={formData.believeInHoroscope}
               onChange={handleInputChange}
-              required
-            >
+              required>
               <option value="" disabled>
                 Do you believe in Horoscope?
               </option>
@@ -1079,8 +1054,7 @@ const EditProfile = () => {
                   name="mangalShani"
                   id="mangalShani"
                   value={formData.mangalShani}
-                  onChange={handleInputChange}
-                >
+                  onChange={handleInputChange}>
                   <option value="" disabled>
                     Is There Mangal/Shani in your Horoscope?
                   </option>
@@ -1098,8 +1072,7 @@ const EditProfile = () => {
               id="disability"
               value={formData.disability}
               onChange={handleInputChange}
-              required
-            >
+              required>
               <option value="" disabled>
                 Type of disability
               </option>
@@ -1112,8 +1085,7 @@ const EditProfile = () => {
               id="disabilityPercentage"
               value={formData.disabilityPercentage}
               onChange={handleInputChange}
-              required
-            >
+              required>
               <option value="" disabled>
                 Percentage of disability
               </option>
@@ -1133,8 +1105,7 @@ const EditProfile = () => {
               id="diet"
               value={formData.diet}
               onChange={handleInputChange}
-              required
-            >
+              required>
               <option value="" disabled>
                 Select Your Diet
               </option>
@@ -1151,8 +1122,7 @@ const EditProfile = () => {
                 id="smoke"
                 value={formData.smoke}
                 onChange={handleInputChange}
-                required
-              >
+                required>
                 <option value="" disabled>
                   Do you smoke?
                 </option>
@@ -1164,8 +1134,7 @@ const EditProfile = () => {
                 id="drink"
                 value={formData.drink}
                 onChange={handleInputChange}
-                required
-              >
+                required>
                 <option value="" disabled>
                   Do you drink?
                 </option>
@@ -1180,16 +1149,14 @@ const EditProfile = () => {
               value={formData.hobbies}
               onChange={handleInputChange}
               placeholder="Enter Your Hobbies"
-              required
-            ></textarea>
+              required></textarea>
             <textarea
               name="about"
               id="about"
               value={formData.about}
               placeholder="Tell us few things about yourself"
               onChange={handleInputChange}
-              required
-            ></textarea>
+              required></textarea>
           </fieldset>
           <fieldset>
             <legend>Partner Preferences*</legend>
@@ -1198,8 +1165,7 @@ const EditProfile = () => {
               id="ageGap"
               value={formData.ageGap}
               onChange={handleInputChange}
-              required
-            >
+              required>
               <option value="" disabled>
                 Select Age Gap
               </option>
@@ -1221,8 +1187,7 @@ const EditProfile = () => {
                 id="partnerReligion"
                 value={formData.partnerReligion}
                 onChange={handleInputChange}
-                required
-              >
+                required>
                 <option value="" disabled>
                   Select Partner&apos;s Religion
                 </option>
@@ -1244,8 +1209,7 @@ const EditProfile = () => {
                 id="partnerCaste"
                 value={formData.partnerCaste}
                 onChange={handleInputChange}
-                required
-              >
+                required>
                 <option value="" disabled>
                   Select Partner&apos;s Caste
                 </option>
@@ -1391,16 +1355,14 @@ const EditProfile = () => {
               id="partnerQualification"
               value={formData.partnerQualification}
               onChange={handleInputChange}
-              required
-            >
+              required>
               <option value="" disabled>
                 Select Partner&apos;s Qualification
               </option>
               {qualifications.map((qualification, index) => (
                 <option
                   key={`${qualification.qualification_name}-${index}`}
-                  value={qualification.qualification_id}
-                >
+                  value={qualification.qualification_id}>
                   {qualification.qualification_name}
                 </option>
               ))}
@@ -1421,8 +1383,7 @@ const EditProfile = () => {
               id="partnerAnnualIncome"
               value={formData.partnerAnnualIncome}
               onChange={handleInputChange}
-              required
-            >
+              required>
               <option value="" disabled>
                 Select Partner&apos;s Annual Income
               </option>
@@ -1460,8 +1421,7 @@ const EditProfile = () => {
               id="mangalik"
               value={formData.mangalik}
               onChange={handleInputChange}
-              required
-            >
+              required>
               <option value="" disabled>
                 Can Partner be Mangalik?
               </option>
@@ -1475,8 +1435,7 @@ const EditProfile = () => {
               id="partnerMaritalStatus"
               value={formData.partnerMaritalStatus}
               onChange={handleInputChange}
-              required
-            >
+              required>
               <option value="" disabled>
                 Select Partner&apos;s Marital Status
               </option>
@@ -1491,8 +1450,7 @@ const EditProfile = () => {
               id="goAbroad"
               value={formData.goAbroad}
               onChange={handleInputChange}
-              required
-            >
+              required>
               <option value="" disabled>
                 Partner is willing to go abroad?
               </option>
