@@ -61,6 +61,7 @@ import AdminLogin from "./pages/admin/AdminLogin";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import Jobseekerresumecreate from "./pages/jobseekerresumecreate";
 import SearchJobSeekers from "./pages/SearchJobSeekers";
+import ViewJobSeeker from "./pages/ViewJobSeeker";
 
 const App = () => {
   return (
@@ -84,8 +85,10 @@ const App = () => {
           <Route path="/register" element={<Register />} />
           <Route path="/recruiter-register" element={<RecruiterRegister />} />
           <Route path="/job-seeker-register" element={<JobSeekerRegister />} />
-          <Route path="/job-seeker-resume-create" element={<Jobseekerresumecreate />} />
-
+          <Route
+            path="/job-seeker-resume-create"
+            element={<Jobseekerresumecreate />}
+          />
 
           <Route
             path="/self-employment-register"
@@ -102,7 +105,10 @@ const App = () => {
           <Route path="edit-job/:id" element={<EditJob />} />
           <Route path="resume-bank" element={<ResumeBank />} />
           <Route path="view-resume/:id" element={<ViewResumeRecruiter />} />
-          <Route path="job-seekers" element={<SearchJobSeekers />} />
+          <Route path="job-seekers">
+            <Route index element={<SearchJobSeekers />} />
+            <Route path="view" element={<ViewJobSeeker />} />
+          </Route>
         </Route>
 
         <Route path="job-seeker-dashboard" element={<JobSeeker />}>

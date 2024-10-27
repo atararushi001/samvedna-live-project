@@ -1,16 +1,17 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import { toast } from "react-toastify";
 
 import UserStore from "../stores/UserStore";
 
 const API = import.meta.env.VITE_API_URL;
+const STATIC_API = import.meta.env.VITE_STATIC_FILES_URL;
 
 const SearchJobSeekers = () => {
-  const navigate = useNavigate();
-
   const [search, setSearch] = useState("");
   const { userDetails } = UserStore();
+
+  const [jobSeekers, setJobSeekers] = useState([]);
 
   const handleSearchChange = (event) => {
     setSearch(event.target.value);
@@ -32,6 +33,7 @@ const SearchJobSeekers = () => {
       );
 
       const data = await response.json();
+      setJobSeekers(data);
       console.log(data);
 
       if (!response.ok) {
@@ -62,11 +64,40 @@ const SearchJobSeekers = () => {
             style={{ width: "10%" }}
             type="submit"
             className="btn btn-primary"
-            onClick={handleSearchSubmit}
-          >
+            onClick={handleSearchSubmit}>
             Search
           </button>
         </div>
+
+        {jobSeekers.length !== 0 ? (
+          <div className="search-results">
+            {jobSeekers.map((jobSeeker) => (
+              <div key={jobSeeker.job_seeker_id} className="search-result">
+                <img
+                  src={`${STATIC_API}/uploads/job/profile/${jobSeeker.photo}`}
+                  alt={jobSeeker.FirstName}
+                  className="search-result-image"
+                />
+                <div className="search-result-details">
+                  <h2>{jobSeeker.FirstName + " " + jobSeeker.Surname}</h2>
+                  <p>{jobSeeker.email}</p>
+                  <p>{jobSeeker.phone}</p>
+                  <p>{jobSeeker.address}</p>
+                  <NavLink
+                    to={`view`}
+                    state={
+                      jobSeeker && {
+                        jobSeeker: jobSeeker,
+                      }
+                    }
+                    className="btn btn-primary">
+                    View Profile
+                  </NavLink>
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : null}
       </section>
     </div>
   );
