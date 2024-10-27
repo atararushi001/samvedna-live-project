@@ -884,7 +884,12 @@ const JobSeekerDashboard = () => {
                       type="date"
                       name="graduation_date"
                       placeholder="Graduation Date"
-                      value={degree.graduation_date}
+                      value={
+                        degree.graduation_date &&
+                        new Date(degree.graduation_date)
+                          .toISOString()
+                          .split("T")[0]
+                      }
                       onChange={(e) =>
                         handleInputChange(
                           e,
