@@ -1534,7 +1534,19 @@ const JobSeeker = {
   searchJobSeeker: (searchCriteria, callback) => {
     const search = searchCriteria;
 
-    let jobSeekerQuery = `SELECT * FROM ${db_name}.job_seekers WHERE 1=1`;
+    let jobSeekerQuery = `SELECT DISTINCT job_seekers.*, 
+                            cities.name AS city, 
+                            states.name AS state, 
+                            country.name AS country, 
+                            qualificationlevel.qualification_name AS qualification, 
+                            educationspecialization.education_specialization_name AS educationSpecialization 
+                          FROM job_seekers 
+                          JOIN cities ON job_seekers.city = cities.id 
+                          JOIN states ON job_seekers.state = states.id 
+                          JOIN country ON job_seekers.country = country.id 
+                          JOIN qualificationlevel ON job_seekers.qualification = qualificationlevel.qualification_id 
+                          JOIN educationspecialization ON job_seekers.educationSpecialization = educationspecialization.education_specialization_id 
+                          WHERE 1=1`;
     const queryParams = [];
 
     if (search) {
